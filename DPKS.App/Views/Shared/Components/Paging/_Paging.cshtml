@@ -1,0 +1,92 @@
+﻿@* @model TechLife.QLBDX.App.Models.PagingViewModel
+
+@{
+    int total = Model.Total;
+    int pageSize = (int)Model.PageSize;
+    int page = (int)Model.PageIndex;
+    int postperpage = (int)Model.PageSize;
+    int count_page = (int)Math.Ceiling((double)total / pageSize);
+}
+@{
+    <input type="hidden" asp-for="PageIndex" />
+    if (total > pageSize)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <select asp-for="PageSize" asp-items="ViewBag.listPage" onchange="this.form.submit()" class="form-select form-select-sm" style="width:20%">
+                </select>
+            </div>
+            <div class="col-md-6">
+                <div class="dataTables_paginate paging_simple_numbers">
+                    @{
+                        <ul class="pagination pagination-sm man">
+                            @{
+                                string firtpage = "<li class=paginate_button><button type=button onclick=\"$('#PageIndex').val(this.value);this.form.submit();\" value='1' class='paginate_button page-link'>Đầu</a></li>";
+                                @Html.Raw(firtpage);
+                                string prepage = "<li class=paginate_button><button type=button onclick=\"$('#PageIndex').val(this.value);this.form.submit();\" value='" + Convert.ToInt32(page - 1).ToString() + "' class='paginate_button page-link'>Trước</a></li>";
+                                if (page > 1)
+                                {
+                                    @Html.Raw(prepage);
+                                }
+                                if (page > 3 && count_page > 5)
+                                {
+                                    if (page > 4)
+                                    {
+                                        <li class=paginate_button><button type="button" class="paginate_button page-link">...</button></li>
+                                    }
+                                }
+                                for (int i = 1; i <= count_page; i++)
+                                {
+                                    string active = "";
+                                    if (i == page)
+                                    {
+                                        active = "active";
+                                    }
+                                    if (i == page)
+                                    {
+                                        <li class="paginate_button @active"><button type="button" onclick="$('#PageIndex').val(this.value); this.form.submit();" value="@i.ToString()" class="paginate_button page-link @active">@i</button></li>
+                                    }
+                                    else
+                                    {
+                                        if (count_page > 5)
+                                        {
+                                            if (i - 3 < page && page < i + 3)
+                                            {
+                                                <li class=paginate_button><button type="button" onclick="$('#PageIndex').val(this.value); this.form.submit();" value="@i.ToString()" class="paginate_button page-link @active">@i</button></li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class=paginate_button><button type="button" onclick="$('#PageIndex').val(this.value); this.form.submit();" value="@i.ToString()" class="paginate_button page-link @active">@i</button></li>
+                                        }
+                                    }
+                                }
+                                if (count_page > 5 && page < count_page - 2)
+                                {
+                                    if (page < count_page - 3)
+                                    {
+                                        <li class=paginate_button><button type="button" class="paginate_button page-link">...</button></li>
+                                    }
+                                }
+                                string nextpage = "<li class=paginate_button><button type='button' onclick=\"$('#PageIndex').val(this.value);this.form.submit();\" value='" + Convert.ToInt32(page + 1).ToString() + "' class='paginate_button page-link'>Sau</a></li>";
+                                if (page < count_page)
+                                {
+                                    @Html.Raw(nextpage);
+                                }
+
+                                string lastpage = "<li class=paginate_button><button type='button' onclick=\"$('#PageIndex').val(this.value);this.form.submit();\" value='" + Convert.ToInt32(count_page).ToString() + "' class='paginate_button page-link'>Cuối</a></li>";
+                                
+                                @Html.Raw(lastpage);
+                            }
+
+                        </ul>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    }
+
+}
+ *@

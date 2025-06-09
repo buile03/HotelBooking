@@ -59,36 +59,34 @@ namespace DPKS.Data.EF
 
         }
 
-        public DbSet<QuocGia> quocGias { get; set; }
+        public DbSet<QuocGia> QuocGias { get; set; }
 
-        public DbSet<Tinh> tinhs { get; set; }
-
-
-        public DbSet<Phong> phongs { get; set; }
+        public DbSet<Tinh> Tinhs { get; set; }
 
 
-        public DbSet<TienNghi> tienNghis { get; set; }
+        public DbSet<Phong> Phongs { get; set; }
+
+
+        public DbSet<TienNghi> TienNghis { get; set; }
 
         public DbSet<FeedBack> FeedBacks { get; set; }
 
-        public DbSet<ThanhToan> thanhToans { get; set; }
+        public DbSet<ThanhToan> ThanhToans { get; set; }
 
-        public DbSet<PhuongThucThanhToan> phuongThucThanhToans { get; set; }
+        public DbSet<PhuongThucThanhToan> PhuongThucThanhToans { get; set; }
 
-        public DbSet<DatPhong> datPhongs { get; set; }
+        public DbSet<DatPhong> DatPhongs { get; set; }
 
-        public DbSet<TrangThaiDatPhong> trangThaiDatPhongs { get; set; }
+        public DbSet<TrangThaiDatPhong> TrangThaiDatPhongs { get; set; }
 
-        public DbSet<TienNghiTheoLoaiPhong> tienNghiTheoLoaiPhongs { get; set; }
+        public DbSet<TienNghiTheoLoaiPhong> TienNghiTheoLoaiPhongs { get; set; }
 
-        public DbSet<TrangThaiPhong> trangThaiPhongs { get; set; }
+        public DbSet<TrangThaiPhong> TrangThaiPhongs { get; set; }
 
-        public DbSet<LoaiPhong> loaiPhongs { get; set; }
+        public DbSet<LoaiPhong> LoaiPhongs { get; set; }
 
-        public DbSet<AnhPhong> anhPhongs { get; set; }
-
-
-
+        public DbSet<AnhPhong> AnhPhongs { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
 
     }
 }

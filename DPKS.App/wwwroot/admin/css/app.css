@@ -1,0 +1,84 @@
+button.paginate_button.page-link {
+    color: blue;
+    background-color: #fff;
+    border: 2px solid #eee;
+}
+
+button.paginate_button.page-link.active {
+    background-color: blue !important;
+    border: 2px solid blue !important;
+    color: white !important;
+}
+
+.smart-style-1 #logo-group {
+    background: rgb(0 0 0 / 0%) !important;
+}
+
+#logo img {
+    width: 39px !important;
+}
+
+#logo {
+    margin-top: 10px !important;
+}
+
+.breadcrumb > li {
+    display: inline-block;
+}
+
+.modal-footer {
+    background-color: #99999952;
+}
+
+.form-select {
+    border-radius: 0 !important
+}
+
+#bot1-Msg1.btn-primary {
+    background-color: #5a5a5a !important;
+    border: 1px solid #5a5a5a !important;
+}
+#left-panel {
+    width: 300px !important;
+}
+.menu-on-top #left-panel {
+    width: 0;
+}
+.badge {
+    background: rgba(0, 0, 0, .2) !important;
+}
+
+.text-overflow-td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/*.fade {
+    opacity: 1 !important;
+}*/
+
+.animationFadeIn {
+    animation: fadeIn 0.25s ease-in;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/*.select2-container .select2-choice, .select2-selection {
+    height: auto;
+    padding: 2px 8px;
+}*/
+
+input.error {
+    border-color: #f44336 !important;
+}

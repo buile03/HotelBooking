@@ -1,0 +1,38 @@
+﻿@model List<DPKS.Model.TienNghi.TienNghiVm>
+
+@{
+    ViewData["Title"] = "Danh sách Tiện Nghi";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Error as string))
+{
+        <div class="alert alert-danger">@ViewBag.Error</div>
+}
+else if (Model != null && Model.Any())
+{
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên Tiện Nghi</th>
+                    <th>Mô Tả</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+else
+{
+        <div>Không có tiện nghi nào để hiển thị.</div>
+}
