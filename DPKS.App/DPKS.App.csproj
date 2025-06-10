@@ -15,8 +15,5 @@
   <ItemGroup>
     <ProjectReference Include="..\DPKS.Service\DPKS.Service.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
 
 </Project>
