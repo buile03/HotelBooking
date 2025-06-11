@@ -7,9 +7,12 @@ namespace DPKS.App.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddTransient<ITienNghiService, TienNghiService>();
             services.AddTransient<IOrganizationService, OrganizationService>();
             services.AddTransient<IStorageService, FileStorageService>();
+
+            services.AddTransient<ITienNghiService, TienNghiService>();
+            services.AddTransient<IPhongService, PhongService>();
+
             return services;
         }
     }

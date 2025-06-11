@@ -23,6 +23,7 @@ namespace DPKS.Data.Entites
         public TrangThaiPhong TrangThaiPhong { get; set; }
         public ICollection<DatPhong>? datPhongs { get; set; } = new List<DatPhong>();
         public ICollection<AnhPhong>? anhPhongs { get; set; } = new List<AnhPhong>();
+        
 
     }
 }

@@ -3,7 +3,445 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Nội dung của banner, about, rooms,... sẽ nằm ở đây -->
-<section id="home" class="banner_wrapper">...</section>
-<section id="about" class="about_wrapper">...</section>
-<!-- Các phần khác... -->
+<!-- Banner section -->
+<section id="home" class="banner_wrapper p-0">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" style="background-image: url(./images/slider/slider2.jpg);">
+                <div class="slide-caption text-center">
+                    <div>
+                        <h1>Chào mừng đến với khách sạn tốt nhất tại Huế</h1>
+                        <p>
+                            Chúng tôi cam kết mang đến cho bạn trải nghiệm nghỉ dưỡng tuyệt vời với dịch vụ chuyên nghiệp, 
+                            không gian sang trọng và tiện nghi đẳng cấp. Hãy tận hưởng kỳ nghỉ đáng nhớ tại thành phố thơ mộng Huế!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide" style="background-image: url(./images/slider/slider3.jpg);">
+                <div class="slide-caption text-center">
+                    <div>
+                        <h1>Chào mừng đến với khách sạn tốt nhất tại Huế</h1>
+                        <p>
+                            Chúng tôi cam kết mang đến cho bạn trải nghiệm nghỉ dưỡng tuyệt vời với dịch vụ chuyên nghiệp,
+                            không gian sang trọng và tiện nghi đẳng cấp. Hãy tận hưởng kỳ nghỉ đáng nhớ tại thành phố thơ mộng Huế!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div class="container booking-area">
+        <form class="row">
+            <div class="col-lg mb-3 mb-lg-0">
+                <div>Ngày nhận phòng</div>
+                <input type="date" class="form-control" placeholder="Date">
+            </div>
+            <div class="col-lg mb-3 mb-lg-0">
+                <div>Ngày trả phòng</div>
+                <input type="date" class="form-control" placeholder="Date">
+            </div>
+            <div class="col-lg mb-3 mb-lg-0">
+                <div>Số lượng</div>
+                <select class="form-select">
+                    <option selected>Người lớn</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="col-lg mb-3 mb-lg-0">
+                <div>Số lượng</div>
+                <select class="form-select">
+                    <option selected>Trẻ con</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="col-lg mb-3 mb-lg-0 d-flex align-items-end ">
+                <button type="submit" class="main-btn rounded-2 px-lg-3">Kiểm tra</button>
+            </div>
+        </form>
+    </div>
+</section>
+<!-- Banner section exit -->
+<!-- About section -->
+<section id="about" class="about_wrapper">
+    <div class="container">
+        <div class="row flex-lg-row flex-column-reverse ">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h3>
+                    Chào mừng đến với <span>
+                        Khách sạn <br class="d-none d-lg-block">
+                        thiên đường
+                    </span> cho kỳ nghỉ cuối tuần của bạn
+                </h3>
+                <p>
+                    Nơi bạn tìm thấy sự thoải mái tuyệt đối, tránh xa những bộn bề, nơi mà bạn có thể tận hưởng những giây phút thư giãn tuyệt vời. Không ai từ chối được sự dễ chịu, sự chăm sóc tận tâm và trải nghiệm đáng nhớ nơi đây.
+                </p>
+                <p>
+                    Nang lại sự yên bình và tiện nghi, giúp bạn tái tạo năng lượng cho hành trình tiếp theo trong cuộc sống.
+                </p>
+
+                <a href="~/About" class="main-btn mt-4">Khám phá</a>
+            </div>
+            <div class="col-lg-6 mb-4 mb-lg-0 ps-lg-4 text-center">
+                <img decoding="async" src="images/about-img.svg" class="img-fluid" alt="About Us">
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- About section exit -->
+<!-- Rooms section -->
+<section id="rooms" class="rooms_wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 section-title text-center mb-5">
+                <h6>Tôi có thể làm gì cho bạn</h6>
+                <h3>Các phòng được yêu thích nhất</h3>
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-4 mb-4 mb-lg-0">
+                <div class="room-item">
+                    <img decoding="async" src="./images/room/room2.webp" class="img-fluid">
+                    <div class="room-item-wrap">
+                        <div class="room-content">
+                            <h5 class="text-white mb-lg-5 text-decoration-underline">Phòng Suite</h5>
+                            <ul class="text-white">
+                                <li>Nội thất được bố trí tinh tế</li>
+                                <li>Không gian rộng</li>
+                                <li>Tiện nghi hiện đại</li>
+                            </ul>
+                            <p class="text-white fw-bold mt-lg-4">800.000VND / Mỗi đêm</p>
+                            <a class="main-btn border-white text-white mt-lg-5" href="#">Đặt phòng ngay</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-lg-0">
+                <div class="room-item">
+                    <img decoding="async" src="./images/room/room1.webp" class="img-fluid">
+                    <div class="room-item-wrap">
+                        <div class="room-content">
+                            <h5 class="text-white mb-lg-5 text-decoration-underline">Phòng gia đình</h5>
+                            <ul class="text-white">
+                                <li>Cho gia đình, có 2 giường trở lên</li>
+                                <li>Nội thất được bố trí tinh tế</li>
+                                <li>Không gian rộng</li>
+                                
+                            </ul>
+                            <p class="text-white fw-bold mt-lg-4">700.000VND / Mỗi đêm</p>
+                            <a class="main-btn border-white text-white mt-lg-5" href="#">Đặt phòng ngay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-lg-0">
+                <div class="room-item">
+                    <img decoding="async" src="./images/room/room3.webp" class="img-fluid">
+                    <div class="room-item-wrap">
+                        <div class="room-content">
+                            <h5 class="text-white mb-lg-5 text-decoration-underline">Phòng VIP</h5>
+                            <ul class="text-white">
+                                <li>Dành cho khách VIP</li>
+                                <li>Đầy đủ tiện nghi</li>
+                                <li>Đầy đủ dịch vụ</li>
+                                <li>Không gian rộng lớn</li>
+                            </ul>
+                            <p class="text-white fw-bold mt-lg-4">900.000VND / Mỗi đêm</p>
+                            <a class="main-btn border-white text-white mt-lg-5" href="#">Đặt phòng ngay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Rooms Section Exit -->
+<!-- Services section -->
+<section id="services" class="services_wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 section-title text-center mb-5">
+                <h6>Luôn đồng hành cùng bạn</h6>
+                <h3>TIỆN NGHI NỔI BẬT CỦA CHÚNG TÔI</h3>
+            </div>
+        </div>
+        <div class="row align-items-center service-item-wrap">
+            <div class="col-lg-7 p-lg-0">
+                <!--Service Area Start-->
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade active show" id="spa" role="tabpanel">
+                        <img decoding="async" src="./images/services/service1.webp" alt="">
+                    </div>
+                    <div class="tab-pane fade" id="restaurent" role="tabpanel">
+                        <img decoding="async" src="./images/services/service2.webp" alt="">
+                    </div>
+                    <div class="tab-pane fade" id="swimming" role="tabpanel">
+                        <img decoding="async" src="images/services/service3.webp" alt="">
+                    </div>
+                    <div class="tab-pane fade" id="conference" role="tabpanel">
+                        <img decoding="async" src="./images/services/service6.webp" alt="">
+                    </div>
+                </div>
+                <!--Service Area End-->
+            </div>
+            <div class="col-lg-5 position-relative">
+                <!--Service Tab Menu Area Start-->
+                <div class="service-menu-area">
+                    <ul class="nav">
+                        <li>
+                            <a data-bs-toggle="tab" href="#spa" class="active">
+                                <span class="service-icon">
+                                    <img decoding="async" src="./images/services/service-icon1.webp" alt="">
+                                </span>
+                                <h5>Spa, Làm đẹp & Sức khỏe</h5>
+                                <p>
+                                    <span>Spa và làm đẹp</span> giúp bạn thư giãn, lấy lại năng lượng và vẻ đẹp tự nhiên.
+                                </p>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-bs-toggle="tab" href="#restaurent">
+                                <span class="service-icon">
+                                    <img decoding="async" src="./images/services/service-icon2.webp" alt="">
+                                </span>
+                                <h5>Nhà hàng</h5>
+                                <p>
+                                    <span>Nhà hàng</span> phục vụ các món ăn hấp dẫn trong không gian sang trọng, ấm cúng.
+                                </p>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-bs-toggle="tab" href="#swimming">
+                                <span class="service-icon">
+                                    <img decoding="async" src="./images/services/service-icon3.webp" alt="">
+                                </span>
+                                <h5>Hồ bơi</h5>
+                                <p>
+                                    <span>Hồ bơi</span> hiện đại, sạch sẽ – nơi lý tưởng để thư giãn và tận hưởng làn nước trong xanh.
+                                </p>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-bs-toggle="tab" href="#conference">
+                                <span class="service-icon">
+                                    <img decoding="async" src="./images/services/service-icon4.webp" alt="">
+                                </span>
+                                <h5>Phòng tập gym</h5>
+                                <p>
+                                    <span>Phòng tập gym</span> được trang bị đầy đủ thiết bị hiện, đáp ứng đủ các nhu cầu của khách hàng.
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--Service Tab Menu Area End-->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Services section Exit -->
+
+<!-- Gallery section -->
+<section id="gallery" class="gallery_wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 section-title text-center mb-5">
+                <h6>Những hình ảnh đẹp nhất về khách sạn của chúng tôi</h6>
+                <h3>Bộ sưu tập</h3>
+            </div>
+        </div>
+        <div class="row g-0">
+            <div class="col-lg-3 col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/1.webp" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Hồ bơi tuyệt đẹp</h4></div>
+            </div>
+            <div class="col-lg-3 col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/3.webp" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Chúng tôi có thể sắp xếp giường đôi nếu bạn cần</h4></div>
+            </div>
+            <div class="col-lg-3 col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/4.webp" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Phòng hội nghị rộng lớn, lý tưởng cho buổi lễ hoặc các cuộc họp</h4></div>
+            </div>
+            <div class="col-lg-3 col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/2.webp" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Chúng tôi còn có hồ bơi lớn để mang đến niềm vui bất tận!</h4></div>
+            </div>
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/LA2.jpg" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Hồ bơi vô cực với tầm nhìn thành phố tuyệt đẹp</h4> </div>
+            </div>
+            <div class="col-md-6 gallery-item">
+                <img decoding="async" src="./images/gallery/6.webp" class="img-fluid w-100">
+                <div class="gallery-item-content"> <h4>Tiệc buffet đa dạng với nhiều món ăn quốc tế</h4> </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Gallery Section Exit -->
+@* <!-- Pricing section -->
+<section id="price" class="price_wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 section-title text-center mb-5">
+                <h6>Giá cả hợp lý và tốt nhất dành cho bạn</h6>
+                <h3>Bảng Giá Của Chúng Tôi</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card p-4 text-center rounded-3">
+                    <h5 class="text-decoration-underline mb-4">Economic</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <p>Flight Ticket(2)</p>
+                        </li>
+                        <li>
+                            <p>Music Concert (30% Off)</p>
+                        </li>
+                        <li>
+                            <p>Restaurant (Snacks)</p>
+                        </li>
+                        <li>
+                            <p>Face Make(No)</p>
+                        </li>
+                    </ul>
+                    <hr />
+                    <h3>$150<sub class="fs-6 fw-normal">/NIGHT</sub></h3>
+                    <a href="#" class="main-btn">Sign Up</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card p-4 text-center rounded-3">
+                    <h5 class="text-decoration-underline mb-4">Economic</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <p>Flight Ticket(2)</p>
+                        </li>
+                        <li>
+                            <p>Music Concert (30% Off)</p>
+                        </li>
+                        <li>
+                            <p>Restaurant (Snacks)</p>
+                        </li>
+                        <li>
+                            <p>Face Make(No)</p>
+                        </li>
+                    </ul>
+                    <hr />
+                    <h3>$150<sub class="fs-6 fw-normal">/NIGHT</sub></h3>
+                    <a href="#" class="main-btn">Sign Up</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card p-4 text-center rounded-3">
+                    <h5 class="text-decoration-underline mb-4">Economic</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <p>Flight Ticket(2)</p>
+                        </li>
+                        <li>
+                            <p>Music Concert (30% Off)</p>
+                        </li>
+                        <li>
+                            <p>Restaurant (Snacks)</p>
+                        </li>
+                        <li>
+                            <p>Face Make(No)</p>
+                        </li>
+                    </ul>
+                    <hr />
+                    <h3>$150<sub class="fs-6 fw-normal">/NIGHT</sub></h3>
+                    <a href="#" class="main-btn">Sign Up</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card p-4 text-center rounded-3">
+                    <h5 class="text-decoration-underline mb-4">Economic</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <p>Flight Ticket(2)</p>
+                        </li>
+                        <li>
+                            <p>Music Concert (30% Off)</p>
+                        </li>
+                        <li>
+                            <p>Restaurant (Snacks)</p>
+                        </li>
+                        <li>
+                            <p>Face Make(No)</p>
+                        </li>
+                    </ul>
+                    <hr />
+                    <h3>$150<sub class="fs-6 fw-normal">/NIGHT</sub></h3>
+                    <a href="#" class="main-btn">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Pricing Section Exit  --> *@
+
+@* <!-- Pricing section -->
+<section id="blog" class="blog_wrapper pb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 section-title text-center mb-5">
+                <h2>Chào Mừng Quý Khách Đến Với Chúng Tôi</h2>
+                <h3>Blog Của Chúng Tôi</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card p-0 border-0 rounded-0">
+                    <img decoding="async" src="images/blog/blog1.webp" alt="">
+                    <div class="blog-content bg-white p-4">
+                        <h5 class="text-decoration-underline mb-4">Relax Zone</h5>
+                        <h6>By Admin - February 18, 2018</h6>
+                        <p class="mt-2">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, nostrum.
+                        </p>
+                        <a href="#" class="main-btn mt-2">Read More</a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-0 border-0 rounded-0">
+                    <img decoding="async" src="images/blog/blog2.webp" alt="">
+                    <div class="blog-content bg-white p-4">
+                        <h5 class="text-decoration-underline mb-4">Relax Zone</h5>
+                        <h6>By Admin - February 18, 2018</h6>
+                        <p class="mt-2">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, nostrum.
+                        </p>
+                        <a href="#" class="main-btn mt-2">Read More</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="our-partner-slider mt-5">
+        <div class="container swiper our-partner">
+            <div class=" swiper-wrapper">
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand1.webp"></div>
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand2.webp"></div>
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand3.webp"></div>
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand4.webp"></div>
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand5.webp"></div>
+                <div class="swiper-slide"><img decoding="async" src="images/partners/brand6.webp"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Pricing Section Exit  --> *@

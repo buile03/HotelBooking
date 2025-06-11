@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DPKS.Common\DPKS.Common.csproj" />
+    <ProjectReference Include="..\DPKS.Data\DPKS.Data.csproj" />
+  </ItemGroup>
+
 </Project>

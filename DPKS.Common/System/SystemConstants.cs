@@ -8,7 +8,13 @@ namespace DPKS.Common.System
 {
     public class SystemConstants
     {
+        public const string Alerts = "Alerts";
+        public const string UrlBack = "UrlBack";
+        public const string UrlIndex = "UrlIndex";
+        public const string loginFailed = "loginFailed";
 
+        public const int pageSize = 20;
+        public const int pageIndex = 1;
         public class AppSettings
         {
             public const string Key = "App";
@@ -18,6 +24,16 @@ namespace DPKS.Common.System
 
             public const int ExpiresUtcMinutes = 30;
             public const string JWTSecurityKey = "xt7oidxpIRs9uDVnZEu9kZKqmumiF1e1RINb3UMlwCGA3O3Xywc8OZkOs4dmwf";
+        }
+        public class ProductSettings
+        {
+            public const int NumberOfFeaturedProducts = 4;
+            public const int NumberOfLatestProducts = 6;
+        }
+
+        public class ProductConstants
+        {
+            public const string NA = "N/A";
         }
     }
 }

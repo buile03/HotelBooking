@@ -372,6 +372,52 @@ namespace DPKS.Data.Migrations
                     b.ToTable("LoaiPhong", (string)null);
                 });
 
+            modelBuilder.Entity("DPKS.Data.Entites.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LateModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
             modelBuilder.Entity("DPKS.Data.Entites.Phong", b =>
                 {
                     b.Property<int>("PhongId")
@@ -590,7 +636,7 @@ namespace DPKS.Data.Migrations
 
                     b.HasIndex("TienNghiId");
 
-                    b.ToTable("tienNghiTheoLoaiPhongs");
+                    b.ToTable("TienNghiTheoLoaiPhongs");
                 });
 
             modelBuilder.Entity("DPKS.Data.Entites.Tinh", b =>

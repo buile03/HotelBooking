@@ -1,0 +1,56 @@
+﻿@model List<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
+
+@if(ViewBag.ErrorMessage != null)
+{
+    <div class="alter alter-warning">
+        @ViewBag.ErrorMessage
+    </div>
+}
+else if(Model.Count == 0)
+{
+    <div class="alter alter-info">
+        Không còn phòng nào để hiển thị
+    </div>
+}
+
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Số phòng</th>
+                <th>Giá</th>
+                @* <th>Loại phòng</th>
+                
+                <th>Trạng thái</th>
+                <th>Số khách</th>
+                <th>Tiện nghi</th>
+                <th>Đánh giá</th>
+                <th>Bình luận</th> *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var p in Model)
+            {
+                <tr>
+                    <td>@p.SoPhong</td>
+                    <td>@string.Format("{0:N0}", p.Gia) VND</td>
+                    @* <td>@p.Type</td>
+                    
+                    <td>@p.TrangThaiPhong</td> *@
+                    @* <td>@p.SoLuongKhach</td>
+                    <td>
+                        <ul>
+                            @foreach (var tn in p.TienNghi)
+                            {
+                                <li>@tn</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>@(p.DanhGia > 0 ? $"{p.DanhGia}/5" : "Chưa có")</td>
+                    <td>@(string.IsNullOrEmpty(p.BinhLuan) ? "Không có" : p.BinhLuan)</td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+}

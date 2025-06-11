@@ -1,0 +1,17 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+@if (!(currentController == "Home" && currentAction == "Index"))
+{
+    <div class="container mt-4">
+        <h2 class="text-center fw-bold mb-3">@ViewData["Title"]</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+            </ol>
+        </nav>
+    </div>
+}

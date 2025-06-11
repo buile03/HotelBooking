@@ -8,9 +8,11 @@
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
 
     @Html.Partial("_Header") <!-- Navbar -->
+    @Html.Partial("_PageTitle") <!-- Tiêu đề trang và breadcrumb -->
 
     <main role="main">
         @RenderBody() <!-- Nội dung trang con sẽ hiển thị ở đây -->
+        @RenderSection("Scripts", required: false)
     </main>
 
     @Html.Partial("_Footer") <!-- Footer -->
