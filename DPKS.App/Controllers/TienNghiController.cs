@@ -1,4 +1,5 @@
-﻿using DPKS.Model.TienNghi.Request;
+﻿
+using DPKS.Common.Result;
 using DPKS.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -18,13 +19,13 @@ namespace DPKS.App.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var request = new TienNghiCreateRequest(); // nếu không cần lọc, truyền rỗng
+            var request = new GetPagingRequest(); // nếu không cần lọc, truyền rỗng
             var result = await _tienNghiService.GetAll(request);
 
             if (!result.IsSuccessed)
             {
                 ViewBag.Error = result.Message;
-                return View(new List<DPKS.Model.TienNghi.TienNghiVm>());
+                return View(new List<DPKS.Model.TienNghi.DanhSachTienNghiVm>());
             }
 
             return View(result.ResultObj);

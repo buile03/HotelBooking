@@ -1,38 +1,45 @@
-﻿@model List<DPKS.Model.TienNghi.TienNghiVm>
-
+﻿@model List<DPKS.Model.TienNghi.DanhSachTienNghiVm>
 @{
-    ViewData["Title"] = "Danh sách Tiện Nghi";
+    ViewData["Title"] = "Tiện nghi";
+    ViewData["PageTitle"] = "Danh sách tiện nghi";
 }
+<div class="container py-5">
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+        else if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert alert-success text-center" role="alert">
+                @ViewBag.SuccessMessage
+            </div>
+        }
 
-<h2>@ViewData["Title"]</h2>
-
-@if (!string.IsNullOrEmpty(ViewBag.Error as string))
-{
-        <div class="alert alert-danger">@ViewBag.Error</div>
-}
-else if (Model != null && Model.Any())
-{
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên Tiện Nghi</th>
-                    <th>Mô Tả</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model)
-            {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                        </tr>
-            }
-            </tbody>
-        </table>
-}
-else
-{
-        <div>Không có tiện nghi nào để hiển thị.</div>
-}
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-warning text-center" role="alert">
+                Không có tiện nghi nào để hiển thị.
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var amenity in Model)
+                {
+                    <!-- Map icon and badge dynamically based on Name and Type -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-2">@amenity.Name</h5>
+                                    <p class="card-text text-muted">@amenity.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+</div>

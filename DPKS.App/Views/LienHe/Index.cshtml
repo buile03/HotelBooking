@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Liên hệ";
+    ViewData["PageTitle"] = "Liên hệ với chúng tôi";
+}
+
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row g-4 align-items-stretch">
+            <!-- Bản đồ bên trái -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-0">
+                        <!-- Google Maps Embed -->
+                        <div class="ratio ratio-4x3 rounded">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.2487912686447!2d107.5883384!3d16.4674733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a147ba7c2829%3A0x2b605e958c5ea4dd!2zSHXhuq0sIFRoxrBhIFRoacOqbiBIdeG6vywgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1703123456789!5m2!1svi!2s"
+                                    class="rounded"
+                                    style="border:0;"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                    <!-- Overlay thông tin nhanh -->
+                    <div class="position-absolute top-0 start-0 m-3">
+                        <div class="card border-0 shadow-sm bg-white" style="max-width: 280px;">
+                            <div class="card-body py-2 px-3">
+                                <h6 class="card-title text-primary mb-1">
+                                    <i class="bi bi-geo-alt-fill me-2 fw-bold" style="font-size:20px"></i> Vị trí của chúng tôi
+                                </h6>
+                                <p class="card-text small text-muted mb-0 fw-bold">TP Huế, Việt Nam</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin liên hệ bên phải -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="row g-4 mb-4">
+                            <!-- Địa chỉ -->
+                            <div class="col-12">
+                                <div class="card border-0 bg-primary bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-map fa-2x mb-4" aria-hidden="true"></i>
+                                        <h6 class="text-primary fw-bold mb-1" style="font-size: 20px;">Địa chỉ</h6>
+                                        <p class="text-muted fw-semibold mb-0" style="font-size: 14px;">Thủy Tân, Hương Thủy, Huế</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Điện thoại -->
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-success bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        @* <img src="~/images/lienhe/dienthoai.jpg" alt="Địa chỉ"
+                                             class=" d-inline-flex align-items-center justify-content-center mb-3 img-fluid"
+                                             style="width: 60px; height: 60px; object-fit: contain;"> *@
+                                        <i class="fa fa-phone fa-2x mb-4" aria-hidden="true"></i>
+                                        <h6 class="text-success fw-bold" style="font-size:20px">Điện thoại</h6>
+                                        <p class="text-muted small mb-2 fw-bold">+84 8888 6666</p>
+                                        <a href="#" class="btn btn-sm btn-outline-success"> <i class="bi bi-telephone me-1"></i>Gọi ngay</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <div class="card border-0 bg-info bg-opacity-10 h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-envelope fa-2x mb-4" aria-hidden="true"></i>
+                                        <h6 class="text-info fw-bold" style="font-size:20px">Email</h6>
+                                        <p class="text-muted small mb-2 fw-bold">lienhe@hotelbooking.info</p>
+                                        <a href="mailto:@ViewBag.Email" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-envelope me-1 fw-bold"></i>Gửi email
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Giờ làm việc -->
+                        <div class="card border-0 bg-warning bg-opacity-25 mb-4">
+                            <div class="card-header bg-warning bg-opacity-75 border-0">
+                                <h6 class="mb-0 text-dark fw-bold" style="font-size:20px"><i class="bi bi-clock-fill me-2"></i>Giờ làm việc</h6>
+                            </div>
+                            <div class="card-body py-3">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong class="text-primary fw-bold">Thứ 2 - Thứ 6</strong>
+                                        <p class="text-muted small mb-0 fw-bold">8:00 - 22:00</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong class="text-primary fw-bold">Thứ 7 - CN</strong>
+                                        <p class="text-muted small mb-0  fw-bold">24/7</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mạng xã hội -->
+                        <div class="text-center mb-4">
+                            <p class="text-muted small fw-bold" style="font-size:20px">Kết nối với chúng tôi</p>
+                            <!-- Nút mạng xã hội -->
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-info btn-sm">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-danger btn-sm">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-success btn-sm">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </div>
+                            <p class="text-muted mt-2 small">Website: <a href="https://@ViewBag.Website" class="text-decoration-none fw-bold">hotelbooking.com</a></p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

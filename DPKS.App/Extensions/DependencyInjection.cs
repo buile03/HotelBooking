@@ -12,6 +12,7 @@ namespace DPKS.App.Extensions
 
             services.AddTransient<ITienNghiService, TienNghiService>();
             services.AddTransient<IPhongService, PhongService>();
+            services.AddTransient<IFeedbackService, FeedbackService>();
 
             return services;
         }

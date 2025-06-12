@@ -11,4 +11,8 @@
     <ProjectReference Include="..\DPKS.Data\DPKS.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TienNghi\Request\" />
+  </ItemGroup>
+
 </Project>
