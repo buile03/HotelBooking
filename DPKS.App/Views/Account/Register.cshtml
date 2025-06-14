@@ -1,0 +1,85 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký - Đặt Phòng Khách Sạn</title>
+
+    <!-- Bootstrap + Font + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/admin/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap&subset=vietnamese">
+</head>
+<body>
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <!-- Bên trái: Hình ảnh -->
+            <div class="col-md-8 d-none d-md-block p-0">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                     class="img-fluid h-100 object-fit-cover"
+                     alt="Ảnh khách sạn">
+            </div>
+
+            <!-- Bên phải: Form đăng ký -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 100vh;">
+                <div class="w-100 p-4" style="max-width: 400px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
+                    <h2 class="text-center mb-4" style="font-weight: 600;">Đăng Ký</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control rounded-3" id="fullName" placeholder="Nhập họ tên" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control rounded-3" id="email" placeholder="Nhập email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control rounded-3" id="phone" placeholder="Nhập số điện thoại" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control rounded-3" id="password" placeholder="Tạo mật khẩu" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                            <input type="password" class="form-control rounded-3" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 rounded-3 shadow-sm" style="font-weight: 500;">Tạo tài khoản</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">Đã có tài khoản? </span>
+                        <a href="/Account" class="text-primary text-decoration-none">Đăng nhập</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/admin/js/bootstrap/bootstrap.min.js"></script>
+    <script src="/admin/js/plugin/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/admin/js/plugin/masked-input/jquery.maskedinput.min.js"></script>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    }
+
+    input:focus, button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+
+    button:hover {
+        opacity: 0.9;
+        transition: 0.3s ease-in-out;
+    }
+</style>

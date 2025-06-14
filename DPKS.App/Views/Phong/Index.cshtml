@@ -1,267 +1,100 @@
 ﻿@model List<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
+@using DPKS.Common.Enum
+@using DPKS.Service
+@using Microsoft.Extensions.DependencyInjection
 @{
     ViewData["Title"] = "Phòng";
-    ViewData["PageTitle"] = "Danh sách phòng";
+    ViewData["PageTitle"] = "Phòng/ Danh sách phòng";
+
+
 }
 
-<div class="container py-4">
-    <div class="row">
-        <!-- Sidebar Bộ Lọc -->
-        <div class="col-lg-3 col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow">
-                @* <div class="card-header bg-primary text-white text-center">
-                    <h6 class="mb-0">
-                        <i class="fas fa-filter me-1"></i> Bộ lọc tìm kiếm
-                    </h6>
-                </div> *@
-                <div class="card-body">
-                    <form method="get" asp-action="Index">
-                        <!-- Ngày nhận/trả phòng -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Ngày nhận phòng</label>
-                            <input type="date" class="form-control" name="NgayNhan" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Ngày trả phòng</label>
-                            <input type="date" class="form-control" name="NgayTra" required>
-                        </div>
-
-                        <!-- Loại phòng -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Loại phòng</label>
-                            <div class="overflow-auto" style="max-height: 150px;">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="LoaiPhong" value="Standard" id="standard">
-                                    <label class="form-check-label" for="standard">Standard</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="LoaiPhong" value="Deluxe" id="deluxe">
-                                    <label class="form-check-label" for="deluxe">Deluxe</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="LoaiPhong" value="Suite" id="suite">
-                                    <label class="form-check-label" for="suite">Suite</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="LoaiPhong" value="VIP" id="vip">
-                                    <label class="form-check-label" for="vip">VIP</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tiện nghi -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tiện nghi</label>
-                            <div class="overflow-auto" style="max-height: 150px;">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="WiFi" id="wifi">
-                                    <label class="form-check-label" for="wifi">
-                                        <i class="fas fa-wifi me-1"></i> WiFi
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="Tivi" id="tivi">
-                                    <label class="form-check-label" for="tivi">
-                                        <i class="fas fa-tv me-1"></i> Tivi
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="DieuHoa" id="dieuhoa">
-                                    <label class="form-check-label" for="dieuhoa">
-                                        <i class="fas fa-snowflake me-1"></i> Điều hòa
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="BanCong" id="bancong">
-                                    <label class="form-check-label" for="bancong">
-                                        <i class="fas fa-building me-1"></i> Ban công
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="BonTam" id="bontam">
-                                    <label class="form-check-label" for="bontam">
-                                        <i class="fas fa-bath me-1"></i> Bồn tắm
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="TienNghi" value="Minibar" id="minibar">
-                                    <label class="form-check-label" for="minibar">
-                                        <i class="fas fa-glass-martini me-1"></i> Minibar
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Giá -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Giá (VNĐ/đêm)</label>
-                            <div class="input-group">
-                                <input type="number" name="GiaMin" class="form-control" placeholder="Từ">
-                                <span class="input-group-text">-</span>
-                                <input type="number" name="GiaMax" class="form-control" placeholder="Đến">
-                            </div>
-                        </div>
-
-                        <!-- Sức chứa -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Sức chứa</label>
-                            <div class="d-flex gap-3">
-                                <div class="flex-fill">
-                                    <label class="form-label">Người lớn</label>
-                                    <select class="form-select" name="NguoiLon">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5+</option>
-                                    </select>
-                                </div>
-                                <div class="flex-fill">
-                                    <label class="form-label">Trẻ em</label>
-                                    <select class="form-select" name="TreEm">
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4+</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search me-1"></i> Tìm phòng
-                            </button>
-                            <button class="btn btn-outline-secondary" type="reset">
-                                <i class="fas fa-undo me-1"></i> Xóa bộ lọc
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="container my-5">
+    <!-- Form tìm kiếm -->
+    <div class="card shadow-sm mb-5 p-4 bg-light rounded-3">
+        <form asp-action="Search" method="post" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Ngày nhận phòng</label>
+                <input type="date" class="form-control" name="NgayNhanPhong" value="@(ViewBag.SearchRequest.NgayNhanPhong?.ToString("yyyy-MM-dd"))" >
             </div>
-        </div>
-
-        <!-- Danh Sách Phòng -->
-        <div class="col-lg-9 col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">
-                    <i class="fas fa-bed me-1"></i> Danh sách phòng
-                </h4>
-                <select class="form-select w-auto" name="SortOrder" onchange="this.form.submit()">
-                    <option value="">Sắp xếp theo giá</option>
-                    <option value="asc">Giá tăng dần</option>
-                    <option value="desc">Giá giảm dần</option>
-                </select>
+            <div class="col-md-3">
+                <label class="form-label">Ngày trả phòng</label>
+                <input type="date" class="form-control" name="NgayTraPhong" value="@(ViewBag.NgayTraPhong?.ToString("yyyy-MM-dd"))" >
             </div>
-
-            @if (Model != null && Model.Any())
-            {
-                <div class="row">
-                    @foreach (var phong in Model)
+            <div class="col-md-2">
+                <label class="form-label">Số lượng khách</label>
+                <input type="number" class="form-control" name="SoLuongKhach" value="@(ViewBag.SoLuongKhach ?? 1)" min="1" max="4" >
+            </div>
+            @* <div class="col-md-2">
+                <label class="form-label">Loại phòng</label>
+                <select class="form-select" name="LoaiPhongId">
+                    <option value="">Tất cả</option>
+                    @if (ViewBag.LoaiPhong != null)
                     {
-                        <div class="col-lg-12 mb-4">
-                            <div class="card border-0 shadow h-100">
-                                <div class="row g-0">
-                                    <!-- Cột ảnh bên trái -->
-                                    <div class="col-md-3 position-relative">
-                                        <img src="~/images/room/room@(phong.PhongId % 4).webp" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" alt="Phòng @phong.SoPhong" />
-                                        <span class="badge position-absolute top-0 end-0 m-2 @(phong.TrangThaiPhong == DPKS.Common.Enum.enTrangThaiPhong.TRONG ? "bg-success" :
-                                                                                        phong.TrangThaiPhong == DPKS.Common.Enum.enTrangThaiPhong.DADAT ? "bg-warning" : "bg-danger")">
-                                            @phong.TrangThaiPhong
-                                        </span>
-                                    </div>
-
-                                    <!-- Cột thông tin bên phải -->
-                                    <div class="col-md-9 ps-5">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                <div>
-                                                    <h5 class="card-title mb-1">
-                                                        <i class="fas fa-bed me-1"></i> Phòng @phong.SoPhong
-                                                    </h5>
-                                                    <p class="text-muted mb-0">
-                                                        <i class="fas fa-users me-1"></i> @phong.SoLuongKhach người
-                                                    </p>
-                                                </div>
-                                                <span class="badge bg-success rounded-pill">
-                                                    @phong.Gia.ToString("N0") VNĐ/đêm
-                                                </span>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                @foreach (var t in phong.TienNghi)
-                                                {
-                                                    string icon = t switch
-                                                    {
-                                                        "WiFi" => "fa-wifi",
-                                                        "Tivi" => "fa-tv",
-                                                        "DieuHoa" => "fa-snowflake",
-                                                        "BanCong" => "fa-building",
-                                                        "BonTam" => "fa-bath",
-                                                        "Minibar" => "fa-glass-martini",
-                                                        _ => "fa-star"
-                                                    };
-                                                    <span class="badge bg-light text-dark me-1 mb-1">
-                                                        <i class="fas @icon me-1"></i> @t
-                                                    </span>
-                                                }
-                                            </div>
-
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                @if (phong.TrangThaiPhong == DPKS.Common.Enum.enTrangThaiPhong.TRONG)
-                                                {
-                                                    <a class="btn btn-primary" href="/Booking/Book?phongId=@phong.PhongId">
-                                                        <i class="fas fa-calendar-check me-1"></i> Đặt ngay
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn btn-secondary" disabled>
-                                                        <i class="fas fa-calendar-times me-1"></i> Đã được đặt
-                                                    </button>
-                                                }
-                                                <a class="btn btn-outline-primary" href="/Room/Details?phongId=@phong.PhongId">
-                                                    <i class="fas fa-eye me-1"></i> Xem chi tiết
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        foreach (var lp in ViewBag.LoaiPhong)
+                        {
+                            <option value="@lp.Id">@lp.TenLoai</option>
+                        }
                     }
-                </div>
+                    else
+                    {
+                        <option disabled selected>Không có loại phòng</option>
+                    }
+                </select>
+            </div> *@   
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+            </div>
+        </form>
+    </div>
 
-                <!-- Pagination -->
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <span class="page-link">Trước</span>
-                        </li>
-                        <li class="page-item active">
-                            <span class="page-link">1</span>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Sau</a>
-                        </li>
-                    </ul>
-                </nav>
-            }
-            else
-            {
-                <div class="text-center py-5">
-                    <i class="fas fa-bed fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Không có phòng phù hợp</h5>
-                </div>
-            }
+    <!-- Thông báo lỗi -->
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
         </div>
+    }
+
+    <!-- Danh sách phòng -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var phong in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm transition-all hover-shadow">
+                    <img src="@(phong.AnhPhong.FirstOrDefault() != null ? "/images/room/" + phong.AnhPhong.FirstOrDefault() : "/images/room/default.png")"
+                         class="card-img-top"
+                         alt="@phong.SoPhong"
+                         style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@phong.SoPhong</h5>
+                        <p class="card-text"><strong>Loại phòng:</strong> @phong.Type</p>
+                        <p class="card-text"><strong>Giá:</strong> @phong.Gia.ToString("C", new System.Globalization.CultureInfo("vi-VN")) / đêm</p>
+                        <p class="card-text"><strong>Trạng thái:</strong> @enHelper.GetDescription(phong.TrangThaiPhong)</p>
+                        <p class="card-text"><strong>Sức chứa:</strong> @phong.SoLuongKhach người</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a asp-action="Detail" asp-route-id="@phong.PhongId" class="btn btn-outline-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+@* @section Scripts {
+    <script>
+        // Thêm hiệu ứng mượt mà khi hover
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-lg');
+                card.style.transform = 'scale(1.02)';
+                card.style.transition = 'all 0.3s ease-in-out';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-lg');
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+} *@

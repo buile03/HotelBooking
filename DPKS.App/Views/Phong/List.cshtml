@@ -1,56 +1,199 @@
 ﻿@model List<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
-
-@if(ViewBag.ErrorMessage != null)
-{
-    <div class="alter alter-warning">
-        @ViewBag.ErrorMessage
-    </div>
-}
-else if(Model.Count == 0)
-{
-    <div class="alter alter-info">
-        Không còn phòng nào để hiển thị
-    </div>
+@using DPKS.Common.Enum
+@{
+    ViewData["Title"] = "Danh sách phòng";
+    var searchRequest = ViewBag.SearchRequest as PhongSearchRequest ?? new PhongSearchRequest();
+    var loaiPhongList = ViewBag.LoaiPhong as List<dynamic> ?? new List<dynamic>();
 }
 
-else
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Số phòng</th>
-                <th>Giá</th>
-                @* <th>Loại phòng</th>
-                
-                <th>Trạng thái</th>
-                <th>Số khách</th>
-                <th>Tiện nghi</th>
-                <th>Đánh giá</th>
-                <th>Bình luận</th> *@
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var p in Model)
-            {
-                <tr>
-                    <td>@p.SoPhong</td>
-                    <td>@string.Format("{0:N0}", p.Gia) VND</td>
-                    @* <td>@p.Type</td>
-                    
-                    <td>@p.TrangThaiPhong</td> *@
-                    @* <td>@p.SoLuongKhach</td>
-                    <td>
-                        <ul>
-                            @foreach (var tn in p.TienNghi)
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- Bộ lọc bên trái (4 ô) -->
+        <div class="col-lg-3 col-md-12 filter-sidebar" style="position: sticky; top: 20px;">
+            <div class="card shadow-sm p-4 mb-4">
+                <h5 class="mb-3">Bộ lọc</h5>
+                <form asp-action="Search" method="post" id="filterForm">
+                    <div class="mb-3">
+                        <label class="form-label">Ngày nhận phòng</label>
+                        <input type="date" class="form-control" name="NgayNhanPhong" value="@(searchRequest.NgayNhanPhong?.ToString("yyyy-MM-dd"))">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ngày trả phòng</label>
+                        <input type="date" class="form-control" name="NgayTraPhong" value="@(searchRequest.NgayTraPhong?.ToString("yyyy-MM-dd"))">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng khách</label>
+                        <input type="number" class="form-control" name="SoLuongKhach" value="@(searchRequest.SoLuongKhach ?? 1)" min="1" max="10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Khoảng giá (VNĐ)</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" class="form-control" name="GiaTu" placeholder="Từ" value="@searchRequest.GiaTu" min="0" step="100000">
+                            <input type="number" class="form-control" name="GiaDen" placeholder="Đến" value="@searchRequest.GiaDen" min="0" step="100000">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Loại phòng</label>
+                        <select class="form-select" name="LoaiPhongId">
+                            <option value="">Tất cả</option>
+                            @foreach (var lp in loaiPhongList)
                             {
-                                <li>@tn</li>
+                                <option value="@lp.Id" selected="@(searchRequest.LoaiPhongId == lp.Id ? "selected" : "")">@lp.Type</option>
                             }
-                        </ul>
-                    </td>
-                    <td>@(p.DanhGia > 0 ? $"{p.DanhGia}/5" : "Chưa có")</td>
-                    <td>@(string.IsNullOrEmpty(p.BinhLuan) ? "Không có" : p.BinhLuan)</td> *@
-                </tr>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Tìm kiếm</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#advancedFilterModal">🛠️</button>
+                    </div>
+                    <button type="reset" class="btn btn-secondary w-100 mt-2">Xóa bộ lọc</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Danh sách phòng bên phải (8 ô) -->
+        <div class="col-lg-9 col-md-12">
+            <!-- Sắp xếp và số lượng phòng -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Tìm thấy @Model.Count phòng</h5>
+                <select class="form-select w-25" id="sortSelect" onchange="applySort()">
+                    <option value="gia-asc">Giá: Thấp đến cao</option>
+                    <option value="gia-desc">Giá: Cao đến thấp</option>
+                </select>
+            </div>
+
+            <!-- Thông báo lỗi -->
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @ViewBag.ErrorMessage
+                </div>
             }
-        </tbody>
-    </table>
+
+            <!-- Danh sách phòng -->
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                @foreach (var phong in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@(phong.AnhPhong.FirstOrDefault() != null ? "/images/room/" + phong.AnhPhong.FirstOrDefault() : "/images/room/default.png")"
+                                 class="card-img-top"
+                                 alt="@phong.SoPhong"
+                                 style="height: 200px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">@phong.SoPhong</h5>
+                                <p class="card-text"><strong>Loại phòng:</strong> @phong.Type</p>
+                                <p class="card-text"><strong>Giá:</strong> @phong.Gia.ToString("C", new System.Globalization.CultureInfo("vi-VN")) / đêm</p>
+                                <p class="card-text"><strong>Sức chứa:</strong> @phong.SoLuongKhach khách</p>
+                                <p class="card-text"><strong>Đánh giá:</strong> @string.Concat(Enumerable.Repeat("★ ", phong.DanhGia))</p>
+                                <p class="card-text"><strong>Tiện nghi:</strong> @string.Join(", ", phong.TienNghis.Take(3))@(phong.TienNghis.Count > 3 ? "..." : "")</p>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a asp-action="Detail" asp-route-id="@phong.PhongId" class="btn btn-primary">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal bộ lọc nâng cao -->
+<div class="modal fade" id="advancedFilterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bộ lọc nâng cao</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tiện nghi</label>
+                    <div class="row">
+                        @foreach (var tienNghi in ViewBag.TienNghiList ?? new List<string> { "Wi-Fi", "Điều hòa", "Ban công", "TV" })
+                        {
+                            <div class="col-6">
+                                <input type="checkbox" name="TienNghi" value="@tienNghi" id="@tienNghi" 
+                                       @(searchRequest.TienNghi?.Contains(tienNghi) == true ? "checked" : "")>
+                                <label for="@tienNghi">@tienNghi</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Loại giường</label>
+                    <select class="form-select" name="LoaiGiuong">
+                        <option value="">Tất cả</option>
+                        @foreach (enLoaiGiuong giuong in Enum.GetValues(typeof(enLoaiGiuong)))
+                        {
+                            <option value="@((int)giuong)" selected="@(searchRequest.LoaiGiuong == giuong ? "selected" : "")">
+                                @enHelper.GetDescription(giuong)
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Loại view</label>
+                    <select class="form-select" name="LoaiView">
+                        <option value="">Tất cả</option>
+                        @foreach (enLoaiView view in Enum.GetValues(typeof(enLoaiView)))
+                        {
+                            <option value="@((int)view)" selected="@(searchRequest.LoaiView == view ? "selected" : "")">
+                            @enHelper.GetDescription(view)
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="applyAdvancedFilters()">Áp dụng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applySort() {
+            const sort = document.getElementById('sortSelect').value;
+            const form = document.getElementById('filterForm');
+            const sortInput = document.createElement('input');
+            sortInput.type = 'hidden';
+            sortInput.name = 'SortBy';
+            sortInput.value = sort;
+            form.appendChild(sortInput);
+            form.submit();
+        }
+
+        function applyAdvancedFilters() {
+            const form = document.getElementById('filterForm');
+            const tienNghi = Array.from(document.querySelectorAll('input[name="TienNghi"]:checked')).map(el => el.value);
+            tienNghi.forEach(tn => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'TienNghi';
+                input.value = tn;
+                form.appendChild(input);
+            });
+            const loaiGiuong = document.querySelector('select[name="LoaiGiuong"]').value;
+            if (loaiGiuong) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'LoaiGiuong';
+                input.value = loaiGiuong;
+                form.appendChild(input);
+            }
+            const loaiView = document.querySelector('select[name="LoaiView"]').value;
+            if (loaiView) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'LoaiView';
+                input.value = loaiView;
+                form.appendChild(input);
+            }
+            form.submit();
+        }
+    </script>
 }

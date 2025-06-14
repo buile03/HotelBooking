@@ -1,26 +1,28 @@
-﻿namespace DPKS.Common.Enum
+﻿using System.ComponentModel;
+
+namespace DPKS.Common.Enum
 {
     public enum enLoaiView
     {
-        /// <summary>Không có view đặc biệt</summary>
+        [Description("Không có")]
         KHONGCO = 0,
 
-        /// <summary>View biển</summary>
+        [Description("Biển")]
         BIEN = 1,
 
-        /// <summary>View núi</summary>
+        [Description("Núi")]
         NUI = 2,
 
-        /// <summary>View thành phố</summary>
+        [Description("Thành phố")]
         THANHPHO = 3,
 
-        /// <summary>View hồ bơi</summary>
+        [Description("Hồ bơi")]
         HOBOI = 4,
 
-        /// <summary>View sân vườn</summary>
+        [Description("Sân vườn")]
         SANVUON = 5,
 
-        /// <summary>View sông</summary>
+        [Description("Sông")]
         SONG = 6
     }
 }

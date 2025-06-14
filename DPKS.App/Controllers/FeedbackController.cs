@@ -32,7 +32,24 @@ namespace DPKS.Controllers
                 return View(new List<DanhSachFeedbackVm>());
             }
         }
-        
+
+        //public async Task<IActionResult> List(SearchFeedbackRequest request)
+        //{
+        //    var result = await _feedbackService.GetAll(request);
+
+        //    if (result.IsSuccessed)
+        //    {
+        //        ViewBag.Message = result.Message;
+        //        return View(result.ResultObj);
+        //    }
+        //    else
+        //    {
+        //        ViewBag.ErrorMessage = result.Message;
+        //        return View(new List<DanhSachFeedbackVm>());
+        //    }
+        //}
+
+
         public async Task<ActionResult> Detail (int id)
         {
             var result = await _feedbackService.GetById(id);

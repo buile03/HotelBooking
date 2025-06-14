@@ -1,20 +1,22 @@
-﻿namespace DPKS.Common.Enum
+﻿using System.ComponentModel;
+
+namespace DPKS.Common.Enum
 {
     public enum enLoaiThanhToan
     {
-        /// <summary>Thanh toán tiền mặt</summary>
+        [Description("Tiền mặt")]
         TienMat = 1,
 
-        /// <summary>Chuyển khoản ngân hàng</summary>
+        [Description("Chuyển khoản ngân hàng")]
         ChuyenKhoan = 2,
 
-        /// <summary>Thẻ tín dụng / ghi nợ</summary>
+        [Description("Thẻ tín dụng / ghi nợ")]
         TheTinDung = 3,
 
-        /// <summary>Thanh toán qua ví điện tử (Momo, ZaloPay...)</summary>
+        [Description("Ví điện tử (Momo, ZaloPay...)")]
         ViDienTu = 4,
 
-        /// <summary>Thanh toán qua cổng trung gian (VNPay, OnePay...)</summary>
+        [Description("Cổng thanh toán (VNPay, OnePay...)")]
         CongThanhToan = 5
     }
 }

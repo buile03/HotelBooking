@@ -1,26 +1,28 @@
-﻿namespace DPKS.Common.Enum
+﻿using System.ComponentModel;
+
+namespace DPKS.Common.Enum
 {
     public enum enTrangThaiDatPhong
     {
-        /// <summary>Đang chờ xác nhận từ hệ thống hoặc lễ tân</summary>
+        [Description("Chờ xác nhận")]
         CHOXACNHAN = 0,
 
-        /// <summary>Đã được xác nhận (phòng đã được giữ cho khách)</summary>
+        [Description("Đã xác nhận")]
         DAXACNHAN = 1,
 
-        /// <summary>Khách đã nhận phòng (check-in)</summary>
+        [Description("Đã nhận phòng")]
         DANHANPHONG = 2,
 
-        /// <summary>Khách đã trả phòng (check-out)</summary>
+        [Description("Đã trả phòng")]
         DATRAPHONG = 3,
 
-        /// <summary>Khách hủy đơn đặt phòng</summary>
+        [Description("Đã hủy")]
         DAHUY = 4,
 
-        /// <summary>Không đến nhận phòng (no-show)</summary>
+        [Description("Không đến")]
         KHONGDEN = 5,
 
-        /// <summary>Thanh toán không thành công hoặc quá hạn</summary>
+        [Description("Thất bại")]
         THATBAI = 6
     }
 }

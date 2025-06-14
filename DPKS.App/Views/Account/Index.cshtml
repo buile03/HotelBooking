@@ -1,0 +1,105 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Đặt Phòng Khách Sạn</title>
+
+    <!-- #CSS Links -->
+    <!-- Basic Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/admin/css/font-awesome.min.css">
+
+    <!-- #GOOGLE FONT -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap&subset=vietnamese">
+
+
+</head>
+<body>
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <!-- Bên trái: 8 phần với ảnh sang trọng -->
+            <div class="col-md-8 d-none d-md-block p-0">
+                <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                     class="img-fluid h-100 object-fit-cover" 
+                     alt="Phòng khách sạn sang trọng">
+            </div>
+            <!-- Bên phải: Form đăng nhập sang trọng hơn -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 100vh;">
+                <div class="w-100 p-4" style="max-width: 380px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
+                    <h2 class="text-center mb-4" style="font-weight: 600;">Đăng Nhập</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control rounded-3" id="email" placeholder="Nhập email của bạn" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control rounded-3" id="password" placeholder="Nhập mật khẩu" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                            </div>
+                            <a href="#" class="text-muted text-decoration-none small">Quên mật khẩu?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 shadow-sm" style="font-weight: 500;">Đăng Nhập</button>
+                    </form>
+
+                    <div class="text-center my-3 text-muted">Hoặc đăng nhập bằng</div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-dark rounded-3 d-flex align-items-center justify-content-center shadow-sm">
+                            <img src="https://www.google.com/favicon.ico" alt="Google" class="me-2" style="width: 20px;">
+                            Đăng nhập bằng Google
+                        </button>
+                        <button class="btn btn-outline-primary rounded-3 d-flex align-items-center justify-content-center shadow-sm">
+                            <img src="https://www.facebook.com/favicon.ico" alt="Facebook" class="me-2" style="width: 20px;">
+                            Đăng nhập bằng Facebook
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">Chưa có tài khoản? </span>
+                        <a href="/Account/Register" class="text-primary text-decoration-none">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- BOOTSTRAP JS -->
+    <script src="/admin/js/bootstrap/bootstrap.min.js"></script>
+
+    <!-- JQUERY VALIDATE -->
+    <script src="/admin/js/plugin/jquery-validate/jquery.validate.min.js"></script>
+
+    <!-- JQUERY MASKED INPUT -->
+    <script src="/admin/js/plugin/masked-input/jquery.maskedinput.min.js"></script>
+
+</body>
+</html>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    }
+
+    input:focus, button:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+
+    button:hover {
+        opacity: 0.9;
+        transition: 0.3s ease-in-out;
+    }
+</style>

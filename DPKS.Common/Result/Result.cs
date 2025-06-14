@@ -61,7 +61,6 @@ namespace DPKS.Common.Result
 
         public static implicit operator Result<T>(Result result) => new(result.IsSuccessed, result.Message, default) { Status = result.Status };
         
-        public static Result<T> Success() => new(true) { Status = ResultStatus.Ok };
         public static Result<T> Success(string message, T resultObj) => new(true, message, resultObj) { Status = ResultStatus.Ok };
         public static Result<T> Success(string message) => new(true, message, default) { Status = ResultStatus.Ok };
         public static Result<T> Success(T resultObj) => new(true, "Cập nhật thành công!", resultObj) { Status = ResultStatus.Ok };

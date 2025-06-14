@@ -1,27 +1,28 @@
-﻿
+﻿using System.ComponentModel;
+
 namespace DPKS.Common.Enum
 {
     public enum enLoaiGiuong
     {
-        /// <summary>Giường đơn (1 người)</summary>
+        [Description("Giường đơn")]
         DON = 1,
 
-        /// <summary>Giường đôi (2 người)</summary>
+        [Description("Giường đôi")]
         DOI = 2,
 
-        /// <summary>Giường queen (kích thước lớn hơn đôi)</summary>
+        [Description("Giường queen")]
         QUEEN = 3,
 
-        /// <summary>Giường king (kích thước lớn nhất)</summary>
+        [Description("Giường king")]
         KING = 4,
 
-        /// <summary>Giường tầng (thường dùng cho phòng tập thể)</summary>
+        [Description("Giường tầng")]
         TANG = 5,
 
-        /// <summary>Nhiều giường (2 hoặc nhiều giường đơn/đôi)</summary>
+        [Description("Nhiều giường")]
         NHIEU_GIUONG = 6,
 
-        /// <summary>Giường sofa (sofa có thể chuyển thành giường)</summary>
+        [Description("Giường sofa")]
         SOFA = 7
     }
 }

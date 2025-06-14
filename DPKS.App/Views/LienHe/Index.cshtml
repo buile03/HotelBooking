@@ -8,9 +8,9 @@
         <div class="row g-4 align-items-stretch">
             <!-- Bản đồ bên trái -->
             <div class="col-lg-6">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body p-0">
-                        <!-- Google Maps Embed -->
+                <div class="card shadow-sm border-0 h-100 d-flex flex-column">
+                    <!-- Google Maps Embed -->
+                    <div class="card-body p-0 flex-grow-0">
                         <div class="ratio ratio-4x3 rounded">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.2487912686447!2d107.5883384!3d16.4674733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a147ba7c2829%3A0x2b605e958c5ea4dd!2zSHXhuq0sIFRoxrBhIFRoacOqbiBIdeG6vywgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1703123456789!5m2!1svi!2s"
                                     class="rounded"
@@ -20,15 +20,30 @@
                                     referrerpolicy="no-referrer-when-downgrade">
                             </iframe>
                         </div>
+                        <!-- Overlay thông tin nhanh -->
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <div class="card border-0 shadow-sm bg-white" style="max-width: 280px;">
+                                <div class="card-body py-2 px-3">
+                                    <h6 class="card-title text-primary mb-1">
+                                        <i class="bi bi-geo-alt-fill me-2 fw-bold" style="font-size:20px"></i> Vị trí của chúng tôi
+                                    </h6>
+                                    <p class="card-text small text-muted mb-0 fw-bold">TP Huế, Việt Nam</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Overlay thông tin nhanh -->
-                    <div class="position-absolute top-0 start-0 m-3">
-                        <div class="card border-0 shadow-sm bg-white" style="max-width: 280px;">
-                            <div class="card-body py-2 px-3">
-                                <h6 class="card-title text-primary mb-1">
-                                    <i class="bi bi-geo-alt-fill me-2 fw-bold" style="font-size:20px"></i> Vị trí của chúng tôi
+                    <!-- Form liên hệ nhanh và CTA -->
+                    <div class="card-body p-4 flex-grow-1 d-flex flex-column">
+                        <!-- CTA đặt phòng -->
+                        <div class="card border-0 bg-primary bg-opacity-25 mt-auto">
+                            <div class="card-body text-center">
+                                <h6 class="text-primary fw-bold mb-3" style="font-size:20px">
+                                    <i class="bi bi-house-door-fill me-2"></i> Đặt phòng ngay hôm nay!
                                 </h6>
-                                <p class="card-text small text-muted mb-0 fw-bold">TP Huế, Việt Nam</p>
+                                <p class="text-muted small mb-3 fw-bold">Nhận ưu đãi lên đến 20% khi đặt phòng trực tiếp.</p>
+                                <a href="@Url.Action("Index", "Phong")" class="btn btn-primary">
+                                    <i class="bi bi-bookmark-check me-1"></i> Khám phá phòng
+                                </a>
                             </div>
                         </div>
                     </div>
