@@ -22,7 +22,7 @@ namespace DPKS.Data.EF
 
             // Configure custom fields in Identity tables
             builder.Entity<ApplicationRole>().Property(role => role.Descritption).HasMaxLength(256);
-
+ 
             // Identity User Claims
             builder.Entity<IdentityUserClaim<int>>(e => { e.ToTable("UserClaims"); });
 

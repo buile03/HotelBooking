@@ -1,4 +1,6 @@
-﻿@{
+﻿@model DPKS.Model.User.RegisterVm
+
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -27,33 +29,58 @@
             <div class="col-md-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 100vh;">
                 <div class="w-100 p-4" style="max-width: 400px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
                     <h2 class="text-center mb-4" style="font-weight: 600;">Đăng Ký</h2>
-                    <form>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-2">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                    <form asp-action="Register" method="post">
                         <div class="mb-3">
-                            <label for="fullName" class="form-label">Họ và tên</label>
-                            <input type="text" class="form-control rounded-3" id="fullName" placeholder="Nhập họ tên" required>
+                            <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+                            <input asp-for="UserName" class="form-control rounded-3" placeholder="Nhập tên đăng nhập" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control rounded-3" id="email" placeholder="Nhập email" required>
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control rounded-3" placeholder="Nhập email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        @* <div class="mb-3">
+                            <label asp-for="QuocGiaId" class="form-label">Quốc gia</label>
+                            <select asp-for="QuocGiaId" asp-items="Model.DanhSachQuocGia" class="form-select rounded-3" id="QuocGiaId">
+                                <option value="">-- Chọn quốc gia --</option>
+                            </select>
+                            <span asp-validation-for="QuocGiaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TinhId" class="form-label">Tỉnh / Thành phố</label>
+                            <select asp-for="TinhId" class="form-select rounded-3" id="TinhId">
+                                <option value="">-- Chọn tỉnh/thành --</option>
+                            </select>
+                            <span asp-validation-for="TinhId" class="text-danger"></span>
+                        </div> *@
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Mật khẩu</label>
+                            <input asp-for="Password" class="form-control rounded-3" placeholder="Tạo mật khẩu" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="text" class="form-control rounded-3" id="phone" placeholder="Nhập số điện thoại" required>
+                            <label asp-for="ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                            <input asp-for="ConfirmPassword" class="form-control rounded-3" placeholder="Xác nhận mật khẩu" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Mật khẩu</label>
-                            <input type="password" class="form-control rounded-3" id="password" placeholder="Tạo mật khẩu" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" class="form-control rounded-3" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2 rounded-3 shadow-sm" style="font-weight: 500;">Tạo tài khoản</button>
+                        <button type="submit" class="btn btn-success w-100 py-2 rounded-3 shadow-sm">Tạo tài khoản</button>
                     </form>
 
                     <div class="text-center mt-4">
                         <span class="text-muted">Đã có tài khoản? </span>
-                        <a href="/Account" class="text-primary text-decoration-none">Đăng nhập</a>
+                        <a href="/Account/Login" class="text-primary text-decoration-none">Đăng nhập</a>
                     </div>
                 </div>
             </div>
@@ -61,9 +88,36 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/admin/js/bootstrap/bootstrap.min.js"></script>
     <script src="/admin/js/plugin/jquery-validate/jquery.validate.min.js"></script>
     <script src="/admin/js/plugin/masked-input/jquery.maskedinput.min.js"></script>
+    @* <script>
+        $(document).ready(function () {
+            $('#QuocGiaId').on('change', function () {
+                var quocGiaId = $(this).val();
+                var tinhSelect = $('#TinhId');
+
+                tinhSelect.empty().append('<option>-- Đang tải... --</option>');
+
+                if (quocGiaId) {
+                    $.get('https://localhost:44357/api/tinh/by-quocgia/' + quocGiaId, function (data) {
+                        tinhSelect.empty().append('<option value="">-- Chọn tỉnh/thành --</option>');
+                        $.each(data, function (i, item) {
+                            tinhSelect.append('<option value="' + item.id + '">' + item.tenTinh + '</option>');
+                        });
+                    }).fail(function () {
+                        tinhSelect.empty().append('<option value="">-- Không tải được --</option>');
+                    });
+                } else {
+                    tinhSelect.empty().append('<option value="">-- Chọn tỉnh/thành --</option>');
+                }
+            });
+        });
+    </script> *@
+
+
+
 </body>
 </html>
 
@@ -83,3 +137,9 @@
         transition: 0.3s ease-in-out;
     }
 </style>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+}

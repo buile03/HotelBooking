@@ -13,7 +13,7 @@ namespace DPKS.Common.System
         public const string UrlIndex = "UrlIndex";
         public const string loginFailed = "loginFailed";
 
-        public const int pageSize = 20;
+        public const int pageSize = 6;
         public const int pageIndex = 1;
         public class AppSettings
         {

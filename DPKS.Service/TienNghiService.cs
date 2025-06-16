@@ -15,7 +15,7 @@ namespace DPKS.Service
 {
     public interface ITienNghiService
     {
-        Task<Result<List<DanhSachTienNghiVm>>> GetAll(GetPagingRequest request);
+        Task<Result<PagedResult<DanhSachTienNghiVm>>> GetAll(GetPagingRequest request);
         
     }
     public class TienNghiService : BaseService, ITienNghiService
@@ -35,11 +35,12 @@ namespace DPKS.Service
         //    return $"{request.Scheme}://{request.Host.Value}";
         //}
 
-        public async Task<Result<List<DanhSachTienNghiVm>>> GetAll(GetPagingRequest request)
+        public async Task<Result<PagedResult<DanhSachTienNghiVm>>> GetAll(GetPagingRequest request)
         {
             try
             {
                 var query = from g in _context.TienNghis
+                            where string.IsNullOrEmpty(request.Keyword) || g.Name.Contains(request.Keyword)
                             select new DanhSachTienNghiVm
                             {
                                 Id = g.Id,
@@ -47,13 +48,28 @@ namespace DPKS.Service
                                 Description = g.Description,
                                 Type = g.loaiPhongs.FirstOrDefault().Type
                             };
-                if (!await query.AnyAsync())
-                    return Result<List<DanhSachTienNghiVm>>.Error("Không có dữ liệu để hiển thị");
-                return Result<List<DanhSachTienNghiVm>>.Success($"Hiển thị {await query.CountAsync()} tiện nghi", await query.ToListAsync());
+
+                int totalRecords = await query.CountAsync();
+
+                var items = await query
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToListAsync();
+
+                var pagedResult = new PagedResult<DanhSachTienNghiVm>
+                {
+                    TotalRecords = totalRecords,
+                    PageIndex = request.PageIndex,
+                    PageSize = request.PageSize,
+                    Keyword = request.Keyword,
+                    Items = items
+                };
+
+                return Result<PagedResult<DanhSachTienNghiVm>>.Success("Lấy danh sách tiện nghi thành công", pagedResult);
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                return Result<PagedResult<DanhSachTienNghiVm>>.Error("Lỗi hệ thống: " + ex.Message);
             }
         }
     }

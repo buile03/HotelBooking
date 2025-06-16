@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DPKS.Data.Entites
 {

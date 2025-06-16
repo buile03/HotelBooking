@@ -1,4 +1,6 @@
-﻿@{
+﻿@model DPKS.Model.User.LoginVm
+
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -29,25 +31,40 @@
             </div>
             <!-- Bên phải: Form đăng nhập sang trọng hơn -->
             <div class="col-md-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 100vh;">
-                <div class="w-100 p-4" style="max-width: 380px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
+                <div class="w-100 p-3" style="max-width: 380px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
                     <h2 class="text-center mb-4" style="font-weight: 600;">Đăng Nhập</h2>
-                    <form>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-2">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                    <form asp-action="Login" method="post">
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control rounded-3" id="email" placeholder="Nhập email của bạn" required>
+                            <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+                            <input asp-for="UserName" class="form-control rounded-3" placeholder="Nhập tên đăng nhập" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Mật khẩu</label>
-                            <input type="password" class="form-control rounded-3" id="password" placeholder="Nhập mật khẩu" required>
+                            <label asp-for="Password" class="form-label">Mật khẩu</label>
+                            <input asp-for="Password" class="form-control rounded-3" placeholder="Nhập mật khẩu" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                        <div class="row mb-3 align-items-center">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input asp-for="RememberMe" class="form-check-input" />
+                                    <label asp-for="RememberMe" class="form-check-label">Ghi nhớ đăng nhập</label>
+                                </div>
                             </div>
-                            <a href="#" class="text-muted text-decoration-none small">Quên mật khẩu?</a>
+                            <div class="col text-end">
+                                <a href="@Url.Action("ForgotPassword", "Account")" class="text-decoration-none">Quên mật khẩu?</a>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 shadow-sm" style="font-weight: 500;">Đăng Nhập</button>
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 shadow-sm">Đăng Nhập</button>
                     </form>
 
                     <div class="text-center my-3 text-muted">Hoặc đăng nhập bằng</div>
@@ -103,3 +120,8 @@
         transition: 0.3s ease-in-out;
     }
 </style>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

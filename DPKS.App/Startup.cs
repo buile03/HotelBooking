@@ -1,10 +1,13 @@
 ﻿using DPKS.App.Extensions;
 using DPKS.Common.System;
 using DPKS.Data.EF;
+using DPKS.Data.Entites;
 using DPKS.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +34,27 @@ namespace DPKS.App
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.AppSettings.MainConnectionString)), ServiceLifetime.Transient);
 
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+
+                // Khóa tài khoản sau bao nhiêu lần đăng nhập sai (nếu có)
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            });
+            
             services.AddInfrastructure();
             services.AddTransient(typeof(ILogger<>), (typeof(Logger<>)));
 
@@ -46,10 +70,17 @@ namespace DPKS.App
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
 
+            // Đăng ký dịch vụ gửi email
+            services.AddTransient<IEmailSenderService, SmtpEmailSender>();
             if (Env.IsDevelopment())
             {
                 services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            }
+            else
+            {
+                services.AddControllersWithViews();
             }
         }
 

@@ -18,6 +18,7 @@ namespace DPKS.Service
 {
     public interface IPhongService
     {
+        Task<PagedResult<ThongTinDanhSachPhongVm>> GetPagings(PhongSearchRequest request);
         Task<Result<List<ThongTinDanhSachPhongVm>>> GetAllPhongAsync(PhongSearchRequest request);
         Task<Result<ChiTietPhongVm>> GetPhongById(int Id);
         Task<Result<List<ThongTinDanhSachPhongVm>>> GetAvailablePhongsAsync(PhongSearchRequest request);
@@ -35,6 +36,118 @@ namespace DPKS.Service
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor; 
+        }
+
+        public async Task<PagedResult<ThongTinDanhSachPhongVm>> GetPagings(PhongSearchRequest request)
+        {
+            try
+            {
+                var query = _context.Phongs
+                    .Where(p => p.IsActive)
+                    .Include(p => p.LoaiPhong)
+                    .Include(p => p.TrangThaiPhong)
+                    .Include(p => p.anhPhongs)
+                    .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
+                    .AsQueryable();
+
+                // Lọc theo yêu cầu
+                if (request.LoaiPhongId.HasValue)
+                    query = query.Where(p => p.LoaiPhongId == request.LoaiPhongId.Value);
+                if (request.GiaTu.HasValue)
+                    query = query.Where(p => p.Gia >= request.GiaTu.Value);
+                if (request.GiaDen.HasValue)
+                    query = query.Where(p => p.Gia <= request.GiaDen.Value);
+                if (request.LoaiGiuong.HasValue)
+                    query = query.Where(p => p.loaiGiuong == request.LoaiGiuong.Value);
+                if (request.LoaiView.HasValue)
+                    query = query.Where(p => p.loaiView == request.LoaiView.Value);
+                if (request.SoLuongKhach.HasValue)
+                    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn =>
+                        tn.TienNghi.Name.Contains("Sức chứa") && tn.TienNghi.Description.Contains(request.SoLuongKhach.Value.ToString())));
+                if (request.TienNghi != null && request.TienNghi.Any())
+                    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn => request.TienNghi.Contains(tn.TienNghi.Name)));
+                if (request.NgayNhanPhong.HasValue && request.NgayTraPhong.HasValue)
+                    query = query.Where(p => !_context.DatPhongs.Any(dp => dp.PhongId == p.PhongId &&
+                        dp.NgayNhanPhong < request.NgayTraPhong && dp.NgayTraPhong > request.NgayNhanPhong));
+                if (!string.IsNullOrEmpty(request.Keyword))
+                    query = query.Where(p => p.SoPhong.Contains(request.Keyword) || p.LoaiPhong.Type.Contains(request.Keyword));
+
+                // Sắp xếp
+                if (!string.IsNullOrEmpty(request.SortBy))
+                {
+                    query = request.SortBy.ToLower() switch
+                    {
+                        "gia-asc" => query.OrderBy(p => p.Gia),
+                        "gia-desc" => query.OrderByDescending(p => p.Gia),
+                        _ => query.OrderBy(p => p.PhongId)
+                    };
+                }
+
+                // Đếm tổng số bản ghi
+                int totalRecords = await query.CountAsync();
+                var items = await query
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToListAsync();
+
+                // Phân trang
+                var data = await query
+                    .Select(p => new
+                    {
+                        p.PhongId,
+                        p.SoPhong,
+                        p.Gia,
+                        p.LoaiPhong.Type,
+                        p.loaiGiuong,
+                        p.loaiView,
+                        TrangThai = p.TrangThaiPhong.trangThaiPhong,
+                        TienNghiList = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => new
+                        {
+                            Name = tn.TienNghi.Name,
+                            Description = tn.TienNghi.Description
+                        }).ToList(),
+                        AnhPhong = p.anhPhongs.Select(ap => ap.PhotoName).ToList(),
+                        TienNghiNames = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList()
+                    })
+                    .ToListAsync(); // Lúc này EF thực thi và chuyển thành in-memory
+
+                var result = data.Select(p => new ThongTinDanhSachPhongVm
+                {
+                    PhongId = p.PhongId,
+                    SoPhong = p.SoPhong,
+                    Gia = p.Gia,
+                    Type = p.Type,
+                    LoaiGiuong = p.loaiGiuong,
+                    LoaiView = p.loaiView,
+                    TrangThaiPhong = p.TrangThai,
+                    SoLuongKhach = p.TienNghiList
+                        .Where(tn => tn.Name.Contains("Sức chứa"))
+                        .Select(tn =>
+                        {
+                            var str = tn.Description.Replace(" người", "").Trim();
+                            return int.TryParse(str, out int val) ? val : 0;
+                        })
+                        .FirstOrDefault(),
+                    AnhPhong = p.AnhPhong,
+                    TienNghis = p.TienNghiNames
+                }).ToList();
+
+                // Tạo PagedResult
+                var pagedResult = new PagedResult<ThongTinDanhSachPhongVm>
+                {
+                    TotalRecords = totalRecords,
+                    PageIndex = request.PageIndex,
+                    PageSize = request.PageSize,
+                    Items = result,
+                    Keyword = request.Keyword ?? string.Empty
+                };
+
+                return pagedResult;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách phòng: " + ex.Message, ex);
+            }
         }
         public async Task<Result<List<ThongTinDanhSachPhongVm>>> GetAllPhongAsync(PhongSearchRequest request)
         {

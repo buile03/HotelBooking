@@ -2,6 +2,7 @@
 @using DPKS.Common.Enum
 @{
     ViewData["Title"] = "Danh sách phòng";
+    ViewData["PageTitle"] = "Danh sách phòng";
     var searchRequest = ViewBag.SearchRequest as PhongSearchRequest ?? new PhongSearchRequest();
     var loaiPhongList = ViewBag.LoaiPhong as List<dynamic> ?? new List<dynamic>();
 }
