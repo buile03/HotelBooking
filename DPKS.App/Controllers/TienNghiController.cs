@@ -17,18 +17,19 @@ namespace DPKS.App.Controllers
             _tienNghiService = tienNghiService;
             _organizationService = organizationService;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] GetPagingRequest request)
         {
-            var request = new GetPagingRequest(); // nếu không cần lọc, truyền rỗng
             var result = await _tienNghiService.GetAll(request);
 
-            if (!result.IsSuccessed)
+            if (!result.IsSuccessed || result.ResultObj == null)
             {
                 ViewBag.Error = result.Message;
-                return View(new List<DPKS.Model.TienNghi.DanhSachTienNghiVm>());
+                return View(new PagedResult<DPKS.Model.TienNghi.DanhSachTienNghiVm>());
             }
 
             return View(result.ResultObj);
         }
+
+
     }
 }

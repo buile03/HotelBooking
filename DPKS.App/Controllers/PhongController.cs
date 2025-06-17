@@ -56,6 +56,24 @@ namespace DPKS.APP.Controllers
             return View(result.ResultObj);
         }
 
+
+        //public async Task<IActionResult> List()
+        //{
+        //    var request = new PhongSearchRequest();
+        //    var result = await _phongService.GetAllPhongAsync(request);
+        //    ViewBag.SearchRequest = request;
+        //    ViewBag.LoaiPhong = await _context.LoaiPhongs.Select(lp => new { lp.Id, lp.Type }).ToListAsync();
+        //    ViewBag.TienNghiList = await _context.TienNghis.Select(tn => tn.Name).ToListAsync();
+
+        //    if (!result.IsSuccessed)
+        //    {
+        //        ViewBag.ErrorMessage = result.Message;
+        //        return View(new List<ThongTinDanhSachPhongVm>());
+        //    }
+
+        //    return View(result.ResultObj);
+        //}
+
         [HttpPost]
         public async Task<IActionResult> Search(PhongSearchRequest request)
         {

@@ -10,6 +10,8 @@ namespace DPKS.Model.Phong
         public string SoPhong { get; set; } //Tên phòng
         public string Type { get; set; } // loại phòng
         public decimal Gia { get; set; } //Giá 1 đêm
+        public enLoaiGiuong? LoaiGiuong { get; set; }
+        public enLoaiView? LoaiView { get; set; }
         public enTrangThaiPhong TrangThaiPhong { get; set; }
         public int SoLuongKhach { get; set; }
         public string BinhLuan { get; set; }

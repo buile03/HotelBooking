@@ -20,7 +20,7 @@
                         <a class="nav-link" href="~/Phong">Phòng</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="~/TienNghi">Tiện Nghi</a>
+                        <a class="nav-link" href="~/TienNghi">Dịch vụ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="~/LienHe">Liên hệ</a>
@@ -33,27 +33,42 @@
                         <a class="main-btn" href="~/Phong">Đặt ngay</a>
                     </li>
 
-                    <!-- Thông tin người dùng -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="~/images/user-avatar.png" width="30" class="rounded-circle me-1" />
-                            Nguyễn Văn A
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/user/profile">Thông tin cá nhân</a></li>
-                            <li><a class="dropdown-item" href="/datphong/cuatoi">Lịch sử đặt phòng</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
-                        </ul>
-                    </li>
 
-                    <!-- (Tuỳ chọn) Thông báo -->
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link" href="/notifications"><i class="fas fa-bell"></i></a>
+
+                    <li class="nav-item dropdown">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i> @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Account/Profile">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a></li>
+                                <li><a class="dropdown-item" href="/Account/Profile">Phòng yêu thích</a></li>
+                                <li><a class="dropdown-item" href="/Account/Profile">Phòng đã đặt</a></li>
+                                <li>
+                                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" class="dropdown-item p-0 m-0">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item w-100 text-start bg-transparent border-0">
+                                            Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user me-1"></i> Đăng nhập/Đăng ký
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/Account/Login">Đăng nhập</a></li>
+                                    <li><a class="dropdown-item" href="/Account/Register">Đăng ký</a></li>
+                                </ul>
+                            </li>
+                        }
                     </li>
-                    -->
                 </ul>
             </div>
         </div>
