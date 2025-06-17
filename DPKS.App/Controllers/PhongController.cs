@@ -1,6 +1,8 @@
 ﻿using Azure.Core;
 using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using DPKS.Common.Result;
+using DPKS.Common.System;
 using DPKS.Data.EF;
 using DPKS.Model.Phong;
 using DPKS.Model.Phong.Request;
@@ -20,59 +22,43 @@ namespace DPKS.APP.Controllers
     {
         private readonly IPhongService _phongService;
         private readonly AppDbContext _context;
-        public PhongController(IPhongService phongService, AppDbContext context)
+        private readonly ILogger<PhongController> _logger;
+        public PhongController(IPhongService phongService, AppDbContext context, ILogger<PhongController> logger)
         {
             _phongService = phongService;
             _context = context;
+            _logger = logger;
         }
 
-        //Hiển thị danh sách phòng
-        public async Task<IActionResult> Index()
+        
+        public async Task<IActionResult> Index(PhongSearchRequest request)
         {
-            var request = new PhongSearchRequest();
-            var result = await _phongService.GetAllPhongAsync(request);
-            if (!result.IsSuccessed)
-            {
-                ViewBag.ErrorMessage = result.Message;
-                return View(new List<ThongTinDanhSachPhongVm>());
-            }
-            return View(result.ResultObj);
+            // Chuẩn bị dữ liệu cho các dropdown và bộ lọc
+            var loaiPhongs = await _context.LoaiPhongs.ToListAsync();
+            ViewBag.LoaiPhong = loaiPhongs.Select(lp => new { lp.Id, lp.Type }).ToList();
+
+            var tienNghiList = await _context.TienNghis.Select(tn => tn.Name).ToListAsync();
+            ViewBag.TienNghiList = tienNghiList;
+
+            
+            return View(request);
         }
 
-        public async Task<IActionResult> List()
+
+        public async Task<IActionResult> List(PhongSearchRequest request)
         {
-            var request = new PhongSearchRequest();
-            var result = await _phongService.GetAllPhongAsync(request);
-            ViewBag.SearchRequest = request;
-            ViewBag.LoaiPhong = await _context.LoaiPhongs.Select(lp => new { lp.Id, lp.Type }).ToListAsync();
-            ViewBag.TienNghiList = await _context.TienNghis.Select(tn => tn.Name).ToListAsync();
-
-            if (!result.IsSuccessed)
+            try
             {
-                ViewBag.ErrorMessage = result.Message;
-                return View(new List<ThongTinDanhSachPhongVm>());
+                var data = await _phongService.GetPagings(request);
+                return PartialView(data);
             }
-
-            return View(result.ResultObj);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Đã có lỗi xảy ra khi lấy danh sách phòng");
+                return PartialView(new PagedResult<ThongTinDanhSachPhongVm>());
+            }
         }
 
-
-        //public async Task<IActionResult> List()
-        //{
-        //    var request = new PhongSearchRequest();
-        //    var result = await _phongService.GetAllPhongAsync(request);
-        //    ViewBag.SearchRequest = request;
-        //    ViewBag.LoaiPhong = await _context.LoaiPhongs.Select(lp => new { lp.Id, lp.Type }).ToListAsync();
-        //    ViewBag.TienNghiList = await _context.TienNghis.Select(tn => tn.Name).ToListAsync();
-
-        //    if (!result.IsSuccessed)
-        //    {
-        //        ViewBag.ErrorMessage = result.Message;
-        //        return View(new List<ThongTinDanhSachPhongVm>());
-        //    }
-
-        //    return View(result.ResultObj);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> Search(PhongSearchRequest request)
@@ -104,26 +90,6 @@ namespace DPKS.APP.Controllers
         }
 
 
-        // Tìm kiếm phòng trống
-        //[HttpPost]
-        //public async Task<IActionResult> Search(PhongSearchRequest request)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        ViewBag.ErrorMessage = "Dữ liệu tìm kiếm không hợp lệ.";
-        //        return View("Index", new List<ThongTinDanhSachPhongVm>());
-        //    }
-
-        //    var result = await _phongService.GetAvailablePhongsAsync(request);
-        //    if (!result.IsSuccessed)
-        //    {
-        //        ViewBag.ErrorMessage = result.Message;
-        //        return View("Index", new List<ThongTinDanhSachPhongVm>());
-        //    }
-
-        //    ViewBag.SearchRequest = request; // Lưu request để hiển thị lại trong form
-        //    return View("Index", result.ResultObj);
-        //}
         // Xem chi tiết phòng
         public async Task<IActionResult> Detail(int id)
         {
@@ -136,20 +102,9 @@ namespace DPKS.APP.Controllers
             return View(result.ResultObj);
         }
 
-        //// Hiển thị danh sách loại phòng
-        //public async Task<IActionResult> LoaiPhong()
-        //{
-        //    var result = await _phongService.GetAllLoaiPhongAsync();
-        //    if (!result.Success)
-        //    {
-        //        ViewBag.ErrorMessage = result.Message;
-        //        return View(new List<LoaiPhongVm>());
-        //    }
-        //    return View(result.Data);
-        //}
+        
 
         // Tính tổng giá (dành cho form trong chi tiết phòng)
-
         [HttpPost]
         public async Task<IActionResult> CalculatePrice([FromBody] CalculatePriceRequest request)
         {

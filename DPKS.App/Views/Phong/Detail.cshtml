@@ -175,7 +175,6 @@
             priceResult.innerHTML = `
                 <div class="alert alert-success">
                     <strong>Tổng giá:</strong> ${result.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}<br>
-                    <small>Số đêm: ${result.soDem}</small>
                 </div>`;
         } else {
             priceResult.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;

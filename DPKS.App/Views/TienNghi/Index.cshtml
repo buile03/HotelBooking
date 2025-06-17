@@ -19,35 +19,38 @@
     </form>
 </div>
 
-<div class="row g-4">
-    @if (!Model.Items.Any())
-    {
-        <div class="alert alert-warning text-center" role="alert">
-            Không có tiện nghi nào để hiển thị.
-        </div>
-    }
-    else
-    {
-        @foreach (var amenity in Model.Items)
+<div class="container">
+    <div class="row g-4">
+        @if (!Model.Items.Any())
         {
-            <div class="col-12 col-sm-6 col-lg-4">
-                <div class="card border-0 shadow-lg h-100 rounded-4">
-                    <div class="card-body p-4 d-flex flex-column align-items-start">
-                        <div class="mb-3 text-primary fs-1">
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h5 class="card-title fw-bold mb-2">@amenity.Name</h5>
-                        <p class="card-text text-muted mb-0">@amenity.Description</p>
-                    </div>
-                </div>
+            <div class="alert alert-warning text-center mb-5" role="alert">
+                Không có tiện nghi nào để hiển thị.
             </div>
         }
-    }
+        else
+        {
+            @foreach (var amenity in Model.Items)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 mb-5">
+                    <div class="card border-0 shadow-lg h-100 rounded-4">
+                        <div class="card-body p-4 d-flex flex-column align-items-start">
+                            <div class="mb-3 text-primary fs-1">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <h5 class="card-title fw-bold mb-2">@amenity.Name</h5>
+                            <p class="card-text text-muted mb-0">@amenity.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
 </div>
 
 @if (Model.PageCount > 1)
 {
-    <nav aria-label="Page navigation" class="mt-5">
+    <nav aria-label="Page navigation" class="mt-5 mb-5">
         <ul class="pagination justify-content-center">
             <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
                 <a class="page-link" href="?pageIndex=@(Model.PageIndex - 1)&pageSize=@Model.PageSize&keyword=@Model.Keyword">Trước</a>
