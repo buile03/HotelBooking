@@ -13,6 +13,7 @@ using DPKS.Common.Result;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DPKS.Common.Enum;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using DPKS.Model.Phong.Request;
 
 namespace DPKS.Service
 {
@@ -69,8 +70,7 @@ namespace DPKS.Service
                 if (request.NgayNhanPhong.HasValue && request.NgayTraPhong.HasValue)
                     query = query.Where(p => !_context.DatPhongs.Any(dp => dp.PhongId == p.PhongId &&
                         dp.NgayNhanPhong < request.NgayTraPhong && dp.NgayTraPhong > request.NgayNhanPhong));
-                if (!string.IsNullOrEmpty(request.Keyword))
-                    query = query.Where(p => p.SoPhong.Contains(request.Keyword) || p.LoaiPhong.Type.Contains(request.Keyword));
+                
 
                 // Sắp xếp
                 if (!string.IsNullOrEmpty(request.SortBy))
@@ -85,52 +85,32 @@ namespace DPKS.Service
 
                 // Đếm tổng số bản ghi
                 int totalRecords = await query.CountAsync();
-                var items = await query
+
+                // Ánh xạ trực tiếp trong truy vấn
+                var data = await query
                     .Skip((request.PageIndex - 1) * request.PageSize)
                     .Take(request.PageSize)
-                    .ToListAsync();
-
-                // Phân trang
-                var data = await query
-                    .Select(p => new
+                    .Select(p => new ThongTinDanhSachPhongVm
                     {
-                        p.PhongId,
-                        p.SoPhong,
-                        p.Gia,
-                        p.LoaiPhong.Type,
-                        p.loaiGiuong,
-                        p.loaiView,
-                        TrangThai = p.TrangThaiPhong.trangThaiPhong,
-                        TienNghiList = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => new
-                        {
-                            Name = tn.TienNghi.Name,
-                            Description = tn.TienNghi.Description
-                        }).ToList(),
+                        PhongId = p.PhongId,
+                        SoPhong = p.SoPhong,
+                        Gia = p.Gia,
+                        Type = p.LoaiPhong.Type,
+                        LoaiGiuong = p.loaiGiuong,
+                        LoaiView = p.loaiView,
+                        TrangThaiPhong = p.TrangThaiPhong.trangThaiPhong,
+                        //SoLuongKhach = p.LoaiPhong.tienNghiTheoLoaiPhongs
+                        //    .Where(tn => tn.TienNghi.Name.Contains("Sức chứa"))
+                        //    .Select(tn =>
+                        //    {
+                        //        var str = tn.TienNghi.Description.Replace(" người", "").Trim();
+                        //        return int.TryParse(str, out int val) ? val : 0;
+                        //    })
+                        //    .FirstOrDefault(),
                         AnhPhong = p.anhPhongs.Select(ap => ap.PhotoName).ToList(),
-                        TienNghiNames = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList()
+                        TienNghis = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList()
                     })
-                    .ToListAsync(); // Lúc này EF thực thi và chuyển thành in-memory
-
-                var result = data.Select(p => new ThongTinDanhSachPhongVm
-                {
-                    PhongId = p.PhongId,
-                    SoPhong = p.SoPhong,
-                    Gia = p.Gia,
-                    Type = p.Type,
-                    LoaiGiuong = p.loaiGiuong,
-                    LoaiView = p.loaiView,
-                    TrangThaiPhong = p.TrangThai,
-                    SoLuongKhach = p.TienNghiList
-                        .Where(tn => tn.Name.Contains("Sức chứa"))
-                        .Select(tn =>
-                        {
-                            var str = tn.Description.Replace(" người", "").Trim();
-                            return int.TryParse(str, out int val) ? val : 0;
-                        })
-                        .FirstOrDefault(),
-                    AnhPhong = p.AnhPhong,
-                    TienNghis = p.TienNghiNames
-                }).ToList();
+                    .ToListAsync();
 
                 // Tạo PagedResult
                 var pagedResult = new PagedResult<ThongTinDanhSachPhongVm>
@@ -138,8 +118,8 @@ namespace DPKS.Service
                     TotalRecords = totalRecords,
                     PageIndex = request.PageIndex,
                     PageSize = request.PageSize,
-                    Items = result,
-                    Keyword = request.Keyword ?? string.Empty
+                    Items = data,
+                    //Keyword = request.Keyword ?? string.Empty
                 };
 
                 return pagedResult;
@@ -277,78 +257,7 @@ namespace DPKS.Service
             }
         }
 
-        // Lấy danh sách phòng khả dụng theo ngày nhận và trả phòng
-        //public async Task<Result<List<ThongTinDanhSachPhongVm>>> GetAvailablePhongsAsync(PhongSearchRequest request)
-        //{
-        //    try
-        //    {
-        //        if (!request.NgayNhanPhong.HasValue || !request.NgayTraPhong.HasValue)
-        //            return Result<List<ThongTinDanhSachPhongVm>>.Error("Vui lòng cung cấp ngày nhận và trả phòng");
-
-        //        if (request.NgayNhanPhong.Value >= request.NgayTraPhong.Value)
-        //            return Result<List<ThongTinDanhSachPhongVm>>.Error("Ngày nhận phòng phải nhỏ hơn ngày trả phòng");
-
-        //        var bookedPhongIds = await _context.DatPhongs
-        //            .Where(dp => dp.NgayNhanPhong <= request.NgayTraPhong.Value
-        //                      && dp.NgayTraPhong >= request.NgayNhanPhong.Value
-        //                      && dp.TrangThaiDatPhongId != (int)enTrangThaiDatPhong.DAHUY) // Sử dụng trạng thái DAHUY = 4
-        //            .Select(dp => dp.PhongId)
-        //            .Distinct()
-        //            .ToListAsync();
-
-        //        var query = _context.Phongs
-        //            .Where(p => p.IsActive
-        //                     && !bookedPhongIds.Contains(p.PhongId)
-        //                     && p.TrangThaiPhong.trangThaiPhong == enTrangThaiPhong.TRONG)
-        //            .Include(p => p.LoaiPhong)
-        //            .Include(p => p.TrangThaiPhong)
-        //            .Include(p => p.anhPhongs)
-        //            .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
-        //            .AsQueryable();
-
-        //        // Lọc thêm theo yêu cầu
-        //        if (request.LoaiPhongId.HasValue)
-        //            query = query.Where(p => p.LoaiPhongId == request.LoaiPhongId.Value);
-        //        if (request.GiaTu.HasValue)
-        //            query = query.Where(p => p.Gia >= request.GiaTu.Value);
-        //        if (request.GiaDen.HasValue)
-        //            query = query.Where(p => p.Gia <= request.GiaDen.Value);
-        //        if (request.LoaiGiuong.HasValue)
-        //            query = query.Where(p => p.loaiGiuong == request.LoaiGiuong.Value);
-        //        if (request.LoaiView.HasValue)
-        //            query = query.Where(p => p.loaiView == request.LoaiView.Value);
-        //        if (request.SoLuongKhach.HasValue)
-        //            query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn =>
-        //                tn.TienNghi.Name.Contains("Sức chứa") && tn.TienNghi.Description.Contains(request.SoLuongKhach.Value.ToString())));
-
-        //        var result = await query.Select(p => new ThongTinDanhSachPhongVm
-        //        {
-        //            PhongId = p.PhongId,
-        //            SoPhong = p.SoPhong,
-        //            Gia = p.Gia,
-        //            Type = p.LoaiPhong.Type,
-        //            LoaiGiuong = p.loaiGiuong,
-        //            LoaiView = p.loaiView,
-        //            TrangThaiPhong = p.TrangThaiPhong.trangThaiPhong,
-        //            //SoLuongKhach = p.LoaiPhong.tienNghiTheoLoaiPhongs
-        //            //    .Where(tn => tn.TienNghi.Name.Contains("Sức chứa"))
-        //            //    .Select(tn => int.TryParse(tn.TienNghi.Description.Replace(" người", ""), out int sucChua) ? sucChua : 0)
-        //            //    .FirstOrDefault(),
-        //            AnhPhong = p.anhPhongs.Select(ap => ap.PhotoName).ToList(),
-        //            TienNghis = p.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList()
-        //        }).ToListAsync();
-
-        //        if (!result.Any())
-        //            return Result<List<ThongTinDanhSachPhongVm>>.Success("Không có phòng trống trong khoảng thời gian yêu cầu", new List<ThongTinDanhSachPhongVm>());
-
-        //        return Result<List<ThongTinDanhSachPhongVm>>.Success($"Tìm thấy {result.Count} phòng trống", result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Result<List<ThongTinDanhSachPhongVm>>.Error($"Lỗi khi lấy danh sách phòng trống: {ex.Message}");
-        //    }
-        //}
-
+        
         public async Task<Result<List<ThongTinDanhSachPhongVm>>> GetAvailablePhongsAsync(PhongSearchRequest request)
         {
             try

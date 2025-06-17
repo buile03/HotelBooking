@@ -1,9 +1,9 @@
-﻿@model List<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
+﻿@model DPKS.Model.Phong.Request.PhongSearchRequest
 @using DPKS.Common.Enum
+@using DPKS.App.Extensions
 @{
     ViewData["Title"] = "Danh sách phòng";
     ViewData["PageTitle"] = "Danh sách phòng";
-    var searchRequest = ViewBag.SearchRequest as PhongSearchRequest ?? new PhongSearchRequest();
     var loaiPhongList = ViewBag.LoaiPhong as List<dynamic> ?? new List<dynamic>();
 }
 
@@ -13,24 +13,26 @@
         <div class="col-lg-3 col-md-12 filter-sidebar" style="position: sticky; top: 20px;">
             <div class="card shadow-sm p-4 mb-4">
                 <h5 class="mb-3">Bộ lọc</h5>
-                <form asp-action="Search" method="post" id="filterForm">
+                <form id="filterForm">
+                    <input type="hidden" name="PageIndex" value="1" id="pageIndexInput" />
+                    <input type="hidden" name="PageSize" value="@Model.PageSize" />
                     <div class="mb-3">
                         <label class="form-label">Ngày nhận phòng</label>
-                        <input type="date" class="form-control" name="NgayNhanPhong" value="@(searchRequest.NgayNhanPhong?.ToString("yyyy-MM-dd"))">
+                        <input type="date" class="form-control" name="NgayNhanPhong" value="@(Model.NgayNhanPhong?.ToString("yyyy-MM-dd"))">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ngày trả phòng</label>
-                        <input type="date" class="form-control" name="NgayTraPhong" value="@(searchRequest.NgayTraPhong?.ToString("yyyy-MM-dd"))">
+                        <input type="date" class="form-control" name="NgayTraPhong" value="@(Model.NgayTraPhong?.ToString("yyyy-MM-dd"))">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Số lượng khách</label>
-                        <input type="number" class="form-control" name="SoLuongKhach" value="@(searchRequest.SoLuongKhach ?? 1)" min="1" max="10">
+                        <input type="number" class="form-control" name="SoLuongKhach" value="@(Model.SoLuongKhach ?? 1)" min="1" max="10">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Khoảng giá (VNĐ)</label>
                         <div class="d-flex gap-2">
-                            <input type="number" class="form-control" name="GiaTu" placeholder="Từ" value="@searchRequest.GiaTu" min="0" step="100000">
-                            <input type="number" class="form-control" name="GiaDen" placeholder="Đến" value="@searchRequest.GiaDen" min="0" step="100000">
+                            <input type="number" class="form-control" name="GiaTu" placeholder="Từ" value="@Model.GiaTu" min="0" step="100000">
+                            <input type="number" class="form-control" name="GiaDen" placeholder="Đến" value="@Model.GiaDen" min="0" step="100000">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -39,15 +41,34 @@
                             <option value="">Tất cả</option>
                             @foreach (var lp in loaiPhongList)
                             {
-                                <option value="@lp.Id" selected="@(searchRequest.LoaiPhongId == lp.Id ? "selected" : "")">@lp.Type</option>
+                                @if (Model.LoaiPhongId == lp.Id)
+                                {
+                                    <option value="@lp.Id" selected>@lp.Type</option>
+                                }
+                                else
+                                {
+                                    <option value="@lp.Id">@lp.Type</option>
+                                }
                             }
                         </select>
                     </div>
+                    <!-- Hidden inputs cho advanced filters -->
+                    <input type="hidden" name="SortBy" value="@Model.SortBy" id="sortByInput" />
+                    @if (Model.TienNghi != null)
+                    {
+                        foreach (var tn in Model.TienNghi)
+                        {
+                            <input type="hidden" name="TienNghi" value="@tn" class="tienNghiHidden" />
+                        }
+                    }
+                    <input type="hidden" name="LoaiGiuong" value="@Model.LoaiGiuong" id="loaiGiuongInput" />
+                    <input type="hidden" name="LoaiView" value="@Model.LoaiView" id="loaiViewInput" />
+
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-grow-1">Tìm kiếm</button>
+                        <button type="button" class="btn btn-primary flex-grow-1" onclick="applyFilters()">Tìm kiếm</button>
                         <button type="button" class="fa fa-list btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#advancedFilterModal"></button>
                     </div>
-                    <button type="reset" class="btn btn-secondary w-100 mt-2">Xóa bộ lọc</button>
+                    <button type="button" class="btn btn-secondary w-100 mt-2" onclick="resetForm()">Xóa bộ lọc</button>
                 </form>
             </div>
         </div>
@@ -55,11 +76,23 @@
         <!-- Danh sách phòng bên phải (8 ô) -->
         <div class="col-lg-9 col-md-12">
             <!-- Sắp xếp và số lượng phòng -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5>Tìm thấy @Model.Count phòng</h5>
-                <select class="form-select w-25" id="sortSelect" onchange="applySort()">
-                    <option value="gia-asc">Giá: Thấp đến cao</option>
-                    <option value="gia-desc">Giá: Cao đến thấp</option>
+            <div class="d-flex justify-content-end align-items-center mb-3">
+                <select class="form-select w-25" id="sortSelect" name="SortBy">
+                    @if (Model.SortBy == "gia-asc")
+                    {
+                        <option value="gia-asc" selected>Giá: Thấp đến cao</option>
+                        <option value="gia-desc">Giá: Cao đến thấp</option>
+                    }
+                    else if (Model.SortBy == "gia-desc")
+                    {
+                        <option value="gia-asc">Giá: Thấp đến cao</option>
+                        <option value="gia-desc" selected>Giá: Cao đến thấp</option>
+                    }
+                    else
+                    {
+                        <option value="gia-asc" selected>Giá: Thấp đến cao</option>
+                        <option value="gia-desc">Giá: Cao đến thấp</option>
+                    }
                 </select>
             </div>
 
@@ -72,36 +105,7 @@
             }
 
             <!-- Danh sách phòng -->
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                @foreach (var phong in Model)
-                {
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            <img src="@(phong.AnhPhong.FirstOrDefault() != null ? "/images/room/" + phong.AnhPhong.FirstOrDefault() : "/images/room/default.png")"
-                                 class="card-img-top"
-                                 alt="@phong.SoPhong"
-                                 style="height: 200px; object-fit: cover;" />
-                            <div class="card-body">
-                                <h5 class="card-title">@phong.SoPhong</h5>
-                                <p class="card-text"><strong>Loại phòng:</strong> @phong.Type</p>
-                                <p class="card-text"><strong>Giá:</strong> @phong.Gia.ToString("C", new System.Globalization.CultureInfo("vi-VN")) / đêm</p>
-                                <p class="card-text"><strong>Sức chứa:</strong> @phong.SoLuongKhach khách</p>
-                                <p class="card-text"><strong>Đánh giá:</strong> @string.Concat(Enumerable.Repeat("★ ", phong.DanhGia))</p>
-                                <p class="card-text"><strong>Tiện nghi:</strong> @string.Join(", ", phong.TienNghis.Take(3))@(phong.TienNghis.Count > 3 ? "..." : "")</p>
-                            </div>
-                            
-                            <div class="card-footer bg-white border-0 text-center d-flex justify-content-center gap-2">
-                                <a asp-action="Detail" asp-route-id="@phong.PhongId" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
-                                    <i class="bi bi-eye"></i> Xem chi tiết
-                                </a>
-                                <a asp-action="DatPhong" asp-route-id="@phong.PhongId" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                                    <i class="bi bi-calendar-check"></i> Đặt phòng
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+            <div id="box-content"></div>
         </div>
     </div>
 </div>
@@ -118,11 +122,17 @@
                 <div class="mb-3">
                     <label class="form-label">Tiện nghi</label>
                     <div class="row">
-                        @foreach (var tienNghi in ViewBag.TienNghiList ?? new List<string> { "Wi-Fi", "Điều hòa", "Ban công", "TV" })
+                        @foreach (var tienNghi in ViewBag.TienNghiList ?? new List<string>())
                         {
                             <div class="col-6">
-                                <input type="checkbox" name="TienNghi" value="@tienNghi" id="@tienNghi"
-                                @(searchRequest.TienNghi?.Contains(tienNghi) == true ? "checked" : "")>
+                                @if (Model.TienNghi?.Contains(tienNghi) == true)
+                                {
+                                    <input type="checkbox" name="TienNghi" value="@tienNghi" id="@tienNghi" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="TienNghi" value="@tienNghi" id="@tienNghi">
+                                }
                                 <label for="@tienNghi">@tienNghi</label>
                             </div>
                         }
@@ -130,25 +140,43 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Loại giường</label>
-                    <select class="form-select" name="LoaiGiuong">
+                    <select class="form-select" name="LoaiGiuong" id="modalLoaiGiuong">
                         <option value="">Tất cả</option>
                         @foreach (enLoaiGiuong giuong in Enum.GetValues(typeof(enLoaiGiuong)))
                         {
-                            <option value="@((int)giuong)" selected="@(searchRequest.LoaiGiuong == giuong ? "selected" : "")">
-                                @enHelper.GetDescription(giuong)
-                            </option>
+                            @if (Model.LoaiGiuong == giuong)
+                            {
+                                <option value="@((int)giuong)" selected>
+                                    @enHelper.GetDescription(giuong)
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@((int)giuong)">
+                                    @enHelper.GetDescription(giuong)
+                                </option>
+                            }
                         }
                     </select>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Loại view</label>
-                    <select class="form-select" name="LoaiView">
+                    <select class="form-select" name="LoaiView" id="modalLoaiView">
                         <option value="">Tất cả</option>
                         @foreach (enLoaiView view in Enum.GetValues(typeof(enLoaiView)))
                         {
-                            <option value="@((int)view)" selected="@(searchRequest.LoaiView == view ? "selected" : "")">
-                                @enHelper.GetDescription(view)
-                            </option>
+                            @if (Model.LoaiView == view)
+                            {
+                                <option value="@((int)view)" selected>
+                                    @enHelper.GetDescription(view)
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@((int)view)">
+                                    @enHelper.GetDescription(view)
+                                </option>
+                            }
                         }
                     </select>
                 </div>
@@ -163,44 +191,76 @@
 
 @section Scripts {
     <script>
-        function applySort() {
-            const sort = document.getElementById('sortSelect').value;
-            const form = document.getElementById('filterForm');
-            const sortInput = document.createElement('input');
-            sortInput.type = 'hidden';
-            sortInput.name = 'SortBy';
-            sortInput.value = sort;
-            form.appendChild(sortInput);
-            form.submit();
+        $(document).ready(function () {
+            let element = document.getElementById('box-content');
+            let url = '@Url.Action("List", "Phong")' + window.location.search;
+            loadContent(url, element);
+            // Xử lý thay đổi sort
+            $("#sortSelect").on("change", function () {
+                document.getElementById('sortByInput').value = this.value;
+                applyFilters();
+            });
+
+            // Xử lý thay đổi filter
+            $("#filterForm input, #filterForm select").not("#sortSelect").on("change", function () {
+                applyFilters();
+
+            pageSetUp();
+            });
+        });
+
+
+
+        function applyFilters() {
+            // Reset về trang 1 khi filter
+            document.getElementById('pageIndexInput').value = 1;
+            loadRoomList();
         }
 
         function applyAdvancedFilters() {
-            const form = document.getElementById('filterForm');
-            const tienNghi = Array.from(document.querySelectorAll('input[name="TienNghi"]:checked')).map(el => el.value);
-            tienNghi.forEach(tn => {
+            // Xóa các hidden input cũ
+            document.querySelectorAll('.tienNghiHidden').forEach(el => el.remove());
+
+            // Thêm tiện nghi được chọn
+            const checkedTienNghi = document.querySelectorAll('#advancedFilterModal input[name="TienNghi"]:checked');
+            checkedTienNghi.forEach(checkbox => {
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'TienNghi';
-                input.value = tn;
-                form.appendChild(input);
+                input.value = checkbox.value;
+                input.className = 'tienNghiHidden';
+                document.getElementById('filterForm').appendChild(input);
             });
-            const loaiGiuong = document.querySelector('select[name="LoaiGiuong"]').value;
-            if (loaiGiuong) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'LoaiGiuong';
-                input.value = loaiGiuong;
-                form.appendChild(input);
-            }
-            const loaiView = document.querySelector('select[name="LoaiView"]').value;
-            if (loaiView) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'LoaiView';
-                input.value = loaiView;
-                form.appendChild(input);
-            }
-            form.submit();
+
+            // Cập nhật loại giường và view
+            document.getElementById('loaiGiuongInput').value = document.getElementById('modalLoaiGiuong').value;
+            document.getElementById('loaiViewInput').value = document.getElementById('modalLoaiView').value;
+
+            // Đóng modal và apply filter
+            $('#advancedFilterModal').modal('hide');
+            applyFilters();
+        }
+
+        function resetForm() {
+            document.getElementById('filterForm').reset();
+            document.getElementById('pageIndexInput').value = 1;
+            document.getElementById('sortByInput').value = '';
+            document.getElementById('loaiGiuongInput').value = '';
+            document.getElementById('loaiViewInput').value = '';
+            document.querySelectorAll('.tienNghiHidden').forEach(el => el.remove());
+
+            // Reset modal checkboxes
+            document.querySelectorAll('#advancedFilterModal input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('modalLoaiGiuong').value = '';
+            document.getElementById('modalLoaiView').value = '';
+
+            loadRoomList();
+        }
+
+        // Hàm để handle pagination clicks
+        function changePage(pageIndex) {
+            document.getElementById('pageIndexInput').value = pageIndex;
+            loadRoomList();
         }
     </script>
 }
