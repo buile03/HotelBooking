@@ -219,7 +219,29 @@ namespace DPKS.Service
                     .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
                     .Include(p => p.TrangThaiPhong)
                     .Include(p => p.anhPhongs)
+                    
                     .FirstOrDefaultAsync();
+
+                var feedback = await _context.FeedBacks
+                    .Include(f => f.User)
+                    .Where(f => f.DatPhong.PhongId == Id)
+                    .ToListAsync();
+
+                var diemTB = feedback.Any() ? feedback.Average(f => f.DanhGia) : 0;
+
+                var phongTuongTus = await _context.Phongs
+                    .Where(p => p.LoaiPhongId == phongEntity.LoaiPhongId && p.PhongId != phongEntity.PhongId && p.IsActive)
+                    .OrderBy(p => Guid.NewGuid()) // random nếu muốn
+                    .Take(3)
+                    .Select(p => new PhongLienQuanVm
+                    {
+                        PhongId = p.PhongId,
+                        SoPhong = p.SoPhong,
+                        Gia = p.Gia,
+                        Type = p.LoaiPhong.Type,
+                        AnhDaiDien = p.anhPhongs.Select(a => a.PhotoName).FirstOrDefault() ?? "default.png"
+                    }).ToListAsync();
+
 
                 if (phongEntity == null)
                     return Result<ChiTietPhongVm>.Error("Phòng không tồn tại");
@@ -246,7 +268,17 @@ namespace DPKS.Service
                     TrangThaiPhong = phongEntity.TrangThaiPhong.trangThaiPhong,
                     SoLuongKhach = sucChua,
                     AnhPhong = phongEntity.anhPhongs.Select(ap => ap.PhotoName).ToList(),
-                    TienNghis = phongEntity.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList()
+                    TienNghis = phongEntity.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList(),
+                    Feedbacks = feedback.Select (f => new FeedbackItemVm
+                    {
+                        TenNguoiDung = f.User.HoTen,
+                        DanhGia = f.DanhGia,
+                        BinhLuan = f.BinhLuan,
+                        Ngay = f.CreateAt
+                    }).ToList(),
+                    DiemTrungBinh = diemTB,
+                    PhongLienQuan = phongTuongTus
+
                 };
 
                 return Result<ChiTietPhongVm>.Success("Lấy thông tin phòng thành công", phong);

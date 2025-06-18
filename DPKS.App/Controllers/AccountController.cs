@@ -130,7 +130,6 @@ namespace DPKS.APP.Controllers
             return Ok("Đã gửi mã xác nhận thành công.");
         }
 
-        // Đăng xuất
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -169,7 +168,6 @@ namespace DPKS.APP.Controllers
             return View();
         }
 
-        // POST: /Account/ResetPassword
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordVm model)
         {
@@ -184,51 +182,6 @@ namespace DPKS.APP.Controllers
             return View(model);
         }
 
-        //[HttpGet]
-        //public IActionResult ForgotResetPassword()
-        //{
-        //    return View(new ForgotResetPasswordVm());
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> ForgotResetPassword(ForgotResetPasswordVm model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    if (!model.IsResetStep)
-        //    {
-        //        // Gửi mã
-        //        var success = await _userService.QuenMatKhau(model.Email);
-        //        if (success)
-        //        {
-        //            ViewBag.Message = "Mã xác nhận đã được gửi. Vui lòng kiểm tra email.";
-        //            model.IsResetStep = true; // Chuyển sang bước reset
-        //            ModelState.Clear(); // Để xóa lỗi validate của bước 2 nếu chưa nhập
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("", "Không tìm thấy tài khoản với email này.");
-        //        }
-
-        //        return View(model);
-        //    }
-        //    else
-        //    {
-        //        // Đặt lại mật khẩu
-        //        var success = await _userService.DatLaiMatKhau(model.Email, model.ResetCode, model.NewPassword);
-        //        if (success)
-        //        {
-        //            TempData["Message"] = "Mật khẩu đã được đặt lại thành công.";
-        //            return RedirectToAction("Login");
-        //        }
-        //        ModelState.AddModelError("", "Mã xác nhận không hợp lệ hoặc đã hết hạn.");
-        //        return View(model);
-        //    }
-        //}
-
-
-        // GET: /Account/ChangePassword
         [Authorize]
         [HttpGet]
         public IActionResult ChangePassword()
@@ -236,7 +189,6 @@ namespace DPKS.APP.Controllers
             return View();
         }
 
-        // POST: /Account/ChangePassword
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordVm model)
@@ -285,7 +237,9 @@ namespace DPKS.APP.Controllers
             var model = new UpdateProfileVm
             {
                 UserId = user.Id,
-                FullName = user.UserName,
+                
+                FullName = user.HoTen,
+                UserName = user.UserName,
                 QuocGiaId = user.QuocGiaId,
                 TinhId = user.TinhId,
                 PhotoName = user.PhotoName,
@@ -319,15 +273,21 @@ namespace DPKS.APP.Controllers
                 //    var fileName = await _fileService.SaveAvatar(avatarFile, model.UserId);
                 //    model.PhotoName = fileName;
                 //}
-
-                user.UserName = model.FullName;
+                user.HoTen = model.FullName;
+                user.UserName = model.UserName;
                 user.QuocGiaId = model.QuocGiaId;
                 user.TinhId = model.TinhId;
                 user.PhotoName = model.PhotoName;
 
-                //await _userService.Update(user);
-
-                ViewBag.Message = "Cập nhật thông tin thành công!";
+                var success = await _userService.Update(user);
+                if (success)
+                {
+                    ViewBag.Message = "Cập nhật thông tin thành công!";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cập nhật không thành công.");
+                }
                 return View(model);
             }
             catch (Exception ex)

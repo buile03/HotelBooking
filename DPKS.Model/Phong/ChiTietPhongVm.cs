@@ -22,5 +22,10 @@ namespace DPKS.Model.Phong
         public List<string> AnhPhong { get; set; } = new List<string>();
         public List<string> TienNghis { get; set; } = new List<string>();
         public List<string> LoaiPhong { get; set; } = new List<string>();
+        public List<FeedbackItemVm> Feedbacks { get; set; } = new List<FeedbackItemVm>();
+
+        public double DiemTrungBinh { get; set; }
+
+        public List<PhongLienQuanVm> PhongLienQuan { get; set; } = new List<PhongLienQuanVm>();
     }
 }
