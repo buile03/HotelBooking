@@ -13,6 +13,9 @@ namespace DPKS.App.Extensions
             services.AddTransient<ITienNghiService, TienNghiService>();
             services.AddTransient<IPhongService, PhongService>();
             services.AddTransient<IFeedbackService, FeedbackService>();
+            services.AddTransient<IDatPhongService, DatPhongService>();
+            services.AddTransient<IThanhToanService, ThanhToanService>();
+            
 
             services.AddScoped<IUserService, UserService>();
             //services.AddScoped<IEmailSenderService, SmtpEmailSender>();

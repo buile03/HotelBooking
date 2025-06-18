@@ -3,6 +3,7 @@ using DPKS.Common.System;
 using DPKS.Data.EF;
 using DPKS.Data.Entites;
 using DPKS.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -48,13 +49,16 @@ namespace DPKS.App
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(options =>
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Account/AccessDenied";
+                options.LogoutPath = "/Account/Logout";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.SlidingExpiration = true;
             });
-            
+
             services.AddInfrastructure();
             services.AddTransient(typeof(ILogger<>), (typeof(Logger<>)));
 
@@ -99,6 +103,7 @@ namespace DPKS.App
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthentication();

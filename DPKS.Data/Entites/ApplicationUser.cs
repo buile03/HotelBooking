@@ -6,6 +6,8 @@ namespace DPKS.Data.Entites
 {
     public class ApplicationUser : IdentityUser<int>
     {
+        public string HoTen { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
 
