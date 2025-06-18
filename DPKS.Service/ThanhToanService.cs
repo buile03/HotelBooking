@@ -1,4 +1,5 @@
-﻿using DPKS.Data.Config;
+﻿using DPKS.Common.Enum;
+using DPKS.Data.Config;
 using DPKS.Data.EF;
 using DPKS.Data.Entites;
 using DPKS.Model.ThanhToan;
@@ -33,7 +34,7 @@ namespace DPKS.Service
         {
             var tt = await _context.ThanhToans
                 .Include(x => x.PhuongThucThanhToan)
-                .FirstOrDefaultAsync(x => x.DatPhongId == datPhongId);
+                .FirstOrDefaultAsync(x => x.Id == datPhongId);
 
             if (tt == null)
                 return null;
@@ -52,7 +53,8 @@ namespace DPKS.Service
         public async Task<bool> Create(ThanhToanCreateRequest request)
         {
             var datPhong = await _context.DatPhongs.FindAsync(request.DatPhongId);
-            if (datPhong == null) return false;
+            if (datPhong == null) 
+                return false;
 
             // Kiểm tra nếu đã có thanh toán thì không tạo mới
             var existing = await _context.ThanhToans
@@ -66,10 +68,13 @@ namespace DPKS.Service
                 DatPhongId = request.DatPhongId,
                 PhuongThucThanhToanId = request.PhuongThucThanhToanId,
                 Gia = request.Gia,
-                ThoiDiemThanhToan = request.ThoiDiemThanhToan
+                ThoiDiemThanhToan = request.ThoiDiemThanhToan != DateTime.MinValue ? request.ThoiDiemThanhToan : DateTime.Now
             };
 
             _context.ThanhToans.Add(thanhToan);
+
+            //datPhong.TrangThaiDatPhong = enTrangThaiDatPhong.DANHANPHONG;
+
             await _context.SaveChangesAsync();
             return true;
         }

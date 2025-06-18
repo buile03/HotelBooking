@@ -1,0 +1,27 @@
+﻿@model DPKS.Model.ThanhToan.ThanhToanVm
+
+@{
+    ViewData["Title"] = "Chi tiết thanh toán";
+    ViewData["PageTitle"] = "Chi tiết thanh toán";
+}
+
+<div class="container py-4">
+    <dl class="row">
+        <dt class="col-sm-4">Mã thanh toán</dt>
+        <dd class="col-sm-8">@Model.Id</dd>
+
+        <dt class="col-sm-4">Mã đặt phòng</dt>
+        <dd class="col-sm-8">@Model.DatPhongId</dd>
+
+        <dt class="col-sm-4">Phương thức thanh toán</dt>
+        <dd class="col-sm-8">@Model.TenPhuongThucThanhToan</dd>
+
+        <dt class="col-sm-4">Tổng tiền</dt>
+        <dd class="col-sm-8">@Model.Gia.ToString("N0") VNĐ</dd>
+
+        <dt class="col-sm-4">Thời điểm thanh toán</dt>
+        <dd class="col-sm-8">@Model.ThoiDiemThanhToan.ToString("dd/MM/yyyy HH:mm")</dd>
+    </dl>
+
+    <a href="/Home" class="btn btn-secondary">Về trang chủ</a>
+</div>

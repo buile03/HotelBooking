@@ -12,13 +12,13 @@
                 <img src="@(phong.AnhPhong.FirstOrDefault() != null ? "/images/room/" + phong.AnhPhong.FirstOrDefault() : "/images/room/default.png")"
                      class="card-img-top"
                      alt="@phong.SoPhong"
-                     style="height: 200px; object-fit: cover;" />
+                     style="height: 300px; object-fit: cover;" />
                 <div class="card-body">
                     <h5 class="card-title fw-bold pb-3">Số phòng: @phong.SoPhong</h5>
                     <p class="card-text"><strong>Loại phòng:</strong> @phong.Type</p>
                     <p class="card-text"><strong>Giá:</strong> @phong.Gia.ToString("C", new System.Globalization.CultureInfo("vi-VN")) / đêm</p>
-                    <p class="card-text"><strong>Sức chứa:</strong> @phong.SoLuongKhach khách</p>
-                    <p class="card-text"><strong>Đánh giá:</strong> @string.Concat(Enumerable.Repeat("★ ", phong.DanhGia))</p>
+                        @* <p class="card-text"><strong>Sức chứa:</strong> @phong.SoLuongKhach khách</p> *@
+                        @* <p class="card-text"><strong>Đánh giá:</strong> @string.Concat(Enumerable.Repeat("★ ", phong.DanhGia))</p> *@
                     <p class="card-text"><strong>Tiện nghi:</strong> @string.Join(", ", phong.TienNghis.Take(3))@(phong.TienNghis.Count > 3 ? "..." : "")</p>
                 </div>
                 <div class="card-footer bg-white border-0 text-center d-flex justify-content-center gap-2">

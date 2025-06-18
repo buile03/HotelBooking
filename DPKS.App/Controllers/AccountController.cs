@@ -57,6 +57,7 @@ namespace DPKS.APP.Controllers
 {
                     new Claim("UserId", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
+                    
                     // Nếu bạn có role thì thêm:
                     // new Claim(ClaimTypes.Role, "Admin") // hoặc lấy từ Identity Role
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
@@ -75,6 +76,64 @@ namespace DPKS.APP.Controllers
             ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng.");
             return View(model);
         }
+
+        // Login bằng Google
+        [HttpGet]
+        public IActionResult LoginWithGoogle(string returnUrl = "/")
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return Challenge(properties, "Google");
+        }
+
+        // Login bằng Facebook
+        [HttpGet]
+        public IActionResult LoginWithFacebook(string returnUrl = "/")
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", redirectUrl);
+            return Challenge(properties, "Facebook");
+        }
+        
+        // Xử lý sau khi xác thực từ gg/fb
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/")
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+                return RedirectToAction(nameof(Login));
+
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+
+            if (result.Succeeded)
+                return LocalRedirect(returnUrl);
+
+            // Nếu chưa có tài khoản, tạo mới
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                QuocGiaId = 242,
+                TinhId = 5,
+                IsActive = true
+            };
+
+            var identityResult = await _userManager.CreateAsync(user);
+            if (identityResult.Succeeded)
+            {
+                await _userManager.AddLoginAsync(user, info);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return LocalRedirect(returnUrl);
+            }
+
+            foreach (var error in identityResult.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
+
+            return View("Login");
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Register()
@@ -304,5 +363,8 @@ namespace DPKS.APP.Controllers
         {
             return View();
         }
+
+
+
     }
 }

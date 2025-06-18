@@ -17,5 +17,7 @@ namespace DPKS.Model.DatPhong
 
         public decimal TongTien { get; set; }
         public enTrangThaiDatPhong TrangThaiDatPhong { get; set; }
+
+        public bool DaThanhToan { get; set; }
     }
 }

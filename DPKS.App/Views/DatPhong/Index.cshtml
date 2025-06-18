@@ -8,23 +8,6 @@
 <div class="container bg-light min-vh-100 py-5">
     <div class="row">
         <div class="col-12">
-            <!-- Header Section -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            
-                            <p class="mb-0 opacity-75">Quản lý và theo dõi các đơn đặt phòng của bạn</p>
-                        </div>
-                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                            <a href="@Url.Action("Index", "Phong")" class="btn btn-light btn-lg px-4">
-                                <i class="fas fa-plus-circle me-2"></i>Đặt phòng mới
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             @if (Model == null || !Model.Any())
             {
                     <!-- Empty State -->
@@ -222,22 +205,39 @@
                                             </div>
                                         </div>
 
-                                @if (booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN ||
-                                    booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN)
+                                @if (booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN && !booking.DaThanhToan)
                                 {
-                                                <div class="card-footer border-0 bg-transparent pt-0">
-                                                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                                                        <a href="/DatPhong/Details/@booking.Id" class="btn btn-outline-primary btn-sm flex-fill">
-                                                            <i class="fas fa-eye me-1"></i>Chi tiết
-                                                        </a>
-                                                        <button type="button" 
-                                                                class="btn btn-outline-danger btn-sm flex-fill" 
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#cancelModal@(booking.Id)">
-                                                            <i class="fas fa-times me-1"></i>Hủy đặt
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                    <div class="card-footer border-0 bg-transparent pt-0">
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-between flex-wrap">
+
+                                            <!-- Nút Chi tiết -->
+                                            <a href="/DatPhong/Details/@booking.Id" class="btn btn-outline-primary btn-sm flex-fill">
+                                                <i class="fas fa-eye me-1"></i>Chi tiết
+                                            </a>
+
+                                            <!-- Nút Hủy đặt -->
+                                            @if (booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN ||
+                                           booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN)
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-outline-danger btn-sm flex-fill"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#cancelModal@(booking.Id)">
+                                                    <i class="fas fa-times me-1"></i>Hủy đặt
+                                                </button>
+                                            }
+
+                                            <!-- Nút Thanh toán -->
+                                            @if (booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN &&
+                                           !booking.DaThanhToan)
+                                            {
+                                                <a href=@Url.Action("Create", "ThanhToan", new{ datPhongId = booking.Id, tongTien = booking.TongTien}) class="btn btn-outline-success btn-sm flex-fill">
+                                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+
 
                                                 <!-- Cancel Modal -->
                                                 <div class="modal fade" id="cancelModal@(booking.Id)" tabindex="-1">

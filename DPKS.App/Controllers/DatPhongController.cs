@@ -38,22 +38,8 @@ namespace DPKS.APP.Controllers
         public async Task<IActionResult> Create(DatPhongCreateRequest request)
         {
             if (!ModelState.IsValid)
-            {
-                foreach (var key in ModelState.Keys)
-                {
-                    var errors = ModelState[key].Errors;
-                    foreach (var error in errors)
-                    {
-                        Console.WriteLine("Bắt đầu xử lý đặt phòng");
-
-                        Console.WriteLine($"PhongId: {request.PhongId}");
-                        Console.WriteLine($"NgayNhan: {request.NgayNhanPhong}, NgayTra: {request.NgayTraPhong}");
-                        Console.WriteLine($"UserId: {request.UserId}");
-
-                    }
-                }
-                return View(request);
-            }
+                View(request);
+            
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
