@@ -13,7 +13,7 @@ namespace DPKS.Data.Entites
         public int DatPhongId { get; set; }
         public int DanhGia { get; set; } // tu 1 - 5
         public string BinhLuan {  get; set; }
-        public DateTime CreateAt { get; set; } = DateTime.Now;
+        
 
 
         //navigation properties

@@ -1,0 +1,291 @@
+﻿@model List<DPKS.Model.DatPhong.ThongTinDatPhongVm>
+
+@{
+    ViewData["Title"] = "Lịch sử đặt phòng";
+    ViewData["PageTitle"] = "Lịch sử đặt phòng";
+}
+
+<div class="container-fluid bg-light min-vh-100 py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header Section -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            
+                            <p class="mb-0 opacity-75">Quản lý và theo dõi các đơn đặt phòng của bạn</p>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                            <a href="@Url.Action("Index", "Phong")" class="btn btn-light btn-lg px-4">
+                                <i class="fas fa-plus-circle me-2"></i>Đặt phòng mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                    <!-- Empty State -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-bed fa-4x text-muted opacity-50"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">Chưa có đơn đặt phòng nào</h4>
+                            <p class="text-muted mb-4">Bạn chưa thực hiện đặt phòng nào. Hãy khám phá các phòng đẹp của chúng tôi!</p>
+                            <a href="@Url.Action("Index", "Phong")" class="btn btn-lg text-white px-5" 
+                               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-search me-2"></i>Tìm phòng ngay
+                            </a>
+                        </div>
+                    </div>
+            }
+            else
+            {
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-primary mb-2">
+                                        <i class="fas fa-calendar-check fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-primary mb-1">@Model.Count()</h4>
+                                    <small class="text-muted">Tổng đặt phòng</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-success mb-2">
+                                        <i class="fas fa-check-circle fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-success mb-1">@Model.Count(x => x.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN)</h4>
+                                    <small class="text-muted">Đã xác nhận</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-warning mb-2">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-warning mb-1">@Model.Count(x => x.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN)</h4>
+                                    <small class="text-muted">Chờ xác nhận</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-info mb-2">
+                                        <i class="fas fa-dollar-sign fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-info mb-1">@Model.Sum(x => x.TongTien).ToString("N0")</h4>
+                                    <small class="text-muted">Tổng chi tiêu (VNĐ)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bookings List -->
+                    <div class="row">
+                    @foreach (var booking in Model.OrderByDescending(x => x.NgayNhanPhong))
+                    {
+                                <div class="col-lg-6 col-xl-4 mb-4">
+                                    <div class="card border-0 shadow-sm h-100 booking-card">
+                                        <div class="card-header border-0 pb-0" style="background: transparent;">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <h6 class="mb-0 text-primary fw-bold">
+                                                        <i class="fas fa-door-open me-2"></i>Phòng @booking.SoPhong
+                                                    </h6>
+                                                    <small class="text-muted">#@booking.Id</small>
+                                                </div>
+                                                <div class="col-auto">
+                                            @{
+                                                var statusClass = "";
+                                                var statusText = "";
+                                                var statusIcon = "";
+
+                                                switch (booking.TrangThaiDatPhong)
+                                                {
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN:
+                                                        statusClass = "warning";
+                                                        statusText = "Chờ xác nhận";
+                                                        statusIcon = "clock";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN:
+                                                        statusClass = "success";
+                                                        statusText = "Đã xác nhận";
+                                                        statusIcon = "check-circle";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.DANHANPHONG:
+                                                        statusClass = "primary";
+                                                        statusText = "Đã nhận phòng";
+                                                        statusIcon = "door-open";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.DATRAPHONG:
+                                                        statusClass = "info";
+                                                        statusText = "Đã trả phòng";
+                                                        statusIcon = "flag-checkered";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.DAHUY:
+                                                        statusClass = "danger";
+                                                        statusText = "Đã hủy";
+                                                        statusIcon = "times-circle";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.KHONGDEN:
+                                                        statusClass = "dark";
+                                                        statusText = "Không đến";
+                                                        statusIcon = "user-slash";
+                                                        break;
+
+                                                    case DPKS.Common.Enum.enTrangThaiDatPhong.THATBAI:
+                                                        statusClass = "secondary";
+                                                        statusText = "Thất bại";
+                                                        statusIcon = "exclamation-triangle";
+                                                        break;
+
+                                                    default:
+                                                        statusClass = "secondary";
+                                                        statusText = "Không xác định";
+                                                        statusIcon = "question";
+                                                        break;
+                                                }
+
+                                            }
+
+                                                    <span class="badge bg-@statusClass">
+                                                        <i class="fas fa-@statusIcon me-1"></i>@statusText
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body pt-3">
+                                            <div class="row g-3">
+                                                <div class="col-12">
+                                                    <div class="bg-light rounded-3 p-3">
+                                                        <div class="row text-center">
+                                                            <div class="col-6">
+                                                                <div class="text-success">
+                                                                    <i class="fas fa-calendar-plus mb-1"></i>
+                                                                    <div class="small fw-bold">Nhận phòng</div>
+                                                                    <div class="small">@booking.NgayNhanPhong.ToString("dd/MM/yyyy")</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <div class="text-danger">
+                                                                    <i class="fas fa-calendar-minus mb-1"></i>
+                                                                    <div class="small fw-bold">Trả phòng</div>
+                                                                    <div class="small">@booking.NgayTraPhong.ToString("dd/MM/yyyy")</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <div class="text-center">
+                                                        <i class="fas fa-moon text-primary mb-1"></i>
+                                                        <div class="small text-muted">Số đêm</div>
+                                                        <div class="fw-bold">@booking.SoDem</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <div class="text-center">
+                                                        <i class="fas fa-users text-primary mb-1"></i>
+                                                        <div class="small text-muted">Số khách</div>
+                                                        <div class="fw-bold">@booking.SoLuongKhach</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="bg-success bg-opacity-10 rounded-3 p-3 text-center">
+                                                        <div class="text-success">
+                                                            <i class="fas fa-money-bill-wave mb-1"></i>
+                                                            <div class="h5 mb-0 fw-bold">@booking.TongTien.ToString("N0") VNĐ</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                @if (booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN ||
+                                    booking.TrangThaiDatPhong == DPKS.Common.Enum.enTrangThaiDatPhong.DAXACNHAN)
+                                {
+                                                <div class="card-footer border-0 bg-transparent pt-0">
+                                                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                                        <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                                            <i class="fas fa-eye me-1"></i>Chi tiết
+                                                        </a>
+                                                        <button type="button" 
+                                                                class="btn btn-outline-danger btn-sm flex-fill" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#cancelModal@(booking.Id)">
+                                                            <i class="fas fa-times me-1"></i>Hủy đặt
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Cancel Modal -->
+                                                <div class="modal fade" id="cancelModal@(booking.Id)" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0">
+                                                                <h5 class="modal-title text-danger">
+                                                                    <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận hủy đặt phòng
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p class="mb-3">Bạn có chắc chắn muốn hủy đặt phòng <strong>@booking.SoPhong</strong>?</p>
+                                                                <div class="bg-light rounded-3 p-3">
+                                                                    <div class="row">
+                                                                        <div class="col-6">
+                                                                            <small class="text-muted">Ngày nhận:</small>
+                                                                            <div class="fw-bold">@booking.NgayNhanPhong.ToString("dd/MM/yyyy")</div>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <small class="text-muted">Tổng tiền:</small>
+                                                                            <div class="fw-bold text-danger">@booking.TongTien.ToString("N0") VNĐ</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="alert alert-warning mt-3 mb-0">
+                                                                    <i class="fas fa-info-circle me-2"></i>
+                                                                    <small>Việc hủy đặt phòng có thể áp dụng phí hủy theo chính sách của khách sạn.</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                    Không hủy
+                                                                </button>
+                                                                <a href="@Url.Action("Cancel", new { id = booking.Id })" 
+                                                                   class="btn btn-danger">
+                                                                    <i class="fas fa-times me-1"></i>Xác nhận hủy
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                }
+                                    </div>
+                                </div>
+                    }
+                    </div>
+            }
+        </div>
+    </div>
+</div>

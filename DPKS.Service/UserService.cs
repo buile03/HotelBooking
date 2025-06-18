@@ -19,6 +19,8 @@ namespace DPKS.Service
         Task<bool> AssignRole(ApplicationUser user, string role);
         Task Logout();
 
+        Task<ApplicationUser> GetByUserName(string username);
+
         Task<bool> QuenMatKhau(string email);
         Task<bool> DatLaiMatKhau(string email, string resetCode, string newPassword);
         Task<bool> DoiMatKhau(int userId, string currentPassword, string newPassword);
@@ -81,6 +83,12 @@ namespace DPKS.Service
         {
             await _signInManager.SignOutAsync();
         }
+
+        public async Task<ApplicationUser> GetByUserName(string username)
+        {
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
+        }
+
         public async Task<bool> XacNhanEmail(string userId, string confirmationCode)
         {
             var user = await _userManager.FindByIdAsync(userId);

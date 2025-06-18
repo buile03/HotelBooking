@@ -1,14 +1,18 @@
 ﻿using DPKS.Data.Entites;
 using DPKS.Model.User;
 using DPKS.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using static DPKS.Model.User.PasswordVm;
+using Microsoft.AspNetCore.Identity;
 
 namespace DPKS.APP.Controllers
 {
@@ -16,10 +20,17 @@ namespace DPKS.APP.Controllers
     {
         private readonly IUserService _userService;
         private readonly IDanhMucService _danhmucService;
-        public AccountController(IUserService userService, IDanhMucService danhMucService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public AccountController(IUserService userService
+            , IDanhMucService danhMucService
+            , UserManager<ApplicationUser> userManager
+            , SignInManager<ApplicationUser> signInManager)
         {
             _userService = userService;
             _danhmucService = danhMucService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // Trang đăng nhập
@@ -38,11 +49,31 @@ namespace DPKS.APP.Controllers
 
             var result = await _userService.DangNhap(model.UserName, model.Password, model.RememberMe);
             if (result.Succeeded)
+            {
+                var user = await _userService.GetByUserName(model.UserName); // Lấy thông tin user
+
+                // Tạo danh sách claims
+                var claims = new List<Claim>
+{
+                    new Claim("UserId", user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    // Nếu bạn có role thì thêm:
+                    // new Claim(ClaimTypes.Role, "Admin") // hoặc lấy từ Identity Role
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                };
+
+                // Tạo identity và principal
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Đăng nhập và tạo cookie
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                 return RedirectToAction("Index", "Home");
+            }
 
             ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng.");
             return View(model);
-
         }
 
         [HttpGet]

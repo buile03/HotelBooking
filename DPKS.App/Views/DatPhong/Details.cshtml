@@ -1,0 +1,34 @@
+﻿@model DPKS.Data.Entites.DatPhong
+
+@{
+    ViewData["Title"] = "Chi tiết đặt phòng";
+}
+
+<h2>Chi tiết đặt phòng</h2>
+
+<partial name="_MessagePartial" />
+
+<dl class="row">
+    <dt class="col-sm-3">Phòng:</dt>
+    <dd class="col-sm-9">@Model.Phong?.SoPhong</dd>
+
+    <dt class="col-sm-3">Ngày nhận phòng:</dt>
+    <dd class="col-sm-9">@Model.NgayNhanPhong.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Ngày trả phòng:</dt>
+    <dd class="col-sm-9">@Model.NgayTraPhong.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Số lượng khách:</dt>
+    <dd class="col-sm-9">@Model.SoLuongKhach</dd>
+
+    <dt class="col-sm-3">Số đêm:</dt>
+    <dd class="col-sm-9">@Model.SoDem</dd>
+
+    <dt class="col-sm-3">Tổng tiền:</dt>
+    <dd class="col-sm-9">@Model.TongTien.ToString("N0") đ</dd>
+
+    <dt class="col-sm-3">Trạng thái đặt:</dt>
+    <dd class="col-sm-9">@((DPKS.Common.Enum.enTrangThaiDatPhong)Model.TrangThaiDatPhongId)</dd>
+</dl>
+
+<a asp-action="MyBooking" class="btn btn-secondary">Quay lại danh sách</a>
