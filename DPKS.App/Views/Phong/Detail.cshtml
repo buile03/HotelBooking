@@ -88,8 +88,83 @@
         </div>
     </div>
 
+    <div class="card shadow-sm p-4 mt-5 bg-light rounded-3">
+        <ul class="nav nav-tabs" id="tabPhong" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button" role="tab">Đánh giá</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="similar-tab" data-bs-toggle="tab" data-bs-target="#similar" type="button" role="tab">Phòng tương tự</button>
+            </li>
+        </ul>
+        <div class="tab-content mt-4" id="tabPhongContent">
+            <!-- Đánh giá -->
+            <div class="tab-pane fade show active" id="feedback" role="tabpanel">
+                @if (Model.Feedbacks != null && Model.Feedbacks.Any())
+                {
+                    <h5 class="fw-bold mb-3">Đánh giá từ khách hàng (Trung bình: @Model.DiemTrungBinh.ToString("0.0") ⭐)</h5>
+                    @foreach (var feedback in Model.Feedbacks.OrderByDescending(f => f.Ngay))
+                    {
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>@feedback.TenNguoiDung</strong>
+                                <span class="text-muted">@feedback.Ngay.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="mb-1">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= feedback.DanhGia)
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                            </div>
+                            <div>@feedback.BinhLuan</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <strong>Chưa có đánh giá nào cho phòng này.</strong>
+                }
+            </div>
+
+            <!-- Phòng tương tự -->
+            <div class="tab-pane fade" id="similar" role="tabpanel">
+                @if (Model.PhongLienQuan != null && Model.PhongLienQuan.Any())
+                {
+                    <h5 class="fw-bold mb-4">Phòng tương tự</h5>
+                    <div class="row">
+                        @foreach (var p in Model.PhongLienQuan)
+                        {
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/images/room/@p.AnhDaiDien" class="card-img-top" alt="Ảnh phòng" style="height: 180px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <p class="card-title fw-bold">@p.SoPhong - @p.Type</p>
+                                        <h6 class="card-text text-black">@p.Gia.ToString("C", new System.Globalization.CultureInfo("vi-VN")) / đêm</h6>
+                                        <a href="/Phong/Detail/@p.PhongId" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <strong>Không có phòng tương tự nào.</strong>
+                }
+            </div>
+        </div>
+    </div>
+
+
     <!-- Form tính giá -->
-    <div class="card shadow-sm p-4 bg-light rounded-3">
+    <div class="card shadow-sm p-4 mt-5 bg-light rounded-3">
         <h5 class="fw-bold mb-3">Tính giá phòng</h5>
         <form id="calculatePriceForm" class="row g-3">
             <input type="hidden" name="phongId" value="@Model.PhongId">
@@ -114,13 +189,9 @@
     <!-- Nút điều hướng -->
     <div class="text-center mt-4">
         <a href="@Url.Action("Index")" class="btn btn-outline-secondary me-2">Quay lại danh sách</a>
-        <a href="@Url.Action("Create", new { phongId = Model.PhongId })" class="btn btn-primary">Đặt phòng ngay</a>
+        <a href="/DatPhong/Create/@Model.PhongId" class="btn btn-primary">Đặt phòng ngay</a>
     </div>
 
-    <!-- Nút cuộn lên đầu -->
-    <button id="scrollToTop" class="btn btn-outline-primary rounded-circle position-fixed bottom-0 end-0 m-3 d-none" title="Lên đầu trang">
-        <i class="bi bi-arrow-up"></i>
-    </button>
 </div>
 
 @section Scripts {
@@ -188,13 +259,4 @@
     }
 });
     </script>
-    <style>
-        #scrollToTop {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 }

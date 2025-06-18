@@ -26,20 +26,16 @@ namespace DPKS.Service
             _context = context;
         }
 
+        
         public async Task<List<SelectListItem>> GetDanhSachQuocGiaAsync()
         {
-            var quocGias = await _context.QuocGias
-                .OrderBy(q => q.Name)
-                .ToListAsync();
-
-            return quocGias
-                .Select(q => new SelectListItem
-                {
-                    Value = q.Id.ToString(),
-                    Text = q.Name
-                }).ToList();
+            var quocGias = await _context.QuocGias.OrderBy(q => q.Name).ToListAsync();
+            return quocGias.Select(q => new SelectListItem
+            {
+                Value = q.Id.ToString(),
+                Text = q.Name
+            }).ToList();
         }
-
         public async Task<List<SelectListItem>> GetDanhSachTinhTheoQuocGiaAsync(int quocGiaId)
         {
             var tinhs = await _context.Tinhs

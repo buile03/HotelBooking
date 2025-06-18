@@ -20,7 +20,7 @@ namespace DPKS.Service
         Task Logout();
 
         Task<ApplicationUser> GetByUserName(string username);
-
+        Task<bool> Update(ApplicationUser user);
         Task<bool> QuenMatKhau(string email);
         Task<bool> DatLaiMatKhau(string email, string resetCode, string newPassword);
         Task<bool> DoiMatKhau(int userId, string currentPassword, string newPassword);
@@ -135,6 +135,13 @@ namespace DPKS.Service
         {
             return await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        public async Task<bool> Update(ApplicationUser user)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
 
         public async Task<bool> CapNhatAnhDaiDien(int userId, string photoName)
         {

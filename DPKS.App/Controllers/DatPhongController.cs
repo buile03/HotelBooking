@@ -86,6 +86,19 @@ namespace DPKS.APP.Controllers
             await _datPhongService.HuyDatPhongAsync(id);
             return RedirectToAction("Index");
         }
+        
+
+        //Hiển thị thông tin chi tiết đơn đặt phòng.
+        public async Task<IActionResult> Details (int Id)
+        {
+            var datphong = await _datPhongService.GetByIdAsync(Id);
+            if(datphong == null)
+            {
+                return NotFound();
+            }
+            return View(datphong);
+        }
+
 
     }
 }
