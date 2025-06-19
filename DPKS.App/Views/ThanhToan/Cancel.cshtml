@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán thất bại";
+    var phuongThuc = ViewBag.PhuongThuc as string ?? "Không xác định";
+}
+
+<div class="alert alert-danger">
+    <h4>❌ Thanh toán không thành công!</h4>
+    <p>Phương thức: <strong>@phuongThuc</strong></p>
+    <p>Vui lòng thử lại hoặc chọn phương thức khác.</p>
+</div>
+<a href="/DatPhong/Index" class="btn btn-warning">Quay lại đặt phòng</a>

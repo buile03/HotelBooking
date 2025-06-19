@@ -23,6 +23,13 @@ namespace DPKS.Common.Enum
         KHONGDEN = 5,
 
         [Description("Thất bại")]
-        THATBAI = 6
+        THATBAI = 6,
+
+        [Description("Chờ thanh toán")]
+        CHOTHANHTOAN = 7,
+
+        [Description("Đã thanh toán")]
+        DATHANHTOAN = 8
+
     }
 }

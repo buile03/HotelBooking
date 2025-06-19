@@ -1,9 +1,15 @@
-﻿using DPKS.Data.EF;
+﻿using DPKS.Common.Enum;
+using DPKS.Data.EF;
+using DPKS.Data.Entites;
 using DPKS.Model.DatPhong.Request;
 using DPKS.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe.Checkout;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -14,22 +20,41 @@ namespace DPKS.APP.Controllers
     {
         private readonly IDatPhongService _datPhongService;
         private readonly IPhongService _phongService;
+        private readonly IThanhToanService _thanhToanService;
         private readonly AppDbContext _context;
 
 
-        public DatPhongController(AppDbContext context,IDatPhongService datPhongService, IPhongService phongService)
+        public DatPhongController(AppDbContext context
+            , IDatPhongService datPhongService
+            , IPhongService phongService
+            , IThanhToanService thanhToanService)
         {
             _datPhongService = datPhongService;
             _context = context;
             _phongService = phongService;
+            _thanhToanService = thanhToanService;
         }
 
-        public IActionResult Create(int id)
+
+
+        public async Task<IActionResult> Create(int id)
         {
+            var phongrs = await _phongService.GetPhongById(id);
+            
+            if (phongrs == null)
+            {
+                return NotFound();
+            }
+
+            var phong = phongrs.ResultObj;
             var model = new DatPhongCreateRequest
             {
-                PhongId = id
+                PhongId = phong.PhongId,
+                Gia1Dem = phong.Gia 
             };
+
+            ViewBag.PhuongThucThanhToanList =  enHelper.GetSelectListPhuongThuc();
+
             return View(model);
         }
 
@@ -38,8 +63,11 @@ namespace DPKS.APP.Controllers
         public async Task<IActionResult> Create(DatPhongCreateRequest request)
         {
             if (!ModelState.IsValid)
-                View(request);
-            
+            {
+                ViewBag.PhuongThucThanhToanList = enHelper.GetSelectListPhuongThuc();
+                return View(request);
+            }
+
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
@@ -50,12 +78,46 @@ namespace DPKS.APP.Controllers
 
             try
             {
-                await _datPhongService.DatPhongAsync(request);
-                return RedirectToAction("Index");
+                var datPhongId = await _datPhongService.DatPhongAsync(request);
+
+                //Nếu thanh toán bằng tiền mặt thì xác nhận thành công
+                if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.TienMat)
+                {
+                    //await _thanhToanService.ThanhToanTienMat(datPhongId);
+                    return RedirectToAction("ChoThanhToan", "ThanhToan", new { id = datPhongId });
+                }
+                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.Stripe)
+                {
+                    // Gọi tới StripeCheckout action để xử lý
+                    return RedirectToAction("StripeCheckout", "ThanhToan", new { datPhongId = datPhongId });
+                }
+
+                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.PayPal)
+                {
+                    // Gọi tới StripeCheckout action để xử lý
+                    return RedirectToAction("PaypalCheckout", "ThanhToan", new { datPhongId = datPhongId });
+                }
+
+                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.Momo)
+                {
+                    // Gọi tới StripeCheckout action để xử lý
+                    return RedirectToAction("MoMoCheckout", "ThanhToan", new { datPhongId = datPhongId });
+                }
+                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.VNPay)
+                {
+                    // Gọi tới StripeCheckout action để xử lý
+                    return RedirectToAction("VnPayCheckout", "ThanhToan", new { datPhongId = datPhongId });
+                }
+
+                // Nếu là online: chuyển sang controller thanh toán
+                return RedirectToAction("ThanhToan", "ThanhToan", new { datPhongId = datPhongId });
+                
+
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
+                ViewBag.PhuongThucThanhToanLisst = enHelper.GetSelectListPhuongThuc();
                 return View(request);
             }
         }
@@ -85,6 +147,6 @@ namespace DPKS.APP.Controllers
             return View(datphong);
         }
 
-
+        
     }
 }

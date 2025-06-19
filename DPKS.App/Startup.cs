@@ -1,4 +1,6 @@
 ﻿using DPKS.App.Extensions;
+using DPKS.Common.Helper;
+using DPKS.Common.Helper.DPKS.Common.Helper;
 using DPKS.Common.System;
 using DPKS.Data.EF;
 using DPKS.Data.Entites;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Stripe;
 using System;
 using System.Configuration;
 
@@ -72,10 +75,16 @@ namespace DPKS.App
                 options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
 
+            // thanh toan stripe
+            StripeConfiguration.ApiKey = Configuration["Stripe:SecretKey"];
+
             services.AddInfrastructure();
             services.AddTransient(typeof(ILogger<>), (typeof(Logger<>)));
+            services.AddTransient<MoMoHelper>();
+            services.AddTransient<VnPayHelper>();
 
             services.AddHttpClient();
+            PayPalHelper.Configure(Configuration);
 
             services.AddHttpContextAccessor();
 
