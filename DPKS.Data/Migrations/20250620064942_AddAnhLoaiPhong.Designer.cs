@@ -4,6 +4,7 @@ using DPKS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DPKS.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250620064942_AddAnhLoaiPhong")]
+    partial class AddAnhLoaiPhong
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -499,14 +502,8 @@ namespace DPKS.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SoNguoiLonToiDa")
-                        .HasColumnType("int");
-
                     b.Property<string>("SoPhong")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("SoTreEmToiDa")
-                        .HasColumnType("int");
 
                     b.Property<int>("TrangThaiPhongId")
                         .HasColumnType("int");
@@ -907,7 +904,7 @@ namespace DPKS.Data.Migrations
             modelBuilder.Entity("DPKS.Data.Entites.AnhLoaiPhong", b =>
                 {
                     b.HasOne("DPKS.Data.Entites.LoaiPhong", "LoaiPhong")
-                        .WithMany("anhLoaiPhongs")
+                        .WithMany("HinhAnhPhu")
                         .HasForeignKey("LoaiPhongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1134,7 +1131,7 @@ namespace DPKS.Data.Migrations
 
             modelBuilder.Entity("DPKS.Data.Entites.LoaiPhong", b =>
                 {
-                    b.Navigation("anhLoaiPhongs");
+                    b.Navigation("HinhAnhPhu");
 
                     b.Navigation("phongs");
 

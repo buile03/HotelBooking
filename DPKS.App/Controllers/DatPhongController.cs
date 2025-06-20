@@ -36,7 +36,7 @@ namespace DPKS.APP.Controllers
         }
 
 
-
+        [Authorize]
         public async Task<IActionResult> Create(int id)
         {
             var phongrs = await _phongService.GetPhongById(id);
@@ -57,7 +57,7 @@ namespace DPKS.APP.Controllers
 
             return View(model);
         }
-
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DatPhongCreateRequest request)
@@ -117,7 +117,7 @@ namespace DPKS.APP.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                ViewBag.PhuongThucThanhToanLisst = enHelper.GetSelectListPhuongThuc();
+                ViewBag.PhuongThucThanhToanList = enHelper.GetSelectListPhuongThuc();
                 return View(request);
             }
         }

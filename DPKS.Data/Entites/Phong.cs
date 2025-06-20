@@ -14,6 +14,9 @@ namespace DPKS.Data.Entites
         public enLoaiView loaiView { get; set; }
         public bool IsActive { get; set; } = true;
 
+        public int SoNguoiLonToiDa { get; set; }
+        public int SoTreEmToiDa { get; set; }
+
         //navigation properties
         public LoaiPhong LoaiPhong { get; set; }
         public TrangThaiPhong TrangThaiPhong { get; set; }

@@ -19,5 +19,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DPKS.Service\DPKS.Service.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\loaiphong\" />
+  </ItemGroup>
 
 </Project>

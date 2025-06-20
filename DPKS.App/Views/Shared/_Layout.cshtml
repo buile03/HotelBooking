@@ -1,50 +1,4 @@
-﻿@* <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Hotel Booking</title>
-
-    <!-- CSS từ thư viện ngoài -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="~/css/style.css" />
-    <link rel="stylesheet" href="~/css/responsive-style.css" />
-    <link rel="icon" href="~/images/favicon.ico" />
-
-    @Html.Partial("_Styles")
-</head>
-<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="100">
-
-    @Html.Partial("_Header") <!-- Navbar -->
-    @Html.Partial("_PageTitle") <!-- Tiêu đề trang và breadcrumb -->
-
-    <main role="main">
-        @RenderBody() <!-- Nội dung trang con sẽ hiển thị ở đây -->
-    </main>
-
-    @Html.Partial("_Footer") <!-- Footer -->
-    <!-- JS: jQuery phải được load đầu tiên -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJ+Y5axDgbT+Y1rA5c5jzIdfRw3A76FpjvP4Y="
-            crossorigin="anonymous"></script>
-
-    <!-- Bootstrap và các thư viện khác -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <!-- Local JS -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/main.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
- *@
+﻿
 
 <!DOCTYPE html>
 <html lang="en">
@@ -52,8 +6,11 @@
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - Hotel Booking</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    
     <link rel="stylesheet" href="~/css/style.css" />
     <link rel="stylesheet" href="~/css/responsive-style.css" />
     <link rel="icon" href="~/images/favicon.ico" />

@@ -32,20 +32,13 @@
             </div>
 
             <div class="form-group mb-4">
-                <label>Phương thức thanh toán</label>
-                <div class="d-flex flex-column gap-2">
-                    ViewBag.PhuongThucThanhToanList = new List<SelectListItem>
-                        {
-                        new SelectListItem { Text = "Tiền mặt", Value = "1" },
-                        new SelectListItem { Text = "Stripe", Value = "2" },
-                        new SelectListItem { Text = "VNPay", Value = "3" },
-                        new SelectListItem { Text = "MoMo (Đang bảo trì)", Value = "4", Disabled = true },
-                        new SelectListItem { Text = "VNPay (Đang bảo trì)", Value = "5", Disabled = true }
-                        };
-                </div>
-                <span asp-validation-for="PhuongThucThanhToanId" class="text-danger"></span>
+                <label asp-for="PhuongThucThanhToanId" class="control-label">Phương thức thanh toán</label>
+                @Html.DropDownListFor(model => model.PhuongThucThanhToanId,
+                         (List<SelectListItem>)ViewBag.PhuongThucThanhToanList,
+                         "-- Chọn phương thức --",
+                         new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PhuongThucThanhToanId, "", new { @class = "text-danger" })
             </div>
-
             <button type="submit" class="btn btn-primary">Xác nhận đặt phòng</button>
         </form>
     </div>
@@ -55,7 +48,7 @@
         <div class="card border-secondary">
             <div class="card-header bg-light fw-bold">Thông tin đặt phòng</div>
             <div class="card-body">
-                <p><strong>Phòng ID:</strong> <span>@Model.</span></p>
+                <p><strong>Phòng ID:</strong> <span>@Model.PhongId</span></p>
                 <p><strong>Ngày nhận:</strong> <span id="displayNhanPhong">-</span></p>
                 <p><strong>Ngày trả:</strong> <span id="displayTraPhong">-</span></p>
                 <p><strong>Số khách:</strong> <span id="displaySoKhach">-</span></p>

@@ -42,7 +42,7 @@ namespace DPKS.APP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginVm model)
+        public async Task<IActionResult> Login(LoginVm model, string returnUrl = null)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -69,6 +69,11 @@ namespace DPKS.APP.Controllers
 
                 // Đăng nhập và tạo cookie
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
 
                 return RedirectToAction("Index", "Home");
             }

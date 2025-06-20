@@ -15,6 +15,10 @@ namespace DPKS.Model.TienNghi
         public string CreateBy { get; set; }
         public bool IsActive { get; set; } = true;
 
+
+
         public string Type { get; set; }
+
+        public string Icon { get; set; }
     }
 }

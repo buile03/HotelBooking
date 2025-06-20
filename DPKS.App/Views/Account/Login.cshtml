@@ -44,6 +44,8 @@
                         </div>
                     }
                     <form asp-action="Login" method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
                         <div class="mb-3">
                             <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
                             <input asp-for="UserName" class="form-control rounded-3" placeholder="Nhập tên đăng nhập" />
