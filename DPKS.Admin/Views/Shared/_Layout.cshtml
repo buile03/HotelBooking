@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <link rel="stylesheet" href="~/css/sb-admin-2.min.css">
+    <link rel="icon" href="~/images/favicon.ico" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar: chiếm 2 cột -->
+            <div class="col-md-3 col-lg-2 bg-light sidebar py-3">
+                @await Html.PartialAsync("_Sidebar")
+            </div>
+
+            <!-- Phần nội dung chính: chiếm 10 cột -->
+            <div class="col-md-9 col-lg-10 d-flex flex-column min-vh-100 py-3">
+                <!-- Header -->
+                @await Html.PartialAsync("_Header")
+
+                <!-- Nội dung chính chiếm hết không gian còn lại -->
+                <div class="flex-fill mt-3">
+                    @RenderBody()
+                </div>
+
+                <!-- Footer cố định phía dưới col này -->
+                <footer class="mt-auto">
+                    @await Html.PartialAsync("_Footer")
+                </footer>
+            </div>
+        </div>
+    </div>  
+
+
+
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

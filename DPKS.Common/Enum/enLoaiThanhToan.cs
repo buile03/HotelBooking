@@ -13,10 +13,10 @@ namespace DPKS.Common.Enum
         [Description("Thanh toán bằng Paypal")]
         PayPal = 3,
 
-        [Description("Thanh toán bằng Momo)")]
+        [Description("Thanh toán bằng Momo")]
         Momo = 4,
 
-        [Description("Thanh toán bằng VNPay)")]
+        [Description("Thanh toán bằng VNPay")]
         VNPay = 5
     }
 }

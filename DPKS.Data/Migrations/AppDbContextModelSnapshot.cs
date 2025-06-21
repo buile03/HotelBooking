@@ -173,6 +173,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("GioiTinh")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HoTen")
                         .HasColumnType("nvarchar(max)");
 
@@ -193,6 +196,9 @@ namespace DPKS.Data.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NgaySinh")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -273,6 +279,15 @@ namespace DPKS.Data.Migrations
                     b.Property<string>("CreateBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HoTen")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -295,6 +310,9 @@ namespace DPKS.Data.Migrations
 
                     b.Property<int>("PhongId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SDT")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SoDem")
                         .HasColumnType("int");
@@ -544,6 +562,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")

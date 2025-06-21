@@ -81,7 +81,8 @@ namespace DPKS.Service
                     AnhPhong = p.anhPhongs.Select(a => a.PhotoName).ToList(),
                     LoaiPhong = new List<string> { lp.Type }
                     // SoNguoiToiDa được tính tự động trong model
-                }).ToList()
+                }).ToList(),
+                DienTich = lp.DienTich
 
             }).ToList();
 

@@ -1,9 +1,12 @@
-﻿using DPKS.Data.Entites;
+﻿using DPKS.Common.Enum;
+using DPKS.Data.Entites;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +14,16 @@ namespace DPKS.Service
 {
     public interface IUserService
     {
+
+        //Admin
+        Task<IEnumerable<ApplicationUser>> GetAllUsers();
+        Task<bool> LockUser(int userId); //khóa tài khoản
+        Task<bool> UnlockUser(int userId); // mở tài khoản
+        Task<bool> ResetPasswordByAdmin(int userId, string newPassword);
+
+        // dùng chung 
         Task<IdentityResult> DangKy(ApplicationUser user, string password, string role);
+        Task<IdentityResult> DangKy(ApplicationUser user, string password); //phương thức này dùng cho tạo tài khoản khách hàng, gán mặc định role là user
         Task<SignInResult> DangNhap(string usernameOrEmail, string password, bool rememberMe);
         Task<bool> GuiMaXacNhanEmail(string email);
         Task<bool> XacNhanEmail(string userId, string confirmationCode);
@@ -27,6 +39,7 @@ namespace DPKS.Service
 
         Task<bool> CapNhatAnhDaiDien(int userId, string photoName);
         Task<string> LayAnhDaiDien(int userId);
+        Task<string> LuuAnhDaiDien(IFormFile avatarFile, int userId);
     }
 
     public class UserService : IUserService
@@ -50,15 +63,62 @@ namespace DPKS.Service
             _danhmucService = danhmucService;
         }
 
+        #region Admin
+        // Lấy tất cả user
+        public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
+        {
+            return await _userManager.Users.ToListAsync();
+        }
+        // khoa user
+        public async Task<bool> LockUser (int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+
+            user.LockoutEnd = DateTimeOffset.MaxValue; //khoa vo thoi han
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        //mở khóa user
+        public async Task<bool> UnlockUser (int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+
+            user.LockoutEnd = null;
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> ResetPasswordByAdmin (int userId, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            return result.Succeeded;
+        }
+
+        #endregion
+
         #region Đăng ký & Đăng nhập
 
+        // Hàm gốc vẫn giữ nếu cần sử dụng cho admin
         public async Task<IdentityResult> DangKy(ApplicationUser user, string password, string role)
         {
             user.CreatedAt = DateTime.UtcNow;
-            user.IsActive = true; 
+            user.IsActive = true;
 
-            // user.EmailConfirmationCode = GenerateRandomCode();
-            // user.ConfirmationCodeExpiry = DateTime.UtcNow.AddHours(24);
+            if (role == enRoles.ADMIN.ToString())
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Description = "Không thể tự đăng ký quyền Admin."
+                });
+            }
 
             var result = await _userManager.CreateAsync(user, password);
 
@@ -67,6 +127,13 @@ namespace DPKS.Service
 
             return result;
         }
+
+        // mặc định role là USER
+        public Task<IdentityResult> DangKy(ApplicationUser user, string password)
+        {
+            return DangKy(user, password, enRoles.USER.ToString());
+        }
+
 
         public async Task<SignInResult> DangNhap(string usernameOrEmail, string password, bool rememberMe)
         {
@@ -159,6 +226,33 @@ namespace DPKS.Service
             var user = await _userManager.FindByIdAsync(userId.ToString());
             return user?.PhotoName;
         }
+
+        public async Task<string> LuuAnhDaiDien(IFormFile avatarFile, int userId)
+        {
+            if (avatarFile == null || avatarFile.Length == 0)
+                return null;
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "user");
+
+            // Tạo thư mục nếu chưa có
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            // Tạo tên file duy nhất (vd: user_12345_timestamp.png)
+            var fileExtension = Path.GetExtension(avatarFile.FileName);
+            var fileName = $"user_{userId}_{DateTime.UtcNow.Ticks}{fileExtension}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await avatarFile.CopyToAsync(stream);
+            }
+
+            return fileName;
+        }
+
 
         #endregion
 

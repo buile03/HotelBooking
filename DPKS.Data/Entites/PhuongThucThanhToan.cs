@@ -8,6 +8,7 @@ namespace DPKS.Data.Entites
         public int Id { get; set; }
         public enLoaiThanhToan loaiThanhToan { get; set; }
 
+        public string Icon { get; set; }
         //navigation properties
         public ICollection<ThanhToan> thanhToans { get; set; } = new List<ThanhToan>();
     }

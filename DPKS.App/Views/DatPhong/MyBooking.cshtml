@@ -1,0 +1,42 @@
+﻿@model IEnumerable<DPKS.Data.Entites.DatPhong>
+
+@{
+    ViewData["Title"] = "Đặt phòng của tôi";
+}
+
+<h2>Lịch sử đặt phòng</h2>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Phòng</th>
+            <th>Ngày nhận</th>
+            <th>Ngày trả</th>
+            <th>Số đêm</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Phong?.SoPhong</td>
+                <td>@item.NgayNhanPhong.ToString("dd/MM/yyyy")</td>
+                <td>@item.NgayTraPhong.ToString("dd/MM/yyyy")</td>
+                <td>@item.SoDem</td>
+                <td>@item.TongTien.ToString("N0") đ</td>
+                <td>@((DPKS.Common.Enum.enTrangThaiDatPhong)item.TrangThaiDatPhongId)</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                    @if (item.TrangThaiDatPhongId == (int)DPKS.Common.Enum.enTrangThaiDatPhong.CHOXACNHAN)
+                    {
+                        <a asp-action="Cancel" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn hủy đặt phòng này?')">Hủy</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

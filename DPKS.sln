@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DPKS.Service", "DPKS.Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DPKS.APP", "DPKS.APP\DPKS.APP.csproj", "{C4E1BF11-7650-4649-B011-E7C02D1B060E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DPKS.Admin", "DPKS.Admin\DPKS.Admin.csproj", "{428C5188-8693-48C2-990D-E9A119073346}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,8 +85,23 @@ Global
 		{C4E1BF11-7650-4649-B011-E7C02D1B060E}.Release|x64.Build.0 = Release|Any CPU
 		{C4E1BF11-7650-4649-B011-E7C02D1B060E}.Release|x86.ActiveCfg = Release|Any CPU
 		{C4E1BF11-7650-4649-B011-E7C02D1B060E}.Release|x86.Build.0 = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|x64.Build.0 = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Debug|x86.Build.0 = Debug|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|x64.ActiveCfg = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|x64.Build.0 = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|x86.ActiveCfg = Release|Any CPU
+		{428C5188-8693-48C2-990D-E9A119073346}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D36BE23D-B6D7-42C0-AF84-84B246F4B407}
 	EndGlobalSection
 EndGlobal

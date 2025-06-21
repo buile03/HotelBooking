@@ -26,20 +26,9 @@ public static class enHelper
 
         return value.ToString(); // fallback
     }
-    public static List<SelectListItem> GetSelectListPhuongThuc()
+
+    public static string ToRoleName(this enRoles role)
     {
-        return Enum.GetValues(typeof(enLoaiThanhToan))
-            .Cast<enLoaiThanhToan>()
-            .Select(e => new SelectListItem
-            {
-                Value = ((int)e).ToString(),
-                Text = GetEnumDescription(e)
-            }).ToList();
-    }
-    private static string GetEnumDescription(Enum value)
-    {
-        var field = value.GetType().GetField(value.ToString());
-        var attr = field.GetCustomAttribute<DescriptionAttribute>();
-        return attr?.Description ?? value.ToString();
+        return role.ToString().ToUpper(); // hoặc viết thường nếu cần
     }
 }

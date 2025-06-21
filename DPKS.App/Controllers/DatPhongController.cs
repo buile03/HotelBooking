@@ -35,91 +35,72 @@ namespace DPKS.APP.Controllers
             _thanhToanService = thanhToanService;
         }
 
-
-        [Authorize]
+        // GET: /DatPhong/Create/{id}
         public async Task<IActionResult> Create(int id)
         {
             var phongrs = await _phongService.GetPhongById(id);
-            
-            if (phongrs == null)
-            {
+            if (phongrs == null || phongrs.ResultObj == null)
                 return NotFound();
-            }
 
             var phong = phongrs.ResultObj;
             var model = new DatPhongCreateRequest
             {
                 PhongId = phong.PhongId,
-                Gia1Dem = phong.Gia 
+                Gia1Dem = phong.Gia
             };
 
-            ViewBag.PhuongThucThanhToanList =  enHelper.GetSelectListPhuongThuc();
-
+            ViewBag.PhuongThucThanhToanList = await _thanhToanService.GetAll();
             return View(model);
         }
-        [Authorize]
+
+        // POST: /DatPhong/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DatPhongCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.PhuongThucThanhToanList = enHelper.GetSelectListPhuongThuc();
+                ViewBag.PhuongThucThanhToanList = await _thanhToanService.GetAll();
                 return View(request);
             }
 
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
-            {
-                // Gửi người dùng về trang login nếu chưa đăng nhập
                 return RedirectToAction("Login", "Account");
-            }
+
             request.UserId = int.Parse(userIdClaim.Value);
 
             try
             {
                 var datPhongId = await _datPhongService.DatPhongAsync(request);
 
-                //Nếu thanh toán bằng tiền mặt thì xác nhận thành công
-                if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.TienMat)
+                return request.PhuongThucThanhToanId switch
                 {
-                    //await _thanhToanService.ThanhToanTienMat(datPhongId);
-                    return RedirectToAction("ChoThanhToan", "ThanhToan", new { id = datPhongId });
-                }
-                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.Stripe)
-                {
-                    // Gọi tới StripeCheckout action để xử lý
-                    return RedirectToAction("StripeCheckout", "ThanhToan", new { datPhongId = datPhongId });
-                }
-
-                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.PayPal)
-                {
-                    // Gọi tới StripeCheckout action để xử lý
-                    return RedirectToAction("PaypalCheckout", "ThanhToan", new { datPhongId = datPhongId });
-                }
-
-                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.Momo)
-                {
-                    // Gọi tới StripeCheckout action để xử lý
-                    return RedirectToAction("MoMoCheckout", "ThanhToan", new { datPhongId = datPhongId });
-                }
-                else if (request.PhuongThucThanhToanId == (int)enLoaiThanhToan.VNPay)
-                {
-                    // Gọi tới StripeCheckout action để xử lý
-                    return RedirectToAction("VnPayCheckout", "ThanhToan", new { datPhongId = datPhongId });
-                }
-
-                // Nếu là online: chuyển sang controller thanh toán
-                return RedirectToAction("ThanhToan", "ThanhToan", new { datPhongId = datPhongId });
-                
-
+                    (int)enLoaiThanhToan.TienMat => RedirectToAction("ChoThanhToan", "ThanhToan", new { id = datPhongId }),
+                    (int)enLoaiThanhToan.Stripe => RedirectToAction("StripeCheckout", "ThanhToan", new { datPhongId }),
+                    (int)enLoaiThanhToan.PayPal => RedirectToAction("PaypalCheckout", "ThanhToan", new { datPhongId }),
+                    (int)enLoaiThanhToan.Momo => RedirectToAction("MoMoCheckout", "ThanhToan", new { datPhongId }),
+                    (int)enLoaiThanhToan.VNPay => RedirectToAction("VnPayCheckout", "ThanhToan", new { datPhongId }),
+                    _ => RedirectToAction("ThanhToan", "ThanhToan", new { datPhongId })
+                };
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                ViewBag.PhuongThucThanhToanList = enHelper.GetSelectListPhuongThuc();
+                ViewBag.PhuongThucThanhToanList = await _thanhToanService.GetAll();
                 return View(request);
             }
+        }
+
+        // POST: /DatPhong/CapNhatTrangThai
+        [HttpPost]
+        public async Task<IActionResult> CapNhatTrangThai(int id, enTrangThaiDatPhong trangThaiMoi)
+        {
+            var result = await _datPhongService.CapNhatTrangThaiDatPhongAsync(id, trangThaiMoi);
+            if (!result)
+                return BadRequest("Không thể cập nhật trạng thái.");
+
+            return RedirectToAction("ChiTiet", new { id });
         }
 
         public async Task<IActionResult> Index()

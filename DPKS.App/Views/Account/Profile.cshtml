@@ -1,66 +1,162 @@
 ﻿@model DPKS.Model.User.UpdateProfileVm
+
 @{
     ViewData["Title"] = "Thông tin cá nhân";
+    ViewData["PageTitle"] = "Thông tin cá nhân";
+    var avatar = string.IsNullOrEmpty(Model.PhotoName) ? "user.png" : Model.PhotoName;
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4">Cập nhật thông tin cá nhân</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow rounded-4 text-center p-4">
+                <!-- Avatar -->
+                <div class="mb-4 text-center">
+                    <label for="avatarInput" style="cursor: pointer;">
+                        <img src="~/images/user/@avatar" alt="Ảnh đại diện"
+                             class="rounded-circle shadow border border-light mx-auto d-block"
+                             style="width: 120px; height: 120px; object-fit: cover;" id="avatarPreview" />
+                    </label>
 
-    @if (ViewBag.Message != null)
-    {
-        <div class="alert alert-success">@ViewBag.Message</div>
-    }
+                    <!-- Input file ẩn -->
+                    <input type="file" name="avatarFile" class="form-control d-none" id="avatarInput" />
 
-    <form asp-action="Profile" method="post" enctype="multipart/form-data">
-        @Html.HiddenFor(m => m.UserId)
+                    <!-- Nút đổi ảnh -->
+                    <a href="javascript:void(0)" id="changeAvatarBtn"
+                       class="text-primary d-block mt-2 small fw-semibold">Thay đổi ảnh đại diện</a>
+                </div>
 
-        <div class="mb-3">
-            <label asp-for="UserName" class="form-label"></label>
-            <input asp-for="UserName" class="form-control" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success">@ViewBag.Message</div>
+                }
+
+                <form asp-action="Profile" method="post" enctype="multipart/form-data" id="profileForm">
+                    @Html.HiddenFor(m => m.UserId)
+
+                    <!-- Xem thông tin -->
+                    <div id="viewMode">
+                        <div class="text-start mb-3">
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Họ và tên</div>
+                                <div class="col-7 fw-semibold">@Model.FullName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Số điện thoại</div>
+                                <div class="col-7 fw-semibold">@Model.UserName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Giới tính</div>
+                                <div class="col-7 fw-semibold">@Model.GioiTinh</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Ngày sinh</div>
+                                <div class="col-7 fw-semibold">@Model.NgaySinh?.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Email</div>
+                                <div class="col-7 fw-semibold">@Model.Email</div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-danger" id="editToggle">Chỉnh sửa thông tin</button>
+                    </div>
+
+                    <!-- Chỉnh sửa -->
+                    <div id="editMode" class="d-none text-start">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+                                <input asp-for="UserName" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FullName" class="form-label">Họ và tên</label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GioiTinh" class="form-label">Giới tính</label>
+                                <select asp-for="GioiTinh" class="form-select">
+                                    <option value="">-- Chọn --</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                                <span asp-validation-for="GioiTinh" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="NgaySinh" class="form-label">Ngày sinh</label>
+                                <input asp-for="NgaySinh" class="form-control" type="date" />
+                                <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="QuocGiaId" class="form-label">Quốc gia</label>
+                                <select asp-for="QuocGiaId" class="form-select" asp-items="@(ViewBag.QuocGiaList)"></select>
+                                <span asp-validation-for="QuocGiaId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TinhId" class="form-label">Tỉnh/Thành phố</label>
+                                <select asp-for="TinhId" class="form-select" asp-items="@(ViewBag.TinhList)"></select>
+                                <span asp-validation-for="TinhId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" readonly />
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" id="cancelEdit">Huỷ</button>
+                            <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label asp-for="FullName" class="form-label"></label>
-            <input asp-for="FullName" class="form-control" />
-            <span asp-validation-for="FullName" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" readonly />
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="QuocGiaId" class="form-label">Quốc gia</label>
-            <select asp-for="QuocGiaId" class="form-select"
-                    asp-items="@(ViewBag.QuocGiaList != null ? new SelectList(ViewBag.QuocGiaList, "Value", "Text") : new List<SelectListItem>())">
-            </select>
-            <span asp-validation-for="QuocGiaId" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="TinhId" class="form-label">Tỉnh/Thành phố</label>
-            <select asp-for="TinhId" class="form-select"
-                    asp-items="@(ViewBag.TinhList != null ? new SelectList(ViewBag.TinhList, "Value", "Text") : new List<SelectListItem>())">
-            </select>
-
-            <span asp-validation-for="TinhId" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Ảnh đại diện</label><br />
-            @if (!string.IsNullOrEmpty(Model.PhotoName))
-            {
-                <img src="~/images/Users/@Model.PhotoName" alt="Avatar" class="img-thumbnail mb-2" style="max-height: 150px;" />
-            }
-            <input type="file" name="avatarFile" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-    </form>
+    </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const viewMode = document.getElementById("viewMode");
+        const editMode = document.getElementById("editMode");
+        const avatarInput = document.getElementById("avatarInput");
+        const avatarPreview = document.getElementById("avatarPreview");
+        const changeAvatarBtn = document.getElementById("changeAvatarBtn");
+
+        document.getElementById("editToggle").addEventListener("click", function () {
+            viewMode.classList.add("d-none");
+            editMode.classList.remove("d-none");
+            changeAvatarBtn.classList.remove("d-none");
+        });
+
+        document.getElementById("cancelEdit").addEventListener("click", function () {
+            editMode.classList.add("d-none");
+            viewMode.classList.remove("d-none");
+            changeAvatarBtn.classList.add("d-none");
+        });
+
+        changeAvatarBtn.addEventListener("click", function () {
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 }

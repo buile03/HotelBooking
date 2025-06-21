@@ -14,7 +14,11 @@ namespace DPKS.Model.User
 
         [Required]
         public string UserName { get; set; }
-
+        [Required(ErrorMessage = "Vui lòng chọn giới tính")]
+        [RegularExpression("Nam|Nữ", ErrorMessage = "Giới tính không hợp lệ")]
+        public string GioiTinh { get; set; }
+        [Required]
+        public DateTime? NgaySinh { get; set; }
         [Required]
         public string FullName { get; set; }
 

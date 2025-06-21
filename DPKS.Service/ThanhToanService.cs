@@ -2,6 +2,7 @@
 using DPKS.Data.Config;
 using DPKS.Data.EF;
 using DPKS.Data.Entites;
+using DPKS.Model.PhuongThucThanhToan;
 using DPKS.Model.ThanhToan;
 using DPKS.Model.ThanhToan.Request;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace DPKS.Service
         Task ThanhToanPaypal(int datPhongId);
         Task ThanhToanMoMo(int datPhongId);
         Task ThanhToanVnPay(int datPhongId);
+
+        Task<List<PhuongThucThanhToanVm>> GetAll();
     }
 
     public class ThanhToanService : BaseService, IThanhToanService
@@ -193,6 +196,20 @@ namespace DPKS.Service
             datPhong.TrangThaiDatPhongId = (int)enTrangThaiDatPhong.DATHANHTOAN;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<PhuongThucThanhToanVm>> GetAll()
+        {
+            return await _context.PhuongThucThanhToans
+                .Where(p => p.IsActive) // nếu có
+                .Select(p => new PhuongThucThanhToanVm
+                {
+                    Id = p.Id,
+                    Ten = enHelper.GetDescription(p.loaiThanhToan),
+                    Icon = "/images/pttt/" + p.Icon + ".png"
+                })
+                .ToListAsync();
+        }
+
 
     }
 }

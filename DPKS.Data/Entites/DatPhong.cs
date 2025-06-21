@@ -12,6 +12,12 @@ namespace DPKS.Data.Entites
         public DateTime NgayNhanPhong { get; set; }
         public DateTime NgayTraPhong {  get; set; }
 
+
+        //Thông tin người đặt
+        public string HoTen { get; set; }
+        public string SDT { get; set; }
+        public string Email { get; set; }
+        public string GhiChu { get; set; }        
         //Tối đa 4 khách
         public int SoLuongKhach {  get; set; }
         //Tối đa 31

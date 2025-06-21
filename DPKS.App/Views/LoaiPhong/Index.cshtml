@@ -6,236 +6,473 @@
     ViewData["PageTitle"] = "Danh sách loại phòng";
 }
 
-<div class="container">
-    <div class="accordion" id="accordionLoaiPhong">
-        @foreach (var item in Model)
-        {
-            var modalId = $"modalTienNghi_{item.Id}";
-            var collapseId = $"phongCollapse_{item.Id}";
-            var headingId = $"heading_{item.Id}";
-            var carouselId = $"carouselLoaiPhong_{item.Id}";
+<div class="container-fluid position-relative">
+    <div class="row">
+        <!-- phần bên phải -->
+       <div class="col-md-9">
+            <div class="accordion" id="accordionLoaiPhong">
+                @foreach (var item in Model)
+                {
+                    var modalId = $"modalTienNghi_{item.Id}";
+                    var collapseId = $"phongCollapse_{item.Id}";
+                    var headingId = $"heading_{item.Id}";
+                    var carouselId = $"carouselLoaiPhong_{item.Id}";
 
-            <!-- Card loại phòng -->
-            <div class="card pb-4 pt-4 shadow-sm border-0 mb-3">
-                <div class="row g-0">
-                    <!-- Ảnh loại phòng -->
-                    <div class="col-md-4 position-relative">
-                        <div id="@carouselId" class="carousel slide h-100" >
-                            <div class="carousel-inner h-100">
-                                @for (int i = 0; i < item.DanhSachHinhAnh.Count; i++)
-                                {
-                                    var active = i == 0 ? "active" : "";
-                                    <div class="carousel-item @active h-100">
-                                        <img src="@Url.Content($"~/images/loaiphong/{item.DanhSachHinhAnh[i]}")"
-                                             class="img-fluid rounded-start h-100 object-fit-cover"
-                                             onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
-                                    </div>
-                                }
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Nội dung -->
-                    <div class="col-md-8">
-                        <div class="card-body px-3 py-2">
-                            <h5 class="card-title fw-bold mb-2 fs-4">@item.Type</h5>
-                            <p class="text-muted mb-3 small">@item.Description</p>
-
-                            <div class="mb-3 lh-lg">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
-                                    </div>
-                                </div>
-                                <div class="mt-1">
-                                    <strong>Số phòng:</strong> @item.SoLuongPhong (Trống: @item.SoLuongPhongTrong)
-                                </div>
-                            </div>
-
-                            <!-- Tiện nghi -->
-                            <div class="mb-3">
-                                <strong>Tiện nghi:</strong>
-                                <div class="d-inline">
-                                    @foreach (var tienNghi in item.TienNghis.Take(3))
-                                    {
-                                        <span class="badge bg-light text-dark me-1 mb-1 d-inline-flex align-items-center">
-                                            <i class="@tienNghi.Icon me-1"></i> @tienNghi.Name
-                                        </span>
-                                    }
-                                    @if (item.TienNghis.Count > 3)
-                                    {
-                                        <a href="#" class="ms-2 text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#@modalId">Xem thêm</a>
-                                    }
-                                </div>
-                            </div>
-
-                            <!-- Giá và nút -->
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div>
-                                    <strong>Giá chỉ từ:</strong><br />
-                                    <div class="mt-2 text-danger fw-bold fs-5">
-                                        @item.GiaThapNhat.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-warning text-white px-4 shadow-sm"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#@collapseId"
-                                        aria-expanded="false"
-                                        aria-controls="@collapseId">
-                                    Xem phòng
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Collapse danh sách phòng -->
-            <div id="@collapseId" class="accordion-collapse collapse mb-4" aria-labelledby="@headingId" data-bs-parent="#accordionLoaiPhong">
-                <div class="card card-body border shadow-sm">
-                    <h6 class="fw-bold mb-3">Danh sách phòng:</h6>
-                    @if (item.ThongTinPhongs != null && item.ThongTinPhongs.Any())
-                    {
-                        @foreach (var phong in item.ThongTinPhongs)
-                        {
-                            var carouselPhongId = $"carouselPhong_{phong.PhongId}";
-                            <div class="card mb-5 shadow-sm border-0">
-                                <div class="row g-0">
-                                    <!-- Ảnh phòng -->
-                                    <div class="col-md-4 position-relative">
-                                        <div id="@carouselPhongId" class="carousel slide w-100" style="height: 180px;" data-bs-ride="false">
-                                            <div class="carousel-inner w-100 h-100">
-                                                @for (int i = 0; i < phong.AnhPhong.Count; i++)
-                                                {
-                                                    var img = phong.AnhPhong[i];
-                                                    var active = i == 0 ? "active" : "";
-                                                    <div class="carousel-item @active w-100 h-100">
-                                                        <img src="@Url.Content($"~/images/room/{img}")"
-                                                             class="d-block w-100 h-100 rounded-start"
-                                                             style="object-fit: cover;"
-                                                             alt="Ảnh phòng"
-                                                             onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
-                                                    </div>
-                                                }
+                    <!-- Card loại phòng -->
+                    <div class="card pb-4 pt-4 shadow-sm border-0 mb-3">
+                        <div class="row g-0">
+                            <!-- Ảnh loại phòng -->
+                            <div class="col-md-4 position-relative">
+                                <div id="@carouselId" class="carousel slide h-100">
+                                    <div class="carousel-inner h-100">
+                                        @for (int i = 0; i < item.DanhSachHinhAnh.Count; i++)
+                                        {
+                                            var active = i == 0 ? "active" : "";
+                                            <div class="carousel-item @active h-100">
+                                                <img src="@Url.Content($"~/images/loaiphong/{item.DanhSachHinhAnh[i]}")"
+                                                     class="img-fluid rounded-start h-100 object-fit-cover"
+                                                     onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
                                             </div>
-                                            <button class="carousel-control-prev" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon"></span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="next">
-                                                <span class="carousel-control-next-icon"></span>
-                                            </button>
+                                        }
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Nội dung -->
+                            <div class="col-md-8">
+                                <div class="card-body px-3 py-2">
+                                    <h5 class="card-title fw-bold mb-2 fs-4">@item.Type</h5>
+                                    <p class="text-muted mb-3 small">@item.Description</p>
+
+                                    <div class="mb-3 lh-lg">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
+                                            </div>
+                                        </div>
+                                        <div class="mt-1">
+                                            <strong>Số phòng:</strong> @item.SoLuongPhong (Trống: @item.SoLuongPhongTrong)
                                         </div>
                                     </div>
 
-                                    <!-- Thông tin phòng -->
-                                    <div class="col-md-8">
-                                        <div class="card-body px-3 py-2">
-                                            <h6 class="fw-bold mb-2">Phòng @phong.SoPhong</h6>
-
-                                            <div class="mb-2 text-danger fw-bold">
-                                                Giá: @phong.Gia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-sm-4">
-                                                    <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
-                                                </div>
-                                                <div class="col-sm-8">
-                                                    <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
-                                                </div>
-                                            </div>
-                                            <strong>Tiện nghi: </strong>
+                                    <!-- Tiện nghi -->
+                                    <div class="mb-3">
+                                        <strong>Tiện nghi:</strong>
+                                        <div class="d-inline">
                                             @foreach (var tienNghi in item.TienNghis.Take(3))
                                             {
                                                 <span class="badge bg-light text-dark me-1 mb-1 d-inline-flex align-items-center">
                                                     <i class="@tienNghi.Icon me-1"></i> @tienNghi.Name
                                                 </span>
                                             }
-                                            <div class="d-flex justify-content-between align-items-end">
-                                                <div class="mb-1">
-                                                    <strong>Sức chứa:</strong> @phong.SoNguoiLonToiDa người lớn
-                                                    @if (phong.SoTreEmToiDa > 0)
-                                                    {
-                                                        <span> + @phong.SoTreEmToiDa trẻ em</span>
-                                                    }
-                                                </div>
-                                                <div class="mt-2">
-                                                    <a href="~/Phong/Detail/@phong.PhongId"
-                                                       class="btn btn-sm btn-info text-white me-2"
-                                                       type="button">
-                                                        Chi tiết
-                                                    </a>
-                                                    <a href="~/DatPhong/Create/@phong.PhongId"
-                                                       class="btn btn-sm btn-success"
-                                                       type="button">
-                                                        Đặt phòng
-                                                    </a>
-                                                </div>
-                                            </div>
+                                            @if (item.TienNghis.Count > 3)
+                                            {
+                                                <a href="#" class="ms-2 text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#@modalId">Xem thêm</a>
+                                            }
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        }
 
-                    }
-                    else
-                    {
-                        <p class="text-muted">Không có phòng nào thuộc loại này.</p>
-                    }
-                </div>
-            </div>
-
-            <!-- Modal tiện nghi -->
-            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@modalId-Label" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content border-0">
-                        <div class="modal-body p-0">
-                            <div class="row g-0">
-                                <div class="col-md-5">
-                                    <img src="@Url.Content($"~/images/loaiphong/{item.HinhAnhChinh}")"
-                                         class="img-fluid w-100 h-100 object-fit-cover"
-                                         alt="Ảnh loại phòng"
-                                         style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;" />
-                                </div>
-                                <div class="col-md-7 p-4">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <!-- Giá và nút -->
+                                    <div class="d-flex justify-content-between align-items-end">
                                         <div>
-                                            <h5 class="fw-bold">@item.Type</h5>
-                                            <p class="text-muted mb-1">@item.DienTich m²</p>
-                                        </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                                    </div>
-
-                                    <p>@item.Description</p>
-                                    <hr />
-                                    <h6 class="fw-bold mb-3">Tiện ích trong phòng:</h6>
-                                    <div class="row row-cols-2 g-3">
-                                        @foreach (var tienNghi in item.TienNghis)
-                                        {
-                                            <div class="col d-flex align-items-center">
-                                                <i class="@tienNghi.Icon me-2 text-primary fs-5"></i>
-                                                <span>@tienNghi.Name</span>
+                                            <strong>Giá chỉ từ:</strong><br />
+                                            <div class="mt-2 text-danger fw-bold fs-5">
+                                                @item.GiaThapNhat.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
                                             </div>
-                                        }
+                                        </div>
+
+                                        <button class="btn btn-warning text-white px-4 shadow-sm"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false"
+                                                aria-controls="@collapseId">
+                                            Xem phòng
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Collapse danh sách phòng -->
+                    <div id="@collapseId" class="accordion-collapse collapse mb-4" aria-labelledby="@headingId" data-bs-parent="#accordionLoaiPhong">
+                        <div class="card card-body border shadow-sm">
+                            <h6 class="fw-bold mb-3">Danh sách phòng:</h6>
+
+                            @if (item.ThongTinPhongs != null && item.ThongTinPhongs.Any())
+                            {
+                                @foreach (var phong in item.ThongTinPhongs)
+                                {
+                                    var carouselPhongId = $"carouselPhong_{phong.PhongId}";
+
+                                    <div class="card mb-5 shadow-sm border-0">
+                                        <div class="row g-0">
+
+                                            <!-- Ảnh phòng -->
+                                            <div class="col-md-4 position-relative">
+                                                <div id="@carouselPhongId" class="carousel slide w-100" style="height: 180px;" data-bs-ride="false">
+                                                    <div class="carousel-inner w-100 h-100">
+                                                        @for (int i = 0; i < phong.AnhPhong.Count; i++)
+                                                        {
+                                                            var img = phong.AnhPhong[i];
+                                                            var active = i == 0 ? "active" : "";
+
+                                                            <div class="carousel-item @active w-100 h-100">
+                                                                <img src="@Url.Content($"~/images/room/{img}")"
+                                                                     class="d-block w-100 h-100 rounded-start"
+                                                                     style="object-fit: cover;"
+                                                                     alt="Ảnh phòng"
+                                                                     onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
+                                                            </div>
+                                                        }
+                                                    </div>
+
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon"></span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Thông tin phòng -->
+                                            <div class="col-md-8">
+                                                <div class="card-body px-3 py-2">
+                                                    <h6 class="fw-bold mb-2">Phòng @phong.SoPhong</h6>
+
+                                                    <div class="mb-2 text-danger fw-bold">
+                                                        Giá: @phong.Gia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
+                                                    </div>
+
+                                                    <div class="row mb-2">
+                                                        <div class="col-sm-4">
+                                                            <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
+                                                        </div>
+                                                        <div class="col-sm-8">
+                                                            <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
+                                                        </div>
+                                                    </div>
+
+                                                    <strong>Tiện nghi:</strong>
+                                                    @foreach (var tienNghi in item.TienNghis.Take(3))
+                                                    {
+                                                        <span class="badge bg-light text-dark me-1 mb-1 d-inline-flex align-items-center">
+                                                            <i class="@tienNghi.Icon me-1"></i> @tienNghi.Name
+                                                        </span>
+                                                    }
+
+                                                    <div class="d-flex justify-content-between align-items-end mt-2">
+                                                        <div>
+                                                            <strong>Sức chứa:</strong> @phong.SoNguoiLonToiDa người lớn
+                                                            @if (phong.SoTreEmToiDa > 0)
+                                                            {
+                                                                <span> + @phong.SoTreEmToiDa trẻ em</span>
+                                                            }
+                                                        </div>
+
+                                                        <div>
+                                                            <a href="~/Phong/Detail/@phong.PhongId" class="btn btn-sm btn-info text-white me-2">Chi tiết</a>
+
+                                                            <button class="btn btn-sm btn-success toggle-booking-form"
+                                                                    type="button"
+                                                                    data-phong-id="@phong.PhongId"
+                                                                    data-room-type="@item.Type"
+                                                                    data-room-number="@phong.SoPhong"
+                                                                    data-room-price="@phong.Gia"
+                                                                    data-max-adults="@phong.SoNguoiLonToiDa"
+                                                                    data-max-children="@phong.SoTreEmToiDa">
+                                                                Đặt phòng
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Form đặt phòng -->
+                                            <div class="booking-form-container mt-3" style="display: none;" data-phong-id="@phong.PhongId">
+                                                <div class="card border-0 shadow-sm">
+                                                    <div class="card-body">
+                                                        <h6 class="fw-bold mb-3">Thông tin đặt phòng: Phòng @phong.SoPhong</h6>
+
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Ngày nhận phòng</label>
+                                                                <input type="date" class="form-control check-in-date" data-phong-id="@phong.PhongId" required>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Ngày trả phòng</label>
+                                                                <input type="date" class="form-control check-out-date" data-phong-id="@phong.PhongId" required>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label class="form-label">Người lớn</label>
+                                                                <select class="form-select adult-count" data-phong-id="@phong.PhongId">
+                                                                    @for (int i = 1; i <= phong.SoNguoiLonToiDa; i++)
+                                                                    {
+                                                                        <option value="@i">@i</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label class="form-label">Trẻ em</label>
+                                                                <select class="form-select child-count" data-phong-id="@phong.PhongId">
+                                                                    @for (int i = 0; i <= phong.SoTreEmToiDa; i++)
+                                                                    {
+                                                                        <option value="@i">@i</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="alert alert-info">
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Số đêm:</span>
+                                                                <span class="nights-count" data-phong-id="@phong.PhongId">0</span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Giá phòng:</span>
+                                                                <span class="room-price" data-phong-id="@phong.PhongId">
+                                                                    @phong.Gia.ToString("N0") VNĐ/đêm
+                                                                </span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between fw-bold">
+                                                                <span>Tổng cộng:</span>
+                                                                <span class="total-price" data-phong-id="@phong.PhongId">0 VNĐ</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-end">
+                                                            <button class="btn btn-outline-secondary me-2 cancel-booking" type="button" data-phong-id="@phong.PhongId">
+                                                                Hủy
+                                                            </button>
+                                                            <button class="btn btn-primary proceed-to-payment" type="button" data-phong-id="@phong.PhongId">
+                                                                Đặt ngay
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">Không có phòng nào thuộc loại này.</p>
+                            }
+                        </div>
+                    </div>
+
+
+                    <!-- Modal tiện nghi -->
+                    <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@modalId-Label" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0">
+                                <div class="modal-body p-0">
+                                    <div class="row g-0">
+                                        <div class="col-md-5">
+                                            <img src="@Url.Content($"~/images/loaiphong/{item.HinhAnhChinh}")"
+                                                 class="img-fluid w-100 h-100 object-fit-cover"
+                                                 alt="Ảnh loại phòng"
+                                                 style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;" />
+                                        </div>
+                                        <div class="col-md-7 p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div>
+                                                    <h5 class="fw-bold">@item.Type</h5>
+                                                    <p class="text-muted mb-1">@item.DienTich m²</p>
+                                                </div>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                            </div>
+
+                                            <p>@item.Description</p>
+                                            <hr />
+                                            <h6 class="fw-bold mb-3">Tiện ích trong phòng:</h6>
+                                            <div class="row row-cols-2 g-3">
+                                                @foreach (var tienNghi in item.TienNghis)
+                                                {
+                                                    <div class="col d-flex align-items-center">
+                                                        <i class="@tienNghi.Icon me-2 text-primary fs-5"></i>
+                                                        <span>@tienNghi.Name</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+
+            </div>
+            
+       </div>
+
+        <!-- Cột thông tin đặt phòng (4 phần) -->
+        <div class="col-md-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Thông tin đặt phòng</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Hiển thị khi chưa chọn phòng -->
+                    <div id="bookingSummaryEmpty" class="text-center py-4">
+                        <i class="fas fa-hotel fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Vui lòng chọn phòng để xem thông tin và giá</p>
+                    </div>
+
+                    <!-- Hiển thị khi đã chọn phòng -->
+                    <div id="bookingSummaryContent" style="display: none;">
+                        <h6 id="selectedRoomType" class="fw-bold"></h6>
+                        <p id="selectedRoomNumber" class="small text-muted"></p>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Ngày nhận phòng:</span>
+                                <span id="checkInDate" class="fw-bold"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Ngày trả phòng:</span>
+                                <span id="checkOutDate" class="fw-bold"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Số đêm:</span>
+                                <span id="totalNights" class="fw-bold"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Người lớn:</span>
+                                <span id="adultCount" class="fw-bold"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Trẻ em:</span>
+                                <span id="childCount" class="fw-bold"></span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Giá phòng/đêm:</span>
+                                <span id="roomPricePerNight" class="fw-bold"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tổng giá phòng:</span>
+                                <span id="totalRoomPrice" class="fw-bold"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Phí dịch vụ:</span>
+                                <span id="serviceFee" class="fw-bold"></span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5 text-primary">
+                            <span>Tổng cộng:</span>
+                            <span id="totalAmount"></span>
+                        </div>
+
+                        <button id="proceedToPaymentBtn" class="btn btn-primary w-100 mt-3">
+                            Tiến hành thanh toán
+                        </button>
+                    </div>
                 </div>
             </div>
-        }
+        </div>
     </div>
 </div>
+
+
+
+@section Scripts {
+    <script>
+                $(document).ready(function() {
+            // Toggle hiển thị form đặt phòng
+            $('.toggle-booking-form').click(function() {
+                const phongId = $(this).data('phong-id');
+                const formContainer = $(`.booking-form-container[data-phong-id="${phongId}"]`);
+
+                // Ẩn tất cả form khác trước khi hiển thị form hiện tại
+                $('.booking-form-container').not(formContainer).hide();
+                formContainer.toggle();
+
+                // Cuộn đến form nếu đang hiển thị
+                if (formContainer.is(':visible')) {
+                    $('html, body').animate({
+                        scrollTop: formContainer.offset().top - 20
+                    }, 300);
+                }
+            });
+
+            // Hủy đặt phòng
+            $('.cancel-booking').click(function() {
+                const phongId = $(this).data('phong-id');
+                $(`.booking-form-container[data-phong-id="${phongId}"]`).hide();
+            });
+
+            // Tính toán khi thay đổi thông tin
+            $('.check-in-date, .check-out-date, .adult-count, .child-count, .infant-count').change(function() {
+                const phongId = $(this).data('phong-id');
+                updateBookingInfo(phongId);
+            });
+
+            // Xử lý khi click Đặt ngay
+            $('.proceed-to-payment').click(function() {
+                const phongId = $(this).data('phong-id');
+                const checkInDate = $(`.check-in-date[data-phong-id="${phongId}"]`).val();
+                const checkOutDate = $(`.check-out-date[data-phong-id="${phongId}"]`).val();
+
+                if (!checkInDate || !checkOutDate) {
+                    alert('Vui lòng chọn ngày nhận và trả phòng');
+                    return;
+                }
+
+                // Lấy tất cả thông tin đặt phòng
+                const bookingData = {
+                    phongId: phongId,
+                    roomType: $(this).closest('.booking-form-container').siblings('.toggle-booking-form').data('room-type'),
+                    roomNumber: $(this).closest('.booking-form-container').siblings('.toggle-booking-form').data('room-number'),
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
+                    adults: $(`.adult-count[data-phong-id="${phongId}"]`).val(),
+                    children: $(`.child-count[data-phong-id="${phongId}"]`).val(),
+                    infants: $(`.infant-count[data-phong-id="${phongId}"]`).val(),
+                    totalPrice: $(`.total-price[data-phong-id="${phongId}"]`).text()
+                };
+
+                // Chuyển đến trang thanh toán với dữ liệu đã chọn
+                window.location.href = `/DatPhong/Create?${$.param(bookingData)}`;
+            });
+        });
+
+        function updateBookingInfo(phongId) {
+            const checkInDate = new Date($(`.check-in-date[data-phong-id="${phongId}"]`).val());
+            const checkOutDate = new Date($(`.check-out-date[data-phong-id="${phongId}"]`).val());
+
+            if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const roomPrice = $(`.toggle-booking-form[data-phong-id="${phongId}"]`).data('room-price');
+                const totalPrice = roomPrice * diffDays;
+
+                $(`.nights-count[data-phong-id="${phongId}"]`).text(diffDays + ' đêm');
+                $(`.total-price[data-phong-id="${phongId}"]`).text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
+            }
+        }
+    </script>
+}

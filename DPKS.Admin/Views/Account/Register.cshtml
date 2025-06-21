@@ -1,0 +1,92 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Admin</title>
+
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="icon" href="~/images/favicon.ico" />
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <div class="row">
+                    <!-- Cột trái là ảnh nền -->
+                    <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-light">
+                        <img src="~/images/account/register.jpg" class="img-fluid" alt="Login Image" style="max-height: 100%; object-fit: cover;">
+                    </div>
+
+                    <!-- Cột phải là form -->
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <div class="text-center mb-4">
+                                <h1 class="h4 text-gray-900">Tạo tài khoản mới!</h1>
+                            </div>
+
+                            <form asp-action="Register" method="post" class="user">
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input name="FirstName" type="text" class="form-control form-control-user" placeholder="Họ" required />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input name="LastName" type="text" class="form-control form-control-user" placeholder="Tên" required />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input name="Email" type="email" class="form-control form-control-user" placeholder="Địa chỉ Email" required />
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input name="Password" type="password" class="form-control form-control-user" placeholder="Mật khẩu" required />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input name="ConfirmPassword" type="password" class="form-control form-control-user" placeholder="Xác nhận mật khẩu" required />
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-user btn-block">
+                                    Đăng ký tài khoản
+                                </button>
+
+                                <hr />
+
+                                <a href="/Account/ExternalLogin?provider=Google" class="btn btn-google btn-user btn-block">
+                                    <i class="fab fa-google fa-fw"></i> Đăng ký bằng Google
+                                </a>
+                                <a href="/Account/ExternalLogin?provider=Facebook" class="btn btn-facebook btn-user btn-block">
+                                    <i class="fab fa-facebook-f fa-fw"></i> Đăng ký bằng Facebook
+                                </a>
+                            </form>
+
+                            <hr />
+                            <div class="text-center">
+                                <a class="small" href="/Account/ForgotPassword">Quên mật khẩu?</a>
+                            </div>
+                            <div class="text-center">
+                                <a class="small" href="/Account/Login">Đã có tài khoản? Đăng nhập!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
+</body>
+</html>

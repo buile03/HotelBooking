@@ -19,6 +19,7 @@ namespace DPKS.Service
         Task<List<ThongTinDatPhongVm>> GetListByUserIdAsync(int userId);
         Task<ThongTinDatPhongVm> GetByIdAsync(int id);
         Task<bool> HuyDatPhongAsync(int id);
+        Task<bool> CapNhatTrangThaiDatPhongAsync(int datPhongId, enTrangThaiDatPhong trangThaiMoi);
     }
     public class DatPhongService : BaseService, IDatPhongService
     {
@@ -38,6 +39,14 @@ namespace DPKS.Service
             int soDem = (request.NgayTraPhong - request.NgayNhanPhong).Days;
             if (soDem <= 0 || soDem > 31) throw new Exception("Số đêm không hợp lệ.");
 
+            var ktraXungDot = await _context.DatPhongs
+                    .AnyAsync(dp => dp.PhongId == request.PhongId &&
+                    dp.TrangThaiDatPhongId != (int)enTrangThaiDatPhong.DAHUY &&
+                    !(request.NgayTraPhong <= dp.NgayNhanPhong || request.NgayNhanPhong >= dp.NgayTraPhong));
+
+            if (ktraXungDot)
+                throw new Exception("Phòng này đã được đặt trong khoảng thời gian bạn chọn.");
+
             var tongTien = phong.Gia * soDem;
 
             var datPhong = new DatPhong
@@ -49,14 +58,15 @@ namespace DPKS.Service
                 SoLuongKhach = request.SoLuongKhach,
                 SoDem = soDem,
                 TongTien = tongTien,
-                TrangThaiDatPhongId = 1,
-                TrangThaiPhongId = (int)Common.Enum.enTrangThaiPhong.DADAT,
-                NgayDat = DateTime.Now
+                TrangThaiDatPhongId = (int)enTrangThaiDatPhong.CHOTHANHTOAN,
+                NgayDat = DateTime.Now,
+                HoTen = request.HoTen,
+                Email = request.Email,
+                SDT = request.SDT,
+                GhiChu = request.GhiChu
             };
 
             _context.DatPhongs.Add(datPhong);
-
-            phong.TrangThaiPhongId = (int)Common.Enum.enTrangThaiPhong.DADAT;
             await _context.SaveChangesAsync();
 
             return datPhong.Id;
@@ -112,14 +122,34 @@ namespace DPKS.Service
         }
         public async Task<bool> HuyDatPhongAsync(int id)
         {
+            return await CapNhatTrangThaiDatPhongAsync(id, enTrangThaiDatPhong.DAHUY);
+        }
+
+        public async Task<bool> CapNhatTrangThaiDatPhongAsync(int datPhongId, enTrangThaiDatPhong trangThaiMoi)
+        {
             var datPhong = await _context.DatPhongs
                 .Include(x => x.Phong)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == datPhongId);
 
             if (datPhong == null) return false;
 
-            datPhong.TrangThaiDatPhongId = (int)Common.Enum.enTrangThaiDatPhong.DAHUY;
-            datPhong.Phong.TrangThaiPhongId = (int)Common.Enum.enTrangThaiPhong.TRONG;
+            datPhong.TrangThaiDatPhongId = (int)trangThaiMoi;
+
+            switch (trangThaiMoi)
+            {
+                case enTrangThaiDatPhong.DANHANPHONG:
+                    datPhong.Phong.TrangThaiPhongId = (int)enTrangThaiPhong.DANGO;
+                    break;
+                case enTrangThaiDatPhong.DATRAPHONG:
+                    datPhong.Phong.TrangThaiPhongId = (int)enTrangThaiPhong.DANGDONDEP;
+                    break;
+                case enTrangThaiDatPhong.DAHUY:
+                case enTrangThaiDatPhong.KHONGDEN:
+                    datPhong.Phong.TrangThaiPhongId = (int)enTrangThaiPhong.TRONG;
+                    break;
+                default:
+                    break;
+            }
 
             await _context.SaveChangesAsync();
             return true;

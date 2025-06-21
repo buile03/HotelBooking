@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using static DPKS.Model.User.PasswordVm;
 using Microsoft.AspNetCore.Identity;
+using Stripe;
 
 namespace DPKS.APP.Controllers
 {
@@ -170,8 +171,8 @@ namespace DPKS.APP.Controllers
                 TinhId = 5,
                 IsActive = true
             };
-
-            var result = await _userService.DangKy(user, model.Password, "USER");
+            
+            var result = await _userService.DangKy(user, model.Password);
 
             if (result.Succeeded)
                 return RedirectToAction("Login");
@@ -301,13 +302,15 @@ namespace DPKS.APP.Controllers
             var model = new UpdateProfileVm
             {
                 UserId = user.Id,
-                
+                NgaySinh = user.NgaySinh,
+                GioiTinh =user.GioiTinh,
                 FullName = user.HoTen,
                 UserName = user.UserName,
                 QuocGiaId = user.QuocGiaId,
                 TinhId = user.TinhId,
                 PhotoName = user.PhotoName,
                 Email = user.Email
+                
             };
 
             return View(model);
@@ -332,17 +335,21 @@ namespace DPKS.APP.Controllers
                     return NotFound();
 
                 //// Xử lý upload avatar nếu có
-                //if (avatarFile != null && avatarFile.Length > 0)
-                //{
-                //    var fileName = await _fileService.SaveAvatar(avatarFile, model.UserId);
-                //    model.PhotoName = fileName;
-                //}
+                if (avatarFile != null && avatarFile.Length > 0)
+                {
+                    var fileName = await _userService.LuuAnhDaiDien(avatarFile, model.UserId);
+                    model.PhotoName = fileName;
+
+                    // Cập nhật lại vào ApplicationUser
+                    await _userService.CapNhatAnhDaiDien(model.UserId, fileName);
+                }
                 user.HoTen = model.FullName;
                 user.UserName = model.UserName;
                 user.QuocGiaId = model.QuocGiaId;
                 user.TinhId = model.TinhId;
                 user.PhotoName = model.PhotoName;
-
+                user.NgaySinh = model.NgaySinh;
+                user.GioiTinh = model.GioiTinh;
                 var success = await _userService.Update(user);
                 if (success)
                 {
