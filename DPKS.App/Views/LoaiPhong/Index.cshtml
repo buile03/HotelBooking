@@ -1,0 +1,241 @@
+﻿@using System.Globalization
+@model List<DPKS.Model.LoaiPhong.ThongTinLoaiPhongVm>
+
+@{
+    ViewData["Title"] = "Loại phòng";
+    ViewData["PageTitle"] = "Danh sách loại phòng";
+}
+
+<div class="container">
+    <div class="accordion" id="accordionLoaiPhong">
+        @foreach (var item in Model)
+        {
+            var modalId = $"modalTienNghi_{item.Id}";
+            var collapseId = $"phongCollapse_{item.Id}";
+            var headingId = $"heading_{item.Id}";
+            var carouselId = $"carouselLoaiPhong_{item.Id}";
+
+            <!-- Card loại phòng -->
+            <div class="card pb-4 pt-4 shadow-sm border-0 mb-3">
+                <div class="row g-0">
+                    <!-- Ảnh loại phòng -->
+                    <div class="col-md-4 position-relative">
+                        <div id="@carouselId" class="carousel slide h-100" >
+                            <div class="carousel-inner h-100">
+                                @for (int i = 0; i < item.DanhSachHinhAnh.Count; i++)
+                                {
+                                    var active = i == 0 ? "active" : "";
+                                    <div class="carousel-item @active h-100">
+                                        <img src="@Url.Content($"~/images/loaiphong/{item.DanhSachHinhAnh[i]}")"
+                                             class="img-fluid rounded-start h-100 object-fit-cover"
+                                             onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
+                                    </div>
+                                }
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nội dung -->
+                    <div class="col-md-8">
+                        <div class="card-body px-3 py-2">
+                            <h5 class="card-title fw-bold mb-2 fs-4">@item.Type</h5>
+                            <p class="text-muted mb-3 small">@item.Description</p>
+
+                            <div class="mb-3 lh-lg">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
+                                    </div>
+                                </div>
+                                <div class="mt-1">
+                                    <strong>Số phòng:</strong> @item.SoLuongPhong (Trống: @item.SoLuongPhongTrong)
+                                </div>
+                            </div>
+
+                            <!-- Tiện nghi -->
+                            <div class="mb-3">
+                                <strong>Tiện nghi:</strong>
+                                <div class="d-inline">
+                                    @foreach (var tienNghi in item.TienNghis.Take(3))
+                                    {
+                                        <span class="badge bg-light text-dark me-1 mb-1 d-inline-flex align-items-center">
+                                            <i class="@tienNghi.Icon me-1"></i> @tienNghi.Name
+                                        </span>
+                                    }
+                                    @if (item.TienNghis.Count > 3)
+                                    {
+                                        <a href="#" class="ms-2 text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#@modalId">Xem thêm</a>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Giá và nút -->
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div>
+                                    <strong>Giá chỉ từ:</strong><br />
+                                    <div class="mt-2 text-danger fw-bold fs-5">
+                                        @item.GiaThapNhat.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-warning text-white px-4 shadow-sm"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#@collapseId"
+                                        aria-expanded="false"
+                                        aria-controls="@collapseId">
+                                    Xem phòng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapse danh sách phòng -->
+            <div id="@collapseId" class="accordion-collapse collapse mb-4" aria-labelledby="@headingId" data-bs-parent="#accordionLoaiPhong">
+                <div class="card card-body border shadow-sm">
+                    <h6 class="fw-bold mb-3">Danh sách phòng:</h6>
+                    @if (item.ThongTinPhongs != null && item.ThongTinPhongs.Any())
+                    {
+                        @foreach (var phong in item.ThongTinPhongs)
+                        {
+                            var carouselPhongId = $"carouselPhong_{phong.PhongId}";
+                            <div class="card mb-5 shadow-sm border-0">
+                                <div class="row g-0">
+                                    <!-- Ảnh phòng -->
+                                    <div class="col-md-4 position-relative">
+                                        <div id="@carouselPhongId" class="carousel slide w-100" style="height: 180px;" data-bs-ride="false">
+                                            <div class="carousel-inner w-100 h-100">
+                                                @for (int i = 0; i < phong.AnhPhong.Count; i++)
+                                                {
+                                                    var img = phong.AnhPhong[i];
+                                                    var active = i == 0 ? "active" : "";
+                                                    <div class="carousel-item @active w-100 h-100">
+                                                        <img src="@Url.Content($"~/images/room/{img}")"
+                                                             class="d-block w-100 h-100 rounded-start"
+                                                             style="object-fit: cover;"
+                                                             alt="Ảnh phòng"
+                                                             onerror="this.onerror=null;this.src='@Url.Content("~/images/rooms/default.jpg")';" />
+                                                    </div>
+                                                }
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon"></span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#@carouselPhongId" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Thông tin phòng -->
+                                    <div class="col-md-8">
+                                        <div class="card-body px-3 py-2">
+                                            <h6 class="fw-bold mb-2">Phòng @phong.SoPhong</h6>
+
+                                            <div class="mb-2 text-danger fw-bold">
+                                                Giá: @phong.Gia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) VNĐ / đêm
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <strong>Giường:</strong> @string.Join(", ", item.LoaiGiuong.Select(g => enHelper.GetDescription(g)))
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <strong>View:</strong> @string.Join(", ", item.LoaiView.Select(v => enHelper.GetDescription(v)))
+                                                </div>
+                                            </div>
+                                            <strong>Tiện nghi: </strong>
+                                            @foreach (var tienNghi in item.TienNghis.Take(3))
+                                            {
+                                                <span class="badge bg-light text-dark me-1 mb-1 d-inline-flex align-items-center">
+                                                    <i class="@tienNghi.Icon me-1"></i> @tienNghi.Name
+                                                </span>
+                                            }
+                                            <div class="d-flex justify-content-between align-items-end">
+                                                <div class="mb-1">
+                                                    <strong>Sức chứa:</strong> @phong.SoNguoiLonToiDa người lớn
+                                                    @if (phong.SoTreEmToiDa > 0)
+                                                    {
+                                                        <span> + @phong.SoTreEmToiDa trẻ em</span>
+                                                    }
+                                                </div>
+                                                <div class="mt-2">
+                                                    <a href="~/Phong/Detail/@phong.PhongId"
+                                                       class="btn btn-sm btn-info text-white me-2"
+                                                       type="button">
+                                                        Chi tiết
+                                                    </a>
+                                                    <a href="~/DatPhong/Create/@phong.PhongId"
+                                                       class="btn btn-sm btn-success"
+                                                       type="button">
+                                                        Đặt phòng
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                    else
+                    {
+                        <p class="text-muted">Không có phòng nào thuộc loại này.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Modal tiện nghi -->
+            <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@modalId-Label" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-body p-0">
+                            <div class="row g-0">
+                                <div class="col-md-5">
+                                    <img src="@Url.Content($"~/images/loaiphong/{item.HinhAnhChinh}")"
+                                         class="img-fluid w-100 h-100 object-fit-cover"
+                                         alt="Ảnh loại phòng"
+                                         style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;" />
+                                </div>
+                                <div class="col-md-7 p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="fw-bold">@item.Type</h5>
+                                            <p class="text-muted mb-1">@item.DienTich m²</p>
+                                        </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+
+                                    <p>@item.Description</p>
+                                    <hr />
+                                    <h6 class="fw-bold mb-3">Tiện ích trong phòng:</h6>
+                                    <div class="row row-cols-2 g-3">
+                                        @foreach (var tienNghi in item.TienNghis)
+                                        {
+                                            <div class="col d-flex align-items-center">
+                                                <i class="@tienNghi.Icon me-2 text-primary fs-5"></i>
+                                                <span>@tienNghi.Name</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

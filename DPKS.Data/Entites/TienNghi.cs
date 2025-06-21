@@ -9,6 +9,8 @@ namespace DPKS.Data.Entites
 
         public string Description { get; set; }
 
+        public string Icon { get; set; }
+
         //navigation properties
 
         public ICollection<LoaiPhong> loaiPhongs { get; set; } = new List<LoaiPhong>();

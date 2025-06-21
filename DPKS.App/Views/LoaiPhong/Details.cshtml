@@ -1,0 +1,18 @@
+﻿@model DPKS.Model.LoaiPhong.LoaiPhongDetailVm
+
+<h2>@Model.LoaiPhong.Type</h2>
+<p>@Model.LoaiPhong.Description</p>
+
+<h4>Danh sách phòng:</h4>
+@foreach (var phong in Model.Phongs)
+{
+    <div class="card">
+        <h5>Phòng @phong.SoPhong</h5>
+        <p>Giá: @phong.Gia.ToString("N0") VNĐ</p>
+        <p>Giường: @enHelper.GetDescription(phong.LoaiGiuong) | View: @enHelper.GetDescription(phong.LoaiView)</p>
+        <p>Trạng thái: @enHelper.GetDescription(phong.TrangThaiPhong)</p>
+        <p>Tiện nghi: @string.Join(", ", phong.TienNghis)</p>
+        <a href="~/Phong/Detail/@phong.PhongId">Xem chi tiết</a>
+        <a href="~/DatPhong/Create/@phong.PhongId">Đặt phòng</a>
+    </div>
+}

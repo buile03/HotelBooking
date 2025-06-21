@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán thành công";
+    var phuongThuc = ViewBag.PhuongThuc as string ?? "Không xác định";
+    var datPhongId = ViewBag.DatPhongId as int? ?? 0;
+}
+
+<div class="alert alert-success">
+    <h4>✅ Thanh toán thành công!</h4>
+    <p>Phương thức thanh toán: <strong>@phuongThuc</strong></p>
+    <p>Mã đặt phòng: <strong>@datPhongId</strong></p>
+</div>
+<a href="/DatPhong/Index" class="btn btn-primary">Về danh sách đặt phòng</a>

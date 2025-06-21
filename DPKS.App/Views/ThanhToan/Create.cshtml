@@ -1,31 +1,37 @@
 ﻿@model DPKS.Model.ThanhToan.Request.ThanhToanCreateRequest
+
 @{
     ViewData["Title"] = "Thanh toán";
-    ViewData["PageTitle"] = "Thanh toán phòng";
 }
 
-<form asp-action="Create" method="post">
-    <input type="hidden" asp-for="DatPhongId" />
-    <input type="hidden" asp-for="ThoiDiemThanhToan" />
+<div class="container py-4">
+    <h2 class="mb-4">Thanh toán đặt phòng</h2>
 
-    <div class="form-group">
-        <label asp-for="PhuongThucThanhToanId">Phương thức thanh toán</label>
-        <select asp-for="PhuongThucThanhToanId" class="form-control" asp-items="ViewBag.PhuongThucThanhToanList">
-            <option value="">-- Chọn phương thức --</option>
-        </select>
-        <span asp-validation-for="PhuongThucThanhToanId" class="text-danger"></span>
-    </div>
+    <form asp-action="Create" method="post">
+        <input type="hidden" asp-for="DatPhongId" />
 
-    <div class="form-group">
-        <label asp-for="Gia">Tổng tiền</label>
-        <input asp-for="Gia" class="form-control" readonly />
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Tổng tiền</label>
+            <input asp-for="Gia" class="form-control" readonly />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Xác nhận thanh toán</button>
-</form>
+        <div class="mb-3">
+            <label class="form-label">Phương thức thanh toán</label>
+            <select asp-for="PhuongThucThanhToanId" class="form-select" disabled>
+                <option value="1" selected>Tiền mặt</option>
+                <option disabled>Chuyển khoản (đang bảo trì)</option>
+                <option disabled>Thẻ tín dụng (đang bảo trì)</option>
+                <option disabled>Ví điện tử (đang bảo trì)</option>
+                <option disabled>Cổng thanh toán (đang bảo trì)</option>
+            </select>
+            <input type="hidden" name="PhuongThucThanhToanId" value="1" />
+        </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+        <div class="mb-3">
+            <label class="form-label">Thời điểm thanh toán</label>
+            <input asp-for="ThoiDiemThanhToan" class="form-control" readonly />
+        </div>
+
+        <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
+    </form>
+</div>

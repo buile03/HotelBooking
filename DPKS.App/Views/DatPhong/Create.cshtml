@@ -2,170 +2,60 @@
 
 @{
     ViewData["Title"] = "Đặt phòng";
-    ViewData["PageTitle"] = "Đặt phòng khách sạn";
 }
 
-<div class="container-fluid bg-light min-vh-100 py-5">
-    <div class="row justify-content-center">
-        <div class="col-xl-8 col-lg-10">
-            <div class="card border-0 shadow-lg">
-                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<h3 class="mb-4">Đặt phòng</h3>
 
-                    <p class="mb-0 opacity-75">Hoàn tất thông tin để xác nhận đặt phòng</p>
-                </div>
+<div class="row">
+    <!-- Form đặt phòng bên trái -->
+    <div class="col-md-8">
+        <form asp-action="Create" method="post" id="bookingForm">
+            @Html.HiddenFor(m => m.PhongId)
+            <input type="hidden" id="gia1Dem" value="@Model.Gia1Dem" />
 
-                <div class="card-body p-5">
-                    @if (ViewData.ModelState.ErrorCount > 0)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Có lỗi xảy ra:</strong>
-                            <ul class="mb-0 mt-2">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <li>@error.ErrorMessage</li>
-                                }
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
+            <div class="form-group mb-3">
+                <label asp-for="NgayNhanPhong"></label>
+                <input asp-for="NgayNhanPhong" class="form-control" type="date" />
+                <span asp-validation-for="NgayNhanPhong" class="text-danger"></span>
+            </div>
 
-                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
-                        @Html.AntiForgeryToken()
-                        @Html.HiddenFor(m => m.PhongId)
-                        @Html.HiddenFor(m => m.UserId)
+            <div class="form-group mb-3">
+                <label asp-for="NgayTraPhong"></label>
+                <input asp-for="NgayTraPhong" class="form-control" type="date" />
+                <span asp-validation-for="NgayTraPhong" class="text-danger"></span>
+            </div>
 
-                        <div class="row g-4">
-                            <!-- Thông tin phòng -->
-                            <div class="col-12">
-                                <div class="bg-light rounded-3 p-4 border-start border-5 border-primary">
-                                    <h5 class="text-primary mb-3">
-                                        <i class="fas fa-door-open me-2"></i>Thông tin phòng
-                                    </h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p class="mb-2"><strong>Mã phòng:</strong> <span class="text-primary">#@Model.PhongId</span></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-2"><strong>Loại phòng:</strong> <span class="text-muted">Phòng cao cấp</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="form-group mb-3">
+                <label asp-for="SoLuongKhach"></label>
+                <input asp-for="SoLuongKhach" class="form-control" type="number" min="1" max="4" />
+                <span asp-validation-for="SoLuongKhach" class="text-danger"></span>
+            </div>
 
-                            <!-- Ngày nhận phòng -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input asp-for="NgayNhanPhong"
-                                           type="date"
-                                           class="form-control form-control-lg border-2"
-                                           id="NgayNhanPhong"
-                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                                           required />
-                                    <label for="NgayNhanPhong" class="text-muted">
-                                        <i class="fas fa-calendar-plus me-2"></i>Ngày nhận phòng
-                                    </label>
-                                    <span asp-validation-for="NgayNhanPhong" class="text-danger small"></span>
-                                </div>
-                            </div>
+            <div class="form-group mb-4">
+                <label asp-for="PhuongThucThanhToanId" class="control-label">Phương thức thanh toán</label>
+                @Html.DropDownListFor(model => model.PhuongThucThanhToanId,
+                         (List<SelectListItem>)ViewBag.PhuongThucThanhToanList,
+                         "-- Chọn phương thức --",
+                         new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PhuongThucThanhToanId, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary">Xác nhận đặt phòng</button>
+        </form>
+    </div>
 
-                            <!-- Ngày trả phòng -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input asp-for="NgayTraPhong"
-                                           type="date"
-                                           class="form-control form-control-lg border-2"
-                                           id="NgayTraPhong"
-                                           min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")"
-                                           required />
-                                    <label for="NgayTraPhong" class="text-muted">
-                                        <i class="fas fa-calendar-minus me-2"></i>Ngày trả phòng
-                                    </label>
-                                    <span asp-validation-for="NgayTraPhong" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <!-- Số lượng khách -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <select asp-for="SoLuongKhach"
-                                            class="form-select form-select-lg border-2"
-                                            id="SoLuongKhach"
-                                            required>
-                                        <option value="">Chọn số lượng khách</option>
-                                        <option value="1">1 khách</option>
-                                        <option value="2">2 khách</option>
-                                        <option value="3">3 khách</option>
-                                        <option value="4">4 khách</option>
-                                    </select>
-                                    <label for="SoLuongKhach" class="text-muted">
-                                        <i class="fas fa-users me-2"></i>Số lượng khách
-                                    </label>
-                                    <span asp-validation-for="SoLuongKhach" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <!-- Tổng tiền preview -->
-                            <div class="col-md-6">
-                                <div class="bg-success bg-opacity-10 rounded-3 p-4 border border-success border-opacity-25">
-                                    <h6 class="text-success mb-2">
-                                        <i class="fas fa-calculator me-2"></i>Tổng chi phí
-                                    </h6>
-                                    <div class="h4 text-success mb-0" id="tongTienPreview">
-                                        Vui lòng chọn ngày
-                                    </div>
-                                    <small class="text-muted">* Giá có thể thay đổi tùy theo thời gian</small>
-                                </div>
-                            </div>
-
-                            <!-- Điều khoản -->
-                            <div class="col-12">
-                                <div class="form-check p-3 bg-light rounded-3">
-                                    <input class="form-check-input me-3" type="checkbox" id="acceptTerms" required>
-                                    <label class="form-check-label text-muted" for="acceptTerms">
-                                        Tôi đồng ý với <a href="#" class="text-decoration-none fw-bold">điều khoản và điều kiện</a>
-                                        của khách sạn và xác nhận thông tin đặt phòng là chính xác.
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <div class="d-grid gap-3 d-md-flex justify-content-md-end">
-                                    <a href="@Url.Action("Index", "Phong")"
-                                       class="btn btn-outline-secondary btn-lg px-5">
-                                        <i class="fas fa-arrow-left me-2"></i>Quay lại
-                                    </a>
-                                    <button type="submit"
-                                            class="btn btn-lg px-5 text-white fw-bold"
-                                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
-                                        <i class="fas fa-check-circle me-2"></i>Xác nhận đặt phòng
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Card footer với thông tin liên hệ -->
-                <div class="card-footer bg-light border-0 py-4">
-                    <div class="row text-center text-muted">
-                        <div class="col-md-4">
-                            <i class="fas fa-phone-alt text-primary mb-2"></i>
-                            <div><small>Hotline: 1900 1234</small></div>
-                        </div>
-                        <div class="col-md-4">
-                            <i class="fas fa-envelope text-primary mb-2"></i>
-                            <div><small>support@hotel.com</small></div>
-                        </div>
-                        <div class="col-md-4">
-                            <i class="fas fa-clock text-primary mb-2"></i>
-                            <div><small>Hỗ trợ 24/7</small></div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Thông tin đặt phòng bên phải -->
+    <div class="col-md-4">
+        <div class="card border-secondary">
+            <div class="card-header bg-light fw-bold">Thông tin đặt phòng</div>
+            <div class="card-body">
+                <p><strong>Phòng ID:</strong> <span>@Model.PhongId</span></p>
+                <p><strong>Ngày nhận:</strong> <span id="displayNhanPhong">-</span></p>
+                <p><strong>Ngày trả:</strong> <span id="displayTraPhong">-</span></p>
+                <p><strong>Số khách:</strong> <span id="displaySoKhach">-</span></p>
+                <p><strong>Số đêm:</strong> <span id="displaySoDem">-</span></p>
+                <p><strong>Giá 1 đêm:</strong> <span id="displayGia1Dem">@Model.Gia1Dem.ToString("N0") ₫</span></p>
+                <hr />
+                <h5 class="text-danger"><strong>Tổng tiền:</strong> <span id="displayTongTien">-</span></h5>
             </div>
         </div>
     </div>
@@ -173,58 +63,38 @@
 
 @section Scripts {
     <script>
-        // Validation and date calculation
-        document.addEventListener('DOMContentLoaded', function() {
-            const ngayNhan = document.getElementById('NgayNhanPhong');
-            const ngayTra = document.getElementById('NgayTraPhong');
-            const soKhach = document.getElementById('SoLuongKhach');
-            const tongTienPreview = document.getElementById('tongTienPreview');
+        function updateSummary() {
+            const nhan = document.getElementById("NgayNhanPhong").value;
+            const tra = document.getElementById("NgayTraPhong").value;
+            const khach = document.getElementById("SoLuongKhach").value;
+            const gia1Dem = parseFloat(document.getElementById("gia1Dem").value);
 
-            const giaPhong = 500000; // Giá mẫu, có thể lấy từ server
+            let soDem = 0;
+            let tongTien = 0;
 
-            function updateTongTien() {
-                if (ngayNhan.value && ngayTra.value) {
-                    const checkIn = new Date(ngayNhan.value);
-                    const checkOut = new Date(ngayTra.value);
-                    const soDem = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-
-                    if (soDem > 0 && soDem <= 31) {
-                        const tongTien = giaPhong * soDem;
-                        tongTienPreview.innerHTML = `${tongTien.toLocaleString('vi-VN')} VNĐ<br><small class="text-muted">(${soDem} đêm × ${giaPhong.toLocaleString('vi-VN')} VNĐ)</small>`;
-                    } else {
-                        tongTienPreview.textContent = 'Ngày không hợp lệ';
-                    }
-                }
+            if (nhan && tra) {
+                const d1 = new Date(nhan);
+                const d2 = new Date(tra);
+                soDem = Math.max(0, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+                tongTien = soDem * gia1Dem;
             }
 
-            // Update minimum checkout date when checkin changes
-            ngayNhan.addEventListener('change', function() {
-                if (this.value) {
-                    const minCheckout = new Date(this.value);
-                    minCheckout.setDate(minCheckout.getDate() + 1);
-                    ngayTra.min = minCheckout.toISOString().split('T')[0];
+            document.getElementById("displayNhanPhong").textContent = nhan || "-";
+            document.getElementById("displayTraPhong").textContent = tra || "-";
+            document.getElementById("displaySoKhach").textContent = khach || "-";
+            document.getElementById("displaySoDem").textContent = soDem;
+            document.getElementById("displayTongTien").textContent = tongTien.toLocaleString("vi-VN") + " ₫";
+        }
 
-                    // Reset checkout if it's before new minimum
-                    if (ngayTra.value && new Date(ngayTra.value) <= new Date(this.value)) {
-                        ngayTra.value = '';
-                    }
-                }
-                updateTongTien();
-            });
+        document.getElementById("NgayNhanPhong").addEventListener("change", updateSummary);
+        document.getElementById("NgayTraPhong").addEventListener("change", updateSummary);
+        document.getElementById("SoLuongKhach").addEventListener("input", updateSummary);
 
-            ngayTra.addEventListener('change', updateTongTien);
-
-            // Form validation
-            const forms = document.querySelectorAll('.needs-validation');
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                });
-            });
-        });
+        // Tự cập nhật lần đầu
+        updateSummary();
     </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

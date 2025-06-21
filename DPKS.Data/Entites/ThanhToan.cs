@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using DPKS.Common.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +18,7 @@ namespace DPKS.Data.Entites
         public decimal Gia { get; set; }
         public DateTime ThoiDiemThanhToan { get; set; }
 
+        public enTrangThaiThanhToan TrangThai { get; set; }
 
         //navigation properties 
         public PhuongThucThanhToan PhuongThucThanhToan { get; set;}

@@ -16,6 +16,27 @@
                 <form id="filterForm">
                     <input type="hidden" name="PageIndex" value="1" id="pageIndexInput" />
                     <input type="hidden" name="PageSize" value="@Model.PageSize" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Giá</label>
+                        <select class="form-select" id="sortSelect" name="SortBy">
+                            @if (Model.SortBy == "gia-asc")
+                            {
+                                <option value="gia-asc" selected>Giá: Thấp đến cao</option>
+                                <option value="gia-desc">Giá: Cao đến thấp</option>
+                            }
+                            else if (Model.SortBy == "gia-desc")
+                            {
+                                <option value="gia-asc">Giá: Thấp đến cao</option>
+                                <option value="gia-desc" selected>Giá: Cao đến thấp</option>
+                            }
+                            else
+                            {
+                                <option value="gia-asc" selected>Giá: Thấp đến cao</option>
+                                <option value="gia-desc">Giá: Cao đến thấp</option>
+                            }
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">Ngày nhận phòng</label>
                         <input type="date" class="form-control" name="NgayNhanPhong" value="@(Model.NgayNhanPhong?.ToString("yyyy-MM-dd"))">
@@ -26,7 +47,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Số lượng khách</label>
-                        <input type="number" class="form-control" name="SoLuongKhach" value="@(Model.SoLuongKhach ?? 1)" min="1" max="10">
+                        <input type="number" class="form-control" name="SoLuongKhach" value="@(Model.SoLuongKhach ?? 1)" min="1" max="10">                      
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Khoảng giá (VNĐ)</label>
@@ -75,26 +96,7 @@
 
         <!-- Danh sách phòng bên phải (8 ô) -->
         <div class="col-lg-9 col-md-12">
-            <!-- Sắp xếp và số lượng phòng -->
-            <div class="d-flex justify-content-end align-items-center mb-3">
-                <select class="form-select w-25" id="sortSelect" name="SortBy">
-                    @if (Model.SortBy == "gia-asc")
-                    {
-                        <option value="gia-asc" selected>Giá: Thấp đến cao</option>
-                        <option value="gia-desc">Giá: Cao đến thấp</option>
-                    }
-                    else if (Model.SortBy == "gia-desc")
-                    {
-                        <option value="gia-asc">Giá: Thấp đến cao</option>
-                        <option value="gia-desc" selected>Giá: Cao đến thấp</option>
-                    }
-                    else
-                    {
-                        <option value="gia-asc" selected>Giá: Thấp đến cao</option>
-                        <option value="gia-desc">Giá: Cao đến thấp</option>
-                    }
-                </select>
-            </div>
+           
 
             <!-- Thông báo lỗi -->
             @if (ViewBag.ErrorMessage != null)

@@ -22,6 +22,46 @@ namespace DPKS.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DPKS.Data.Entites.AnhLoaiPhong", b =>
+                {
+                    b.Property<int>("PhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhotoId"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LateModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LoaiPhongId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhotoName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PhotoId");
+
+                    b.HasIndex("LoaiPhongId");
+
+                    b.HasIndex("PhotoName")
+                        .IsUnique()
+                        .HasFilter("[PhotoName] IS NOT NULL");
+
+                    b.ToTable("AnhLoaiPhong", (string)null);
+                });
+
             modelBuilder.Entity("DPKS.Data.Entites.AnhPhong", b =>
                 {
                     b.Property<int>("PhotoId")
@@ -358,6 +398,12 @@ namespace DPKS.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("DienTich")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HinhAnhChinh")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -453,8 +499,14 @@ namespace DPKS.Data.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SoNguoiLonToiDa")
+                        .HasColumnType("int");
+
                     b.Property<string>("SoPhong")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SoTreEmToiDa")
+                        .HasColumnType("int");
 
                     b.Property<int>("TrangThaiPhongId")
                         .HasColumnType("int");
@@ -583,6 +635,9 @@ namespace DPKS.Data.Migrations
                     b.Property<DateTime>("ThoiDiemThanhToan")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TrangThai")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DatPhongId")
@@ -608,6 +663,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -846,6 +904,17 @@ namespace DPKS.Data.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DPKS.Data.Entites.AnhLoaiPhong", b =>
+                {
+                    b.HasOne("DPKS.Data.Entites.LoaiPhong", "LoaiPhong")
+                        .WithMany("anhLoaiPhongs")
+                        .HasForeignKey("LoaiPhongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LoaiPhong");
+                });
+
             modelBuilder.Entity("DPKS.Data.Entites.AnhPhong", b =>
                 {
                     b.HasOne("DPKS.Data.Entites.Phong", "Phong")
@@ -1065,6 +1134,8 @@ namespace DPKS.Data.Migrations
 
             modelBuilder.Entity("DPKS.Data.Entites.LoaiPhong", b =>
                 {
+                    b.Navigation("anhLoaiPhongs");
+
                     b.Navigation("phongs");
 
                     b.Navigation("tienNghiTheoLoaiPhongs");

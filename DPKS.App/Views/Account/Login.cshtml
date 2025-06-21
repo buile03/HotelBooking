@@ -44,6 +44,8 @@
                         </div>
                     }
                     <form asp-action="Login" method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
                         <div class="mb-3">
                             <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
                             <input asp-for="UserName" class="form-control rounded-3" placeholder="Nhập tên đăng nhập" />
@@ -71,15 +73,17 @@
                     <div class="text-center my-3 text-muted">Hoặc đăng nhập bằng</div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-dark rounded-3 d-flex align-items-center justify-content-center shadow-sm">
+                        <a asp-action="LoginWithGoogle" asp-controller="Account" class="btn btn-outline-dark rounded-3 d-flex align-items-center justify-content-center shadow-sm">
                             <img src="https://www.google.com/favicon.ico" alt="Google" class="me-2" style="width: 20px;">
                             Đăng nhập bằng Google
-                        </button>
-                        <button class="btn btn-outline-primary rounded-3 d-flex align-items-center justify-content-center shadow-sm">
+                        </a>
+                        <a asp-action="LoginWithFacebook" asp-controller="Account" class="btn btn-outline-primary rounded-3 d-flex align-items-center justify-content-center shadow-sm">
                             <img src="https://www.facebook.com/favicon.ico" alt="Facebook" class="me-2" style="width: 20px;">
                             Đăng nhập bằng Facebook
-                        </button>
+                        </a>
                     </div>
+
+
 
                     <div class="text-center mt-4">
                         <span class="text-muted">Chưa có tài khoản? </span>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,7 +80,8 @@ namespace DPKS.Service
                     SoDem = x.SoDem,
                     SoLuongKhach = x.SoLuongKhach,
                     TongTien = x.TongTien,
-                    TrangThaiDatPhong = (enTrangThaiDatPhong)x.TrangThaiDatPhongId
+                    TrangThaiDatPhong = (enTrangThaiDatPhong)x.TrangThaiDatPhongId,
+                    DaThanhToan = _context.ThanhToans.Any(t => t.DatPhongId == x.Id)
                 }).ToListAsync();
         }
 
