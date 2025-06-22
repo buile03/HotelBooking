@@ -32,6 +32,7 @@ namespace DPKS.Service
         Task Logout();
 
         Task<ApplicationUser> GetByUserName(string username);
+        Task<IList<string>> GetRoles(ApplicationUser user);
         Task<bool> Update(ApplicationUser user);
         Task<bool> QuenMatKhau(string email);
         Task<bool> DatLaiMatKhau(string email, string resetCode, string newPassword);
@@ -171,6 +172,12 @@ namespace DPKS.Service
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async Task<IList<string>> GetRoles(ApplicationUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
+
         public async Task<bool> GuiMaXacNhanEmail(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);

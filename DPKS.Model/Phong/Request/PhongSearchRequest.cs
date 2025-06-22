@@ -5,7 +5,7 @@ namespace DPKS.Model.Phong.Request
 {
     public class PhongSearchRequest : PagingRequestBase
     {
-        //public string? Keyword { get; set; }
+        public string? Keyword { get; set; }
         public DateTime? NgayNhanPhong { get; set; }
         public DateTime? NgayTraPhong { get; set; }
         public decimal? GiaTu { get; set; }

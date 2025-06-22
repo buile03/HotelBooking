@@ -1,0 +1,112 @@
+﻿@model DPKS.Model.Phong.Request.PhongCreateRequest
+@using DPKS.Common.Enum
+@{
+    Layout = null;
+}
+
+<div class="modal-content">
+    <form id="modal-form" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        
+
+        <div class="modal-header">
+            <h4 class="modal-title">Thêm phòng mới</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SoPhong" class="control-label">Số phòng</label>
+                        <input asp-for="SoPhong" class="form-control" />
+                        <span asp-validation-for="SoPhong" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="LoaiPhongId" class="control-label">Loại phòng</label>
+                        <select asp-for="LoaiPhongId" asp-items="@ViewBag.LoaiPhongItems" class="form-control">
+                            <option value="">-- Chọn loại phòng --</option>
+                        </select>
+                        <span asp-validation-for="LoaiPhongId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TrangThaiPhongId" class="control-label">Trạng thái</label>
+                        <select asp-for="TrangThaiPhongId" asp-items="@ViewBag.TrangThaiPhongItems" class="form-control">
+                            <option value="">-- Chọn trạng thái --</option>
+                        </select>
+                        <span asp-validation-for="TrangThaiPhongId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Gia" class="control-label">Giá phòng</label>
+                        <input asp-for="Gia" type="number" class="form-control" lang="en" step="any" />
+                        <span asp-validation-for="Gia" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="LoaiGiuong" class="control-label">Loại giường</label>
+                        <select asp-for="LoaiGiuong" asp-items="Html.GetEnumSelectList<enLoaiGiuong>()" class="form-control">
+                            <option value="">-- Chọn loại giường --</option>
+                        </select>
+                        <span asp-validation-for="LoaiGiuong" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="LoaiView" class="control-label">Loại view</label>
+                        <select asp-for="LoaiView" asp-items="Html.GetEnumSelectList<enLoaiView>()" class="form-control">
+                            <option value="">-- Chọn loại view --</option>
+                        </select>
+                        <span asp-validation-for="LoaiView" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SoNguoiLonToiDa" class="control-label">Số người lớn tối đa</label>
+                        <input asp-for="SoNguoiLonToiDa" type="number" class="form-control" lang="en" />
+                        <span asp-validation-for="SoNguoiLonToiDa" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SoTreEmToiDa" class="control-label">Số trẻ em tối đa</label>
+                        <input asp-for="SoTreEmToiDa" type="number" class="form-control" lang="en" />
+                        <span asp-validation-for="SoTreEmToiDa" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-success">Lưu</button>
+        </div>
+    </form>
+
+    @* Script xử lý submit *@
+    @{
+        await Html.RenderPartialAsync("_ModalScript", new DPKS.Admin.Models.ModalFormRequest()
+            {
+                FormId = "modal-form",
+                UrlSubmit = "/Phong/Create",
+                UrlPathLoadData = ViewBag.ResultUrl?.ToString() ?? "/Phong/List/",
+                LoadDataId = "box-content"
+            });
+    }
+</div>

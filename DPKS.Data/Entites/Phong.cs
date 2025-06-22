@@ -13,7 +13,7 @@ namespace DPKS.Data.Entites
         public enLoaiGiuong loaiGiuong { get; set; }
         public enLoaiView loaiView { get; set; }
         public bool IsActive { get; set; } = true;
-
+        
         public int SoNguoiLonToiDa { get; set; }
         public int SoTreEmToiDa { get; set; }
 

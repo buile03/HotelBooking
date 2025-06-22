@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 using DPKS.Common.Result;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DPKS.Common.Enum;
+using DPKS.Common.System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using DPKS.Model.Phong.Request;
+using DPKS.Common;
 
 namespace DPKS.Service
 {
@@ -25,12 +27,19 @@ namespace DPKS.Service
         Task<Result<List<ThongTinDanhSachPhongVm>>> GetAvailablePhongsAsync(PhongSearchRequest request);
         Task<Result<decimal>> CalculateTotalPriceAsync(int phongId, DateTime ngayNhanPhong, DateTime ngayTraPhong);
 
+        //ADMIN
+        Task<Result<int>> Create(PhongCreateRequest request);
+        Task<Result<int>> Update(PhongUpdateRequest request);
+        Task<Result<int>> Delete(DeleteRequest request);
+
+
+
     }
     public class PhongService : BaseService, IPhongService
     {
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
+        
         public PhongService(AppDbContext context
             , IStorageService storageService
             , IHttpContextAccessor httpContextAccessor) : base(context, storageService)
@@ -38,7 +47,7 @@ namespace DPKS.Service
             _context = context;
             _httpContextAccessor = httpContextAccessor; 
         }
-
+        #region
         public async Task<PagedResult<ThongTinDanhSachPhongVm>> GetPagings(PhongSearchRequest request)
         {
             try
@@ -51,37 +60,44 @@ namespace DPKS.Service
                     .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
                     .AsQueryable();
 
-                // Lọc theo yêu cầu
-                if (request.LoaiPhongId.HasValue)
-                    query = query.Where(p => p.LoaiPhongId == request.LoaiPhongId.Value);
-                if (request.GiaTu.HasValue)
-                    query = query.Where(p => p.Gia >= request.GiaTu.Value);
-                if (request.GiaDen.HasValue)
-                    query = query.Where(p => p.Gia <= request.GiaDen.Value);
-                if (request.LoaiGiuong.HasValue)
-                    query = query.Where(p => p.loaiGiuong == request.LoaiGiuong.Value);
-                if (request.LoaiView.HasValue)
-                    query = query.Where(p => p.loaiView == request.LoaiView.Value);
-                if (request.SoLuongKhach.HasValue)
-                    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn =>
-                        tn.TienNghi.Name.Contains("Sức chứa") && tn.TienNghi.Description.Contains(request.SoLuongKhach.Value.ToString())));
-                if (request.TienNghi != null && request.TienNghi.Any())
-                    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn => request.TienNghi.Contains(tn.TienNghi.Name)));
-                if (request.NgayNhanPhong.HasValue && request.NgayTraPhong.HasValue)
-                    query = query.Where(p => !_context.DatPhongs.Any(dp => dp.PhongId == p.PhongId &&
-                        dp.NgayNhanPhong < request.NgayTraPhong && dp.NgayTraPhong > request.NgayNhanPhong));
-                
-
-                // Sắp xếp
-                if (!string.IsNullOrEmpty(request.SortBy))
+                // lọc theo yêu cầu
+                if (!string.IsNullOrEmpty(request.Keyword))
                 {
-                    query = request.SortBy.ToLower() switch
-                    {
-                        "gia-asc" => query.OrderBy(p => p.Gia),
-                        "gia-desc" => query.OrderByDescending(p => p.Gia),
-                        _ => query.OrderBy(p => p.PhongId)
-                    };
+                    var keyword = request.Keyword.ToLower();
+                    query = query.Where(p =>
+                        p.SoPhong.ToLower().Contains(keyword) ||
+                        p.LoaiPhong.Type.ToLower().Contains(keyword));
                 }
+                ////if (request.LoaiPhongId.HasValue)
+                ////    query = query.Where(p => p.LoaiPhongId == request.LoaiPhongId.Value);
+                ////if (request.GiaTu.HasValue)
+                ////    query = query.Where(p => p.Gia >= request.GiaTu.Value);
+                ////if (request.GiaDen.HasValue)
+                ////    query = query.Where(p => p.Gia <= request.GiaDen.Value);
+                ////if (request.LoaiGiuong.HasValue)
+                ////    query = query.Where(p => p.loaiGiuong == request.LoaiGiuong.Value);
+                ////if (request.LoaiView.HasValue)
+                ////    query = query.Where(p => p.loaiView == request.LoaiView.Value);
+                ////if (request.SoLuongKhach.HasValue)
+                ////    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn =>
+                ////        tn.TienNghi.Name.Contains("Sức chứa") && tn.TienNghi.Description.Contains(request.SoLuongKhach.Value.ToString())));
+                ////if (request.TienNghi != null && request.TienNghi.Any())
+                ////    query = query.Where(p => p.LoaiPhong.tienNghiTheoLoaiPhongs.Any(tn => request.TienNghi.Contains(tn.TienNghi.Name)));
+                ////if (request.NgayNhanPhong.HasValue && request.NgayTraPhong.HasValue)
+                ////    query = query.Where(p => !_context.DatPhongs.Any(dp => dp.PhongId == p.PhongId &&
+                ////        dp.NgayNhanPhong < request.NgayTraPhong && dp.NgayTraPhong > request.NgayNhanPhong));
+
+
+                //// Sắp xếp
+                //if (!string.IsNullOrEmpty(request.SortBy))
+                //{
+                //    query = request.SortBy.ToLower() switch
+                //    {
+                //        "gia-asc" => query.OrderBy(p => p.Gia),
+                //        "gia-desc" => query.OrderByDescending(p => p.Gia),
+                //        _ => query.OrderBy(p => p.PhongId)
+                //    };
+                //}
 
                 // Đếm tổng số bản ghi
                 int totalRecords = await query.CountAsync();
@@ -118,8 +134,7 @@ namespace DPKS.Service
                     TotalRecords = totalRecords,
                     PageIndex = request.PageIndex,
                     PageSize = request.PageSize,
-                    Items = data,
-                    //Keyword = request.Keyword ?? string.Empty
+                    Items = data
                 };
 
                 return pagedResult;
@@ -142,7 +157,7 @@ namespace DPKS.Service
                     .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
                     .AsQueryable();
 
-                // Lọc theo yêu cầu
+               
                 if (request.LoaiPhongId.HasValue)
                     query = query.Where(p => p.LoaiPhongId == request.LoaiPhongId.Value);
                 if (request.GiaTu.HasValue)
@@ -219,7 +234,7 @@ namespace DPKS.Service
                     .Include(p => p.LoaiPhong).ThenInclude(lp => lp.tienNghiTheoLoaiPhongs).ThenInclude(tn => tn.TienNghi)
                     .Include(p => p.TrangThaiPhong)
                     .Include(p => p.anhPhongs)
-                    
+
                     .FirstOrDefaultAsync();
 
                 var feedback = await _context.FeedBacks
@@ -269,7 +284,7 @@ namespace DPKS.Service
                     SoLuongKhach = sucChua,
                     AnhPhong = phongEntity.anhPhongs.Select(ap => ap.PhotoName).ToList(),
                     TienNghis = phongEntity.LoaiPhong.tienNghiTheoLoaiPhongs.Select(tn => tn.TienNghi.Name).ToList(),
-                    Feedbacks = feedback.Select (f => new FeedbackItemVm
+                    Feedbacks = feedback.Select(f => new FeedbackItemVm
                     {
                         TenNguoiDung = f.User.HoTen,
                         DanhGia = f.DanhGia,
@@ -288,6 +303,7 @@ namespace DPKS.Service
                 return Result<ChiTietPhongVm>.Error($"Lỗi khi lấy chi tiết phòng: {ex.Message}");
             }
         }
+
 
 
         
@@ -419,5 +435,119 @@ namespace DPKS.Service
                 return Result<decimal>.Error($"Lỗi khi tính tổng giá: {ex.Message}");
             }
         }
+        #endregion
+        #region ADMIN
+       
+        public async Task<Result<int>> Create(PhongCreateRequest request)
+        {
+            try
+            {
+                _action = $"Thêm phòng thành công!";
+
+                if (await _context.Phongs.AnyAsync(x => x.SoPhong == request.SoPhong))
+                    return Result<int>.Error($"Phòng {request.SoPhong} đã tồn tại!");
+
+                var obj = new Phong()
+                {
+                    SoPhong = request.SoPhong,
+                    LoaiPhongId = request.LoaiPhongId,
+                    TrangThaiPhongId = request.TrangThaiPhongId,
+                    Gia = request.Gia,
+                    loaiGiuong = request.LoaiGiuong,
+                    loaiView = request.LoaiView,
+                    SoNguoiLonToiDa = request.SoNguoiLonToiDa,
+                    SoTreEmToiDa = request.SoTreEmToiDa,
+                    IsActive = true,
+                    CreateBy = "admin",
+                    CreateAt = DateTime.Now,
+                    ModifiedBy = "system",
+                    LateModifiedDate = DateTime.Now
+                };
+
+                _context.Phongs.Add(obj);
+                var result = await _context.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return Result<int>.Success(_action, obj.PhongId);
+                }
+
+                return Result<int>.Error("Cập nhật thất bại!");
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Ghi rõ lỗi để biết cột nào sai
+                return new Result<int>(false, $"Lỗi khi thêm phòng: {dbEx.InnerException?.Message}", 0);
+            }
+            catch (Exception ex)
+            {
+                return Result<int>.Error("Lỗi khi thêm phòng: " + ex.Message);
+            }
+        }
+        public async Task<Result<int>> Update(PhongUpdateRequest request)
+        {
+            try
+            {
+                int id = request.Id.DecodeId();
+
+                var obj = await _context.Phongs.FindAsync(id);
+                if (obj == null)
+                    return Result<int>.Error("Không tìm thấy phòng cần sửa!");
+
+                obj.SoPhong = request.SoPhong.Trim();
+                obj.Gia = request.Gia;
+                obj.loaiGiuong = request.loaiGiuong;
+                obj.loaiView = request.loaiView;
+                obj.LoaiPhongId = request.LoaiPhongId;
+                obj.TrangThaiPhongId = request.TrangThaiPhongId;
+                obj.SoNguoiLonToiDa = request.SoNguoiLonToiDa;
+                obj.SoTreEmToiDa = request.SoTreEmToiDa;
+
+                obj.ModifiedBy = request.UserId.ToString();
+                obj.LateModifiedDate = DateTime.Now;
+
+
+                _context.Phongs.Update(obj);
+                var result = await SaveChange();
+
+                return result > 0
+                    ? Result<int>.Success("Cập nhật phòng thành công", id)
+                    : Result<int>.Error("Cập nhật thất bại!");
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Result<int>> Delete(DeleteRequest request)
+        {
+            try
+            {
+                int id = request.Id.DecodeId();
+                var obj = await _context.Phongs.FindAsync(id);
+
+                if (obj == null)
+                    return Result<int>.Error("Không tìm thấy phòng cần xóa!");
+
+                //obj.IsDeleted = true;
+                obj.LateModifiedDate = DateTime.Now;
+                obj.LateModifiedDate = DateTime.Now;
+
+                _context.Phongs.Update(obj);
+                var result = await SaveChange();
+
+                return result > 0
+                    ? Result<int>.Success("Xóa phòng thành công", id)
+                    : Result<int>.Error("Xóa thất bại!");
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        #endregion
     }
 }

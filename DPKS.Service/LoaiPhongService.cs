@@ -6,6 +6,7 @@ using DPKS.Model.Feedback;
 using DPKS.Model.LoaiPhong;
 using DPKS.Model.LoaiPhong.Request;
 using DPKS.Model.TienNghi;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace DPKS.Service
     {
         Task<Result<List<ThongTinLoaiPhongVm>>> GetAllLoaiPhong();
         Task<Result<LoaiPhongDetailVm>> GetPhongById(int loaiPhongId);
+        Task<List<SelectListItem>> GetAllForDropdown();
     }
     public class LoaiPhongService : BaseService, ILoaiPhongService
     {
@@ -29,7 +31,18 @@ namespace DPKS.Service
         {
             _context = context;
         }
-
+        public async Task<List<SelectListItem>> GetAllForDropdown()
+        {
+            return await _context.LoaiPhongs
+                
+                .OrderBy(x => x.Type)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Type
+                })
+                .ToListAsync();
+        }
         public async Task<Result<List<ThongTinLoaiPhongVm>>> GetAllLoaiPhong()
         {
             var loaiPhongs = await _context.LoaiPhongs

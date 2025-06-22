@@ -1,0 +1,105 @@
+﻿@using DPKS.App.Extensions
+@using DPKS.Common.Result
+@model PagedResult<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
+
+<div class="box">
+    <div class="box-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-info">
+                    <tr>
+                        <th>Số phòng</th>
+                        <th>Loại phòng</th>
+                        <th class="text-center">Giá (đ/đêm)</th>
+                        <th class="text-center">Giường</th>
+                        <th class="text-center">View</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        foreach (var p in Model.Items)
+                        {
+                            <tr>
+                                <td>@p.SoPhong</td>
+                                <td>@p.Type</td>
+                                <td class="text-center">@p.Gia.ToString("N0")</td>
+                                
+                                <td class="text-center">@enHelper.GetDescription(p.LoaiGiuong)</td>
+                                <td class="text-center">@enHelper.GetDescription(p.LoaiView)</td>
+                                <td class="text-center">@enHelper.GetDescription(p.TrangThaiPhong)</td>
+                                <td class="text-center">
+                                    <a title="Sửa phòng" class="btn btn-warning popup"
+                                       data-toggle="modal"
+                                       data-target="#modal"
+                                       data-url="/Phong/Edit/?id=@p.PhongId"
+                                       data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-edit"></i> Sửa
+                                    </a>
+                                    <a title="Xóa phòng" class="btn btn-danger popup-delete"
+                                       data-url="/Phong/Delete/?id=@p.PhongId"
+                                       data-id="@p.PhongId"
+                                       data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Không có dữ liệu phòng</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="box-footer clearfix">
+        @if (Model.TotalRecords > Model.PageSize)
+        {
+            <div class="card-footer">
+                @await Component.InvokeAsync("Paging", new { page = Model })
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function handleErrorOrder(elem, data) {
+        $(elem).val(data.resultObj)
+    }
+
+    $(".txtOrder").on("change", function () {
+        updateData($(this).data("url"), $(this).data("id"), $(this).val(), handleErrorOrder, this);
+    });
+    $(".chStatus").on("change", function () {
+        updateData($(this).data("url"), $(this).data("id"));
+    });
+    $(".popup-delete").on("click", function () {
+        var url = $(this).data("url");
+        var id = $(this).data("id");
+        var urlCallBack = $(this).data("link");
+
+        Swal.fire({
+            title: 'Bạn chắc chắn?',
+            text: 'Bạn muốn xóa phòng này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                DeleteData(url, id, function () {
+                    let element = document.getElementById('box-content');
+                    loadContent(urlCallBack, element);
+                });
+            }
+        });
+    });
+
+</script>

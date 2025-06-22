@@ -1,121 +1,125 @@
-﻿<!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
+﻿<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Home/Index">
         <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+            <i class="fas fa-hotel"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        <div class="sidebar-brand-text mx-3">HB-Admin</div>
     </a>
 
     <!-- Divider -->
-    <hr class="sidebar-divider my-0">
-
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-    </li>
-
-    <!-- Divider -->
     <hr class="sidebar-divider">
 
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
-    </div>
-
-    <!-- Nav Item - Pages Collapse Menu -->
+    <!-- Quản lý phòng -->
+    <div class="sidebar-heading">Quản lý phòng</div>
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-           aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Components</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePhong">
+            <i class="fas fa-door-open"></i>
+            <span>Phòng & Loại phòng</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapsePhong" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="buttons.html">Buttons</a>
-                <a class="collapse-item" href="cards.html">Cards</a>
+                <a class="collapse-item" href="/Phong">Danh sách phòng</a>
+                <a class="collapse-item" href="/LoaiPhong">Danh sách loại phòng</a>
+                <a class="collapse-item" href="/AnhPhong">Ảnh phòng</a>
+                <a class="collapse-item" href="/AnhLoaiPhong">Ảnh loại phòng</a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-           aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Utilities</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTienNghi">
+            <i class="fas fa-concierge-bell"></i>
+            <span>Tiện nghi</span>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-             data-parent="#accordionSidebar">
+        <div id="collapseTienNghi" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Utilities:</h6>
-                <a class="collapse-item" href="utilities-color.html">Colors</a>
-                <a class="collapse-item" href="utilities-border.html">Borders</a>
-                <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                <a class="collapse-item" href="utilities-other.html">Other</a>
+                <a class="collapse-item" href="/TienNghi">Danh sách tiện nghi</a>
+                <a class="collapse-item" href="/TienNghiTheoLoaiPhong">Gán tiện nghi loại phòng</a>
             </div>
         </div>
     </li>
 
-    <!-- Divider -->
+    <!-- Quản lý người dùng -->
     <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Addons
-    </div>
-
-    <!-- Nav Item - Pages Collapse Menu -->
+    <div class="sidebar-heading">Người dùng & Vai trò</div>
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-           aria-expanded="true" aria-controls="collapsePages">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Pages</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUser">
+            <i class="fas fa-users"></i>
+            <span>Người dùng</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseUser" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Login Screens:</h6>
-                <a class="collapse-item" href="login.html">Login</a>
-                <a class="collapse-item" href="register.html">Register</a>
-                <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">Other Pages:</h6>
-                <a class="collapse-item" href="404.html">404 Page</a>
-                <a class="collapse-item" href="blank.html">Blank Page</a>
+                <a class="collapse-item" href="/ApplicationUser">Danh sách người dùng</a>
+                <a class="collapse-item" href="/ApplicationRole">Quản lý vai trò</a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Charts -->
+    <!-- Đặt phòng -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Đặt phòng</div>
     <li class="nav-item">
-        <a class="nav-link" href="charts.html">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatPhong">
+            <i class="fas fa-calendar-check"></i>
+            <span>Đặt phòng</span>
         </a>
+        <div id="collapseDatPhong" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/DatPhong">Danh sách đặt phòng</a>
+                <a class="collapse-item" href="/TrangThaiDatPhong">Trạng thái đặt phòng</a>
+                <a class="collapse-item" href="/TrangThaiPhong">Trạng thái phòng</a>
+            </div>
+        </div>
     </li>
 
-    <!-- Nav Item - Tables -->
+    <!-- Thanh toán -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Thanh toán</div>
     <li class="nav-item">
-        <a class="nav-link" href="tables.html">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThanhToan">
+            <i class="fas fa-credit-card"></i>
+            <span>Thanh toán</span>
+        </a>
+        <div id="collapseThanhToan" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/ThanhToan">Danh sách thanh toán</a>
+                <a class="collapse-item" href="/PhuongThucThanhToan">Phương thức thanh toán</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Địa lý & tổ chức -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Địa lý & Tổ chức</div>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDiaLy">
+            <i class="fas fa-globe-asia"></i>
+            <span>Địa lý</span>
+        </a>
+        <div id="collapseDiaLy" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/QuocGia">Quốc gia</a>
+                <a class="collapse-item" href="/Tinh">Tỉnh / Thành phố</a>
+                <a class="collapse-item" href="/Organization">Tổ chức</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Feedback -->
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Phản hồi</div>
+    <li class="nav-item">
+        <a class="nav-link" href="/Feedback">
+            <i class="fas fa-comments"></i>
+            <span>Feedback</span>
         </a>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
-
-    <!-- Sidebar Toggler (Sidebar) -->
+    <!-- Sidebar Toggler -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
-
-    
 </ul>
-<!-- End of Sidebar -->

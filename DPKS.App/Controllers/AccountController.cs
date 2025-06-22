@@ -58,7 +58,7 @@ namespace DPKS.APP.Controllers
 {
                     new Claim("UserId", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    
+                    new Claim(ClaimTypes.Email, user.Email),
                     // Nếu bạn có role thì thêm:
                     // new Claim(ClaimTypes.Role, "Admin") // hoặc lấy từ Identity Role
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())

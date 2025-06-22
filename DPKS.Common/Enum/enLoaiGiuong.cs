@@ -4,6 +4,9 @@ namespace DPKS.Common.Enum
 {
     public enum enLoaiGiuong
     {
+        [Description("Không rõ")]
+        KHONGRO = 0,
+
         [Description("Giường đơn")]
         DON = 1,
 

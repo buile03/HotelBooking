@@ -1,5 +1,6 @@
 ﻿using DPKS.Data.Config;
 using DPKS.Data.Entites;
+using DPKS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +88,7 @@ namespace DPKS.Data.EF
 
         public DbSet<AnhPhong> AnhPhongs { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Tracking> Trackings { get; set; }
 
     }
 }

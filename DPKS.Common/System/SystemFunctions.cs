@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DPKS.Common.System;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -228,15 +229,15 @@ namespace DPKS.Common
 
             return text.Trim();
         }
-        //public static string EncodeId(this int? id, string key = SystemConstants.AppSettings.Key)
-        //{
-        //    if (id == null || id == 0) return String.Empty;
-        //    return SystemHashUtil.EncodeID(id.ToString(), key);
-        //}
-        //public static int DecodeId(this string id, string key = SystemConstants.AppSettings.Key)
-        //{
-        //    return Convert.ToInt32(SystemHashUtil.DecodeID(id, key));
-        //}
+        public static string EncodeId(this int? id, string key = SystemConstants.AppSettings.Key)
+        {
+            if (id == null || id == 0) return String.Empty;
+            return SystemHashUtil.EncodeID(id.ToString(), key);
+        }
+        public static int DecodeId(this string id, string key = SystemConstants.AppSettings.Key)
+        {
+            return Convert.ToInt32(SystemHashUtil.DecodeID(id, key));
+        }
 
         public static bool IsContains(this string text, string key)
         {
