@@ -16,7 +16,7 @@ namespace DPKS.Service
     public interface ITrackingService
     {
         public Task<PagedResult<TrackingVm>> GetPagings(GetPagingRequest request);
-        public Task Create(Guid userId, Result result);
+        public Task Create(int userId, Result result);
     }
     public class TrackingService : BaseService, ITrackingService
     {
@@ -26,7 +26,7 @@ namespace DPKS.Service
             _context = context;
         }
 
-        public async Task Create(Guid userId, Result result)
+        public async Task Create(int userId, Result result)
         {
             try
             {

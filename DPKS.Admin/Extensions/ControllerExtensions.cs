@@ -212,17 +212,17 @@ namespace DPKS.App.Extensions
         //    };
 
         //}
-        public static Guid GetUserId(this ClaimsPrincipal user)
+        public static int GetUserId(this ClaimsPrincipal user)
         {
-            if (user.Identity.IsAuthenticated)
+            if (user.Identity != null && user.Identity.IsAuthenticated)
             {
-                var userId = user.FindFirst("Id").Value;
-                if (string.IsNullOrEmpty(userId))
-                    return Guid.Empty;
-
-                return Guid.Parse(userId);
+                var userIdStr = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(userIdStr, out int userId))
+                {
+                    return userId;
+                }
             }
-            return Guid.Empty;
+            return 0; // hoặc throw nếu bạn muốn bắt buộc
         }
         public static string GetRawUrl(this HttpRequest request)
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,21 +49,26 @@ namespace DPKS.Common.Result
     }
     public class RequestBase
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
     }
-    public class UpdateRequestBase
+    public class UpdateRequestBase : RequestBase
     {
+        [Required(ErrorMessage = "Thiếu Id")]
         public string Id { get; set; }
-        public Guid UserId { get; set; }
+      
 
     }
-    public class DeleteRequest : UpdateRequestBase
+    public class DeleteRequest  //:UpdateRequestBase
     {
-        public string Title { get; set; }
-        public string Caption { get; set; }
-        public string Action { get; set; }
-        public string ViewCallBack { get; set; }
+        [Required(ErrorMessage = "Thiếu Id")]
+        public string Id { get; set; }
+
+        public int UserId { get; set; }
+        //public string Title { get; set; }
+        //public string Caption { get; set; }
+        //public string Action { get; set; }
+        //public string ViewCallBack { get; set; }
     }
     public class UpdateOrderRequest : UpdateRequestBase
     {

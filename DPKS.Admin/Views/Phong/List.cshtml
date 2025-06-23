@@ -1,5 +1,7 @@
 ﻿@using DPKS.App.Extensions
+@using DPKS.Common.Helper
 @using DPKS.Common.Result
+
 @model PagedResult<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
 
 <div class="box">
@@ -38,10 +40,9 @@
                                        data-link="@Context.Request.GetRawUrl()">
                                         <i class="fa fa-edit"></i> Sửa
                                     </a>
-                                    <a title="Xóa phòng" class="btn btn-danger popup-delete"
-                                       data-url="/Phong/Delete/?id=@p.PhongId"
-                                       data-id="@p.PhongId"
-                                       data-link="@Context.Request.GetRawUrl()">
+                                    <a class="btn btn-danger btn-delete"
+                                       data-id="@p.PhongId.EncodeId1()"
+                                       data-token="@Html.GetAntiXsrfRequestToken()">
                                         <i class="fa fa-trash"></i> Xóa
                                     </a>
                                 </td>
@@ -80,26 +81,70 @@
     $(".chStatus").on("change", function () {
         updateData($(this).data("url"), $(this).data("id"));
     });
-    $(".popup-delete").on("click", function () {
-        var url = $(this).data("url");
-        var id = $(this).data("id");
-        var urlCallBack = $(this).data("link");
+    
+    // $(".popup-delete").on("click", function () {
+    //         var url = $(this).data("url");
+    //         var id = $(this).data("id");
+    //         var urlCallBack = $(this).data("link");
+
+    //         Swal.fire({
+    //             title: 'Bạn chắc chắn?',
+    //             text: 'Bạn muốn xóa phòng này?',
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Xác nhận',
+    //             cancelButtonText: 'Hủy'
+    //         }).then((result) => {
+    //                 if (result.isConfirmed) {
+    //         // Gán id vào input hidden trong form
+    //         $('#modal-form-delete input[name="Id"]').val(id);
+
+    //         // Gọi hàm xóa
+    //         DeleteData(url, function () {
+    //             loadContent(urlCallBack, $('#box-content'));
+    //         });
+    //     }
+    //         });
+    //     });
+                  $(".btn-delete").on("click", function () {
+        const id = $(this).data("id");
+        const token = $(this).data("token");
 
         Swal.fire({
-            title: 'Bạn chắc chắn?',
-            text: 'Bạn muốn xóa phòng này?',
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa phòng này không?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Xác nhận',
+            confirmButtonText: 'Xóa',
             cancelButtonText: 'Hủy'
         }).then((result) => {
             if (result.isConfirmed) {
-                DeleteData(url, id, function () {
-                    let element = document.getElementById('box-content');
-                    loadContent(urlCallBack, element);
+                $.post("/Phong/Delete", {
+                    Id: id,
+                    __RequestVerificationToken: token
+                }, function (res) {
+                    if (res.isSuccessed) { 
+                        Swal.fire({
+                            title: "Đã xóa!",
+                            text: res.message,
+                            icon: "success"
+                        });
+                        loadContent("/Phong", $("#box-content"));
+                    } else {
+                        Swal.fire({
+                            title: "Lỗi",
+                            text: res.message,
+                            icon: "error"
+                        });
+                    }
+                }).fail(() => {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Không thể xóa do lỗi máy chủ.",
+                        icon: "error"
+                    });
                 });
             }
         });
     });
-
 </script>

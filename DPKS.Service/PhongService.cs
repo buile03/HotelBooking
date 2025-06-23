@@ -16,6 +16,8 @@ using DPKS.Common.System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using DPKS.Model.Phong.Request;
 using DPKS.Common;
+using DPKS.Common.Helper;
+
 
 namespace DPKS.Service
 {
@@ -32,7 +34,7 @@ namespace DPKS.Service
         Task<Result<int>> Update(PhongUpdateRequest request);
         Task<Result<int>> Delete(DeleteRequest request);
 
-
+        Task<PhongUpdateRequest> GetById(int id);
 
     }
     public class PhongService : BaseService, IPhongService
@@ -47,13 +49,13 @@ namespace DPKS.Service
             _context = context;
             _httpContextAccessor = httpContextAccessor; 
         }
-        #region
+        #region USER
         public async Task<PagedResult<ThongTinDanhSachPhongVm>> GetPagings(PhongSearchRequest request)
         {
             try
             {
                 var query = _context.Phongs
-                    .Where(p => p.IsActive)
+                    .Where(p => p.IsActive && !p.IsDeleted)
                     .Include(p => p.LoaiPhong)
                     .Include(p => p.TrangThaiPhong)
                     .Include(p => p.anhPhongs)
@@ -150,7 +152,7 @@ namespace DPKS.Service
             {
 
                 var query = _context.Phongs
-                    .Where(p => p.IsActive)
+                    .Where(p => p.IsActive && !p.IsDeleted)
                     .Include(p => p.LoaiPhong)
                     .Include(p => p.TrangThaiPhong)
                     .Include(p => p.anhPhongs)
@@ -436,11 +438,15 @@ namespace DPKS.Service
             }
         }
         #endregion
+
+
         #region ADMIN
        
         public async Task<Result<int>> Create(PhongCreateRequest request)
         {
             try
+
+
             {
                 _action = $"Thêm phòng thành công!";
 
@@ -461,7 +467,8 @@ namespace DPKS.Service
                     CreateBy = "admin",
                     CreateAt = DateTime.Now,
                     ModifiedBy = "system",
-                    LateModifiedDate = DateTime.Now
+                    LateModifiedDate = DateTime.Now,
+                    IsDeleted = false
                 };
 
                 _context.Phongs.Add(obj);
@@ -474,11 +481,6 @@ namespace DPKS.Service
 
                 return Result<int>.Error("Cập nhật thất bại!");
             }
-            catch (DbUpdateException dbEx)
-            {
-                // Ghi rõ lỗi để biết cột nào sai
-                return new Result<int>(false, $"Lỗi khi thêm phòng: {dbEx.InnerException?.Message}", 0);
-            }
             catch (Exception ex)
             {
                 return Result<int>.Error("Lỗi khi thêm phòng: " + ex.Message);
@@ -488,24 +490,31 @@ namespace DPKS.Service
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(request.Id))
+                    return Result<int>.Error("Id phòng không hợp lệ!");
                 int id = request.Id.DecodeId();
 
                 var obj = await _context.Phongs.FindAsync(id);
                 if (obj == null)
                     return Result<int>.Error("Không tìm thấy phòng cần sửa!");
 
-                obj.SoPhong = request.SoPhong.Trim();
-                obj.Gia = request.Gia;
-                obj.loaiGiuong = request.loaiGiuong;
-                obj.loaiView = request.loaiView;
-                obj.LoaiPhongId = request.LoaiPhongId;
-                obj.TrangThaiPhongId = request.TrangThaiPhongId;
-                obj.SoNguoiLonToiDa = request.SoNguoiLonToiDa;
-                obj.SoTreEmToiDa = request.SoTreEmToiDa;
+                var existingRoom = await _context.Phongs
+                    .Where(p => p.SoPhong == request.SoPhong && p.PhongId != id && !p.IsDeleted)
+                    .FirstOrDefaultAsync();
+                if (existingRoom != null)
+                    return Result<int>.Error("Số phòng đã tồn tại!");
 
+
+                obj.SoPhong = request.SoPhong;
+                obj.Gia = request.Gia ?? 0;
+                obj.loaiGiuong = request.loaiGiuong ?? enLoaiGiuong.DOI;
+                obj.loaiView = request.loaiView ?? enLoaiView.THANHPHO;
+                obj.LoaiPhongId = request.LoaiPhongId ?? 1;
+                obj.TrangThaiPhongId = request.TrangThaiPhongId ?? 1;
+                obj.SoNguoiLonToiDa = request.SoNguoiLonToiDa ?? 2;
+                obj.SoTreEmToiDa = request.SoTreEmToiDa ?? 0;
                 obj.ModifiedBy = request.UserId.ToString();
                 obj.LateModifiedDate = DateTime.Now;
-
 
                 _context.Phongs.Update(obj);
                 var result = await SaveChange();
@@ -516,7 +525,7 @@ namespace DPKS.Service
             }
             catch
             {
-                throw;
+                return Result<int>.Error("Lỗi hệ thống khi cập nhật phòng!");
             }
         }
 
@@ -530,8 +539,9 @@ namespace DPKS.Service
                 if (obj == null)
                     return Result<int>.Error("Không tìm thấy phòng cần xóa!");
 
-                //obj.IsDeleted = true;
-                obj.LateModifiedDate = DateTime.Now;
+                obj.IsDeleted = true;
+
+                obj.ModifiedBy = request.UserId.ToString();
                 obj.LateModifiedDate = DateTime.Now;
 
                 _context.Phongs.Update(obj);
@@ -543,8 +553,27 @@ namespace DPKS.Service
             }
             catch
             {
-                throw;
+                
+                return Result<int>.Error("Đã xảy ra lỗi khi xóa phòng.");
             }
+        }
+        public async Task<PhongUpdateRequest> GetById(int id)
+        {
+            var phong = await _context.Phongs.FindAsync(id);
+            if (phong == null) return null;
+
+            return new PhongUpdateRequest
+            {
+                Id = phong.PhongId.EncodeId1(),
+                SoPhong = phong.SoPhong,
+                Gia = phong.Gia,
+                loaiGiuong = phong.loaiGiuong,
+                loaiView = phong.loaiView,
+                LoaiPhongId = phong.LoaiPhongId,
+                TrangThaiPhongId = phong.TrangThaiPhongId,
+                SoNguoiLonToiDa = phong.SoNguoiLonToiDa,
+                SoTreEmToiDa = phong.SoTreEmToiDa
+            };
         }
 
 

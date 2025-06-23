@@ -4,6 +4,7 @@ using DPKS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DPKS.Data.EF
 {
@@ -57,6 +58,11 @@ namespace DPKS.Data.EF
             builder.ApplyConfiguration(new TienNghiConfiguration());
 
 
+            builder.Entity<Tracking>()
+            .HasOne(t => t.User)
+            .WithMany()
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         }
 

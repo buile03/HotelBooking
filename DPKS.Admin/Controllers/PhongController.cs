@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Identity;
 using DPKS.Data.Entites;
 using DPKS.Common;
+using DPKS.Admin.Models;
+using DPKS.Common.Helper;
 
 namespace DPKS.Admin.Controllers
 {
@@ -114,72 +116,198 @@ namespace DPKS.Admin.Controllers
                 return ErrorResult();
             }
         }
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(string id)
+        //{
+        //    try
+        //    {
+        //        int decodedId = id.DecodeId();
+        //        var entity = await _context.Phongs.FindAsync(decodedId);
+
+        //        if (entity == null)
+        //        {
+        //            _logger.LogWarning("Không tìm thấy phòng với id = {0}", decodedId);
+        //            return NotFound("Không tìm thấy phòng!");
+        //        }
+
+        //        var model = new PhongUpdateRequest
+        //        {
+        //            Id = id,
+        //            SoPhong = entity.SoPhong,
+        //            Gia = entity.Gia,
+        //            loaiGiuong = entity.loaiGiuong,
+        //            loaiView = entity.loaiView,
+        //            LoaiPhongId = entity.LoaiPhongId,
+        //            TrangThaiPhongId = entity.TrangThaiPhongId,
+        //            SoNguoiLonToiDa = entity.SoNguoiLonToiDa,
+        //            SoTreEmToiDa = entity.SoTreEmToiDa
+        //        };
+
+        //        // 1. Loại phòng
+        //        var loaiPhongList = (await _loaiPhongServie.GetAllForDropdown())
+        //            .Select(x => new SelectListItem
+        //            {
+        //                Value = x.Value,
+        //                Text = x.Text,
+        //                Selected = x.Value == model.LoaiPhongId.ToString()
+        //            }).ToList();
+
+        //        ViewBag.LoaiPhongItems = loaiPhongList;
+
+        //        // 2. Trạng thái phòng
+        //        var trangThaiList = enHelper.GetSelectListTrangThaiPhong()
+        //            .Select(x => new SelectListItem
+        //            {
+        //                Value = x.Value,
+        //                Text = x.Text,
+        //                Selected = x.Value == model.TrangThaiPhongId.ToString()
+        //            }).ToList();
+
+        //        ViewBag.TrangThaiPhongItems = trangThaiList;
+        //        ViewBag.LoaiGiuongItems = enHelper.GetSelectListLoaiGiuong();
+        //        ViewBag.LoaiViewItems = enHelper.GetSelectListLoaiView();
+
+        //        return PartialView(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Lỗi khi lấy dữ liệu phòng để sửa");
+        //        return PartialView();
+        //    }
+        //}
+
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Consumes("multipart/form-data")]
+        //public async Task<IActionResult> Edit(PhongUpdateRequest request)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //            return IsValidResult();
+
+        //        request.UserId = User.GetUserId();
+        //        return await ActionResult(await _phongService.Update(request));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Lỗi khi cập nhật phòng");
+        //        return ErrorResult();
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(int id)
+        //{
+        //    try
+        //    {
+        //        var obj = await _phongService.GetById(id); // bạn cần có hàm này
+        //        if (obj == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        ViewBag.TrangThaiPhongItems = enHelper.GetSelectListTrangThaiPhong();
+        //        ViewBag.LoaiGiuongItems = enHelper.GetSelectListLoaiGiuong();
+        //        ViewBag.LoaiViewItems = enHelper.GetSelectListLoaiView();
+        //        ViewBag.LoaiPhongItems = await _loaiPhongServie.GetAllForDropdown();
+
+        //        return PartialView(obj);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Lỗi khi load form sửa phòng");
+        //        return StatusCode(500);
+        //    }
+        //}
+
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                int decodedId = id.DecodeId();
+                var obj = await _phongService.GetById(id);
+                if (obj == null)
+                {
+                    return NotFound();
+                }
+
+                // Tạo request object với Id đã được encode
+                var request = new PhongUpdateRequest
+                {
+                    Id = id.EncodeId1(), // Encode id thành string
+                    SoPhong = obj.SoPhong,
+                    Gia = obj.Gia,
+                    loaiGiuong = obj.loaiGiuong,
+                    loaiView = obj.loaiView,
+                    LoaiPhongId = obj.LoaiPhongId,
+                    TrangThaiPhongId = obj.TrangThaiPhongId,
+                    SoNguoiLonToiDa = obj.SoNguoiLonToiDa,
+                    SoTreEmToiDa = obj.SoTreEmToiDa
+                };
 
                 ViewBag.TrangThaiPhongItems = enHelper.GetSelectListTrangThaiPhong();
                 ViewBag.LoaiGiuongItems = enHelper.GetSelectListLoaiGiuong();
                 ViewBag.LoaiViewItems = enHelper.GetSelectListLoaiView();
-
-                // Sử dụng service cho LoaiPhong
                 ViewBag.LoaiPhongItems = await _loaiPhongServie.GetAllForDropdown();
 
-                var result = await _phongService.GetPhongById(decodedId);
-                if (!result.IsSuccessed || result.ResultObj == null)
-                {
-                    _logger.LogWarning("Không tìm thấy thông tin phòng với ID: {Id}", id);
-                    return PartialView(); // hoặc return NotFound();
-                }
-
-                var data = result.ResultObj;
-
-                var model = new PhongUpdateRequest
-                {
-                    Id = id,
-                    SoPhong = data.SoPhong,
-                    Gia = data.Gia,
-                    loaiGiuong = data.LoaiGiuong ??enLoaiGiuong.KHONGRO,
-                    loaiView = data.LoaiView ?? enLoaiView.KHONGCO,
-                    LoaiPhongId = data.LoaiPhongId, // bạn cần thêm vào ChiTietPhongVm
-                    TrangThaiPhongId = data.TrangThaiPhongId, // bạn cần thêm vào ChiTietPhongVm
-                    SoNguoiLonToiDa = data.SoLuongKhach, // có thể cần sửa nếu lấy theo TienNghi
-                    SoTreEmToiDa = 0 // bạn có thể cập nhật chính xác nếu có trong ChiTietPhongVm
-                };
-
-                return PartialView(model);
+                return PartialView(request); // Truyền request thay vì obj
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Đã có lỗi xảy ra khi gọi Edit phòng");
-                return PartialView();
+                _logger.LogError(ex, "Lỗi khi load form sửa phòng");
+                return StatusCode(500);
             }
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Consumes("multipart/form-data")]
         public async Task<IActionResult> Edit(PhongUpdateRequest request)
         {
             try
             {
                 if (!ModelState.IsValid)
-                    return IsValidResult();
-
+                {
+                    var errors = ModelState
+                    .Where(x => x.Value.Errors.Any())
+                    .Select(x => $"{x.Key}: {string.Join(", ", x.Value.Errors.Select(e => e.ErrorMessage))}");
+                    _logger.LogWarning("ModelState Invalid: " + string.Join(" | ", errors));
+                    return BadRequest();
+                }
                 request.UserId = User.GetUserId();
-
                 return await ActionResult(await _phongService.Update(request));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Đã có lỗi xảy ra");
+                _logger.LogError(ex, "Lỗi khi cập nhật phòng");
                 return ErrorResult();
             }
         }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmDelete(string id)
+        {
+            var roomId = id.DecodeId();
+            var room = await _context.Phongs
+                .Where(x => x.PhongId == roomId && !x.IsDeleted)
+                .Select(x => new DeleteRequest
+                {
+                    Id = id,
+                    
+                }).FirstOrDefaultAsync();
+
+            if (room == null)
+                return Content("Không tìm thấy phòng.");
+
+            return PartialView("_Delete", room);
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -188,10 +316,18 @@ namespace DPKS.Admin.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return IsValidResult();
+                    return Json(new { isSuccessed = false, message = "Dữ liệu không hợp lệ" });
 
-                request.UserId = User.GetUserId();
-                return await ActionResult(await _phongService.Delete(request));
+                request.UserId = User.GetUserId(); // hàm extension để lấy id người dùng
+
+                var result = await _phongService.Delete(request);
+                return Json(new
+                {
+                    isSuccessed = result.IsSuccessed,
+                    message = result.Message,
+                    
+                });
+
             }
             catch (Exception ex)
             {

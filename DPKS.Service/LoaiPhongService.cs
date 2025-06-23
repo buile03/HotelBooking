@@ -34,14 +34,13 @@ namespace DPKS.Service
         public async Task<List<SelectListItem>> GetAllForDropdown()
         {
             return await _context.LoaiPhongs
-                
+                //.Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Type)
                 .Select(x => new SelectListItem
                 {
-                    Value = x.Id.ToString(),
+                    Value = x.Id.ToString(),  
                     Text = x.Type
-                })
-                .ToListAsync();
+                }).ToListAsync();
         }
         public async Task<Result<List<ThongTinLoaiPhongVm>>> GetAllLoaiPhong()
         {

@@ -121,7 +121,6 @@ function modelPopup(triggerElement) {
     const input = $(triggerElement).data('link');
     const type = $(triggerElement).data('type');
     const data = getUrlVars(decodeURIComponent(input));
-    const modal = new bootstrap.Modal(document.getElementById("modal"));
 
     $('#modal .modal-dialog').removeClass('modal-sm modal-lg modal-xl').html('');
 
@@ -136,13 +135,13 @@ function modelPopup(triggerElement) {
             } else {
                 $('#modal .modal-dialog').html(data);
                 if (type) $('#modal .modal-dialog').addClass(type);
-                modal.show();
+                $('#modal').modal('show'); 
             }
             hideLoading();
         },
         error: function () {
             $(".modal-backdrop").remove();
-            modal.hide();
+            $('#modal').modal('hide'); 
             dropModal();
             hideLoading();
         }
@@ -229,27 +228,89 @@ function debounce(fn, ms) {
     };
 }
 // Hàm xóa dữ liệu
-function DeleteData(url, id, callback) {
-    const token = $('input[name="__RequestVerificationToken"]').val(); // Lấy token từ form hiện tại
+//function DeleteData(url, callback) {
+//    const form = $('#modal-form-delete');
+//    const formData = form.serialize();
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            __RequestVerificationToken: token,
-            id: id
-        },
-        success: function (res) {
-            if (res.success) {
-                Swal.fire('Đã xóa!', res.message, 'success');
-                if (callback) callback();
-            } else {
-                Swal.fire('Lỗi', res.message || 'Không thể xóa.', 'error');
-            }
-        },
-        error: function () {
-            Swal.fire('Lỗi', 'Xóa thất bại do lỗi máy chủ.', 'error');
-        }
-    });
+//    $.ajax({
+//        url: url,
+//        type: 'POST',
+//        data: formData,
+//        success: function (res) {
+//            if (res.success) {
+//                Swal.fire('Đã xóa!', res.message, 'success');
+//                if (callback) callback();
+//            } else {
+//                Swal.fire('Lỗi', res.message || 'Không thể xóa.', 'error');
+//            }
+//        },
+//        error: function () {
+//            Swal.fire('Lỗi', 'Xóa thất bại do lỗi máy chủ.', 'error');
+//        }
+//    });
+//}
+//function DeleteData(url, callback) {
+//    const form = $('#modal-form-delete');
+//    const formData = form.serialize(); // 👉 serialize sẽ lấy đúng token và Id
+
+//    $.ajax({
+//        url: url,
+//        type: 'POST',
+//        data: formData,
+//        contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // ✅ Bắt buộc
+//        success: function (res) {
+//            if (res.success) {
+//                Swal.fire('Đã xóa!', res.message, 'success');
+//                if (callback) callback();
+//            } else {
+//                Swal.fire('Lỗi', res.message || 'Không thể xóa.', 'error');
+//            }
+//        },
+//        error: function (xhr) {
+//            console.error(xhr.responseText); // 🪵 log lỗi chi tiết
+//            Swal.fire('Lỗi', 'Xóa thất bại do lỗi máy chủ.', 'error');
+//        }
+//    });
+//}
+
+
+//// Trong site.js
+//function initDeletePopup(entityName, reloadUrl) {
+//    $(document).on("click", `.popup-delete-${entityName}`, function () {
+//        const id = $(this).data("id");
+//        $.get(`/${entityName}/ConfirmDelete?id=${id}`, function (html) {
+//            $("#modal .modal-dialog").html(html);
+//            $("#modal").modal("show");
+//        });
+//    });
+
+//    $(document).on("submit", `#form-delete-${entityName}`, function (e) {
+//        e.preventDefault();
+//        const form = $(this);
+//        const data = form.serialize();
+//        const url = form.attr("action");
+
+//        $.post(url, data, function (res) {
+//            if (res.success) {
+//                Swal.fire("Thành công", res.message, "success");
+//                $("#modal").modal("hide");
+//                loadContent(reloadUrl, $("#box-content"));
+//            } else {
+//                Swal.fire("Lỗi", res.message, "error");
+//            }
+//        }).fail(() => {
+//            Swal.fire("Lỗi", "Đã xảy ra lỗi khi xóa.", "error");
+//        });
+//    });
+//}
+
+function handleDeleteResult(response) {
+    if (response.isSuccessed) {
+        $('#modal').modal('hide');
+        showToast("success", response.message);
+        eval(response.viewCallback);
+    } else {
+        showToast("error", response.message);
+    }
 }
 
