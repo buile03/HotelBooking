@@ -52,18 +52,23 @@
                                 <td class="text-center">@p.TongAnh</td>
                                 <td class="text-center">@p.TongTienNghi</td>
                                 <td class="text-center">
-                                    <a title="Sửa phòng" class="btn btn-warning popup"
-                                       data-toggle="modal"
-                                       data-target="#modal"
-                                       data-url="/LoaiPhong/Edit/?id=@p.Id"
-                                       data-link="@Context.Request.GetRawUrl()">
-                                        <i class="fa fa-edit"></i> Sửa
+                                    <a title="Sửa loại phòng"
+                                        class="btn btn-sm btn-outline-primary popup mr-1"
+                                        data-toggle="modal"
+                                        data-target="#modal"
+                                        data-url="/LoaiPhong/Edit/?id=@p.Id"
+                                        data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-edit"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-delete"
-                                       data-id="@p.Id.EncodeId1()"
-                                       data-token="@Html.GetAntiXsrfRequestToken()">
-                                        <i class="fa fa-trash"></i> Xóa
-                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger btn-delete"
+                                            data-id="@p.Id.EncodeId1()"
+                                            data-token="@Html.GetAntiXsrfRequestToken()">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+
+
                                 </td>
                             </tr>
                         }

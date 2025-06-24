@@ -4,19 +4,21 @@
 
 @model PagedResult<DPKS.Model.Phong.ThongTinDanhSachPhongVm>
 
-<div class="box">
-    <div class="box-body">
+<div class="card shadow-sm rounded-3 border-0">
+    
+
+    <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-info">
+            <table class="table table-bordered table-hover table-striped mb-0 text-center align-middle">
+                <thead class="bg-light text-dark border-bottom">
                     <tr>
                         <th>Số phòng</th>
                         <th>Loại phòng</th>
-                        <th class="text-center">Giá (đ/đêm)</th>
-                        <th class="text-center">Giường</th>
-                        <th class="text-center">View</th>
-                        <th class="text-center">Trạng thái</th>
-                        <th class="text-center">Chức năng</th>
+                        <th>Giá (đ/đêm)</th>
+                        <th>Giường</th>
+                        <th>View</th>
+                        <th>Trạng thái</th>
+                        <th>Chức năng</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,32 +29,39 @@
                             <tr>
                                 <td>@p.SoPhong</td>
                                 <td>@p.Type</td>
-                                <td class="text-center">@p.Gia.ToString("N0")</td>
-                                
-                                <td class="text-center">@enHelper.GetDescription(p.LoaiGiuong)</td>
-                                <td class="text-center">@enHelper.GetDescription(p.LoaiView)</td>
-                                <td class="text-center">@enHelper.GetDescription(p.TrangThaiPhong)</td>
-                                <td class="text-center">
-                                    <a title="Sửa phòng" class="btn btn-warning popup"
+                                <td>@p.Gia.ToString("N0")</td>
+                                <td>@enHelper.GetDescription(p.LoaiGiuong)</td>
+                                <td>@enHelper.GetDescription(p.LoaiView)</td>
+                                <td>
+                                    <span class="badge text-dark">
+                                        @enHelper.GetDescription(p.TrangThaiPhong)
+                                    </span>
+                                </td>
+                                <td>
+                                    <a title="Sửa phòng"
+                                       class="btn btn-sm btn-outline-primary popup mr-1"
                                        data-toggle="modal"
                                        data-target="#modal"
                                        data-url="/Phong/Edit/?id=@p.PhongId"
                                        data-link="@Context.Request.GetRawUrl()">
-                                        <i class="fa fa-edit"></i> Sửa
+                                        <i class="fa fa-edit"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-delete"
-                                       data-id="@p.PhongId.EncodeId1()"
-                                       data-token="@Html.GetAntiXsrfRequestToken()">
-                                        <i class="fa fa-trash"></i> Xóa
-                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger btn-delete"
+                                            data-id="@p.PhongId.EncodeId1()"
+                                            data-token="@Html.GetAntiXsrfRequestToken()">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </td>
+
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center">Không có dữ liệu phòng</td>
+                            <td colspan="7" class="text-muted">Không có dữ liệu phòng</td>
                         </tr>
                     }
                 </tbody>
@@ -60,15 +69,14 @@
         </div>
     </div>
 
-    <div class="box-footer clearfix">
-        @if (Model.TotalRecords > Model.PageSize)
-        {
-            <div class="card-footer">
-                @await Component.InvokeAsync("Paging", new { page = Model })
-            </div>
-        }
-    </div>
+    @if (Model.TotalRecords > Model.PageSize)
+    {
+        <div class="card-footer bg-light">
+            @await Component.InvokeAsync("Paging", new { page = Model })
+        </div>
+    }
 </div>
+
 
 <script>
     function handleErrorOrder(elem, data) {
@@ -125,3 +133,4 @@
         });
     });
 </script>
+

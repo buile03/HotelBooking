@@ -143,6 +143,7 @@ namespace DPKS.Admin.Controllers
             if (entity == null)
                 return NotFound();
 
+            ViewBag.LoaiPhongId = id;
             ViewBag.AnhPhu = await _loaiPhongService.GetAnhLoaiPhong(id);
             return PartialView(entity);
         }
@@ -152,7 +153,12 @@ namespace DPKS.Admin.Controllers
             try
             {
                 if(!ModelState.IsValid)
-                    return BadRequest();
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                  .Select(e => e.ErrorMessage)
+                                  .ToList();
+                    return BadRequest(new { success = false, errors });
+                } 
                 
                 request.UserId = User.GetUserId();
                 return await ActionResult(await _loaiPhongService.Update(request));
@@ -179,9 +185,9 @@ namespace DPKS.Admin.Controllers
                     if (file == null || file.Length == 0)
                         continue;
 
-                    var ImageFile = $"{Guid.NewGuid()}_{file.FileName}";
+                    var fileName = $"{Guid.NewGuid()}_{file.FileName}";
                     var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "loaiphong");
-                    var filePath = Path.Combine(uploadPath, ImageFile);
+                    var filePath = Path.Combine(uploadPath, fileName);
 
                     Directory.CreateDirectory(uploadPath);
 
@@ -191,7 +197,7 @@ namespace DPKS.Admin.Controllers
                     }
 
                     // Gọi service lưu ảnh
-                    await _loaiPhongService.AddAnhLoaiPhong(request.LoaiPhongId, ImageFile, request.UserId);
+                    await _loaiPhongService.AddAnhLoaiPhong(request.LoaiPhongId, fileName, request.UserId);
                 }
 
                 // Trả lại danh sách ảnh mới

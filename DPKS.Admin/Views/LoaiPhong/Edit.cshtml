@@ -3,7 +3,10 @@
 @{
     Layout = null;
     var anhPhu = ViewBag.AnhPhu as List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm> ?? new List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm>();
+    var loaiPhongId = (int)ViewBag.LoaiPhongId;
+    
 }
+
 
 <div class="modal-content">
     <form id="modal-form" method="post" enctype="multipart/form-data">
@@ -167,8 +170,7 @@
 
 <!-- JavaScript cho quản lý ảnh -->
 <script>
-    const loaiPhongId = '@Model.Id.DecodeId()'; // Cần tạo extension method DecodeId cho JavaScript
-
+    const loaiPhongId = @Html.Raw(Json.Serialize(ViewBag.LoaiPhongId ?? 0));
     function addNewImage() {
         const fileInput = document.getElementById('newImageFile');
         const file = fileInput.files[0];

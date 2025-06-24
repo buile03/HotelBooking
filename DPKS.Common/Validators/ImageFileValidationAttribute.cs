@@ -1,40 +1,55 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DPKS.Common.Validators
+public class ImageFileValidationAttribute : ValidationAttribute
 {
-    public class ImageFileValidationAttribute : ValidationAttribute
+    private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+    private readonly long _maxFileSize = 5 * 1024 * 1024; // 5MB
+
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-        private readonly long _maxFileSize = 5 * 1024 * 1024; // 5MB
+        if (value == null) return ValidationResult.Success;
 
-        public override bool IsValid(object value)
+        // Trường hợp 1: Một file đơn
+        if (value is IFormFile singleFile)
         {
-            if (value == null) return true; // Allow null for optional files
-
-            if (!(value is IFormFile file)) return false;
-
-            // Check file extension
-            var extension = Path.GetExtension(file.FileName)?.ToLower();
-            if (!_allowedExtensions.Contains(extension))
-            {
-                ErrorMessage = "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .gif)!";
-                return false;
-            }
-
-            // Check file size
-            if (file.Length > _maxFileSize)
-            {
-                ErrorMessage = "File ảnh không được vượt quá 5MB!";
-                return false;
-            }
-
-            return true;
+            return ValidateFile(singleFile);
         }
+
+        // Trường hợp 2: Danh sách file
+        if (value is IEnumerable<IFormFile> fileList)
+        {
+            foreach (var file in fileList)
+            {
+                var result = ValidateFile(file);
+                if (result != ValidationResult.Success)
+                    return result;
+            }
+            return ValidationResult.Success;
+        }
+
+        // Không đúng định dạng
+        return new ValidationResult("Dữ liệu upload không hợp lệ.");
+    }
+
+    private ValidationResult ValidateFile(IFormFile file)
+    {
+        if (file == null)
+            return ValidationResult.Success;
+
+        var extension = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+        if (!_allowedExtensions.Contains(extension))
+        {
+            return new ValidationResult("Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .gif)!");
+        }
+
+        if (file.Length > _maxFileSize)
+        {
+            return new ValidationResult("File ảnh không được vượt quá 5MB!");
+        }
+
+        return ValidationResult.Success;
     }
 }
