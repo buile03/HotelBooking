@@ -1,0 +1,92 @@
+﻿@model List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm>
+@{
+    var loaiPhongId = ViewBag.LoaiPhongId;
+}
+<h5>Ảnh phụ</h5>
+<div class="row">
+    @foreach (var photo in Model)
+    {
+            <div class="col-md-3 text-center mb-2">
+                <img src="~/images/loaiphong/@photo.PhotoName" class="img-thumbnail" style="max-height: 150px;" />
+                <form method="post" asp-action="DeleteAnhLoaiPhong">
+                    <input type="hidden" name="photoId" value="@photo.PhotoId" />
+                    <button type="submit" class="btn btn-sm btn-danger mt-1">Xóa</button>
+                </form>
+            </div>
+    }
+</div>
+<form asp-action="AddAnhLoaiPhong" method="post" enctype="multipart/form-data" id="add-anh-phu-form">
+    <input type="hidden" name="LoaiPhongId" value="@loaiPhongId" />
+    <div class="form-group">
+        <label>Thêm ảnh phụ</label>
+        <input type="file" name="ImageFile" class="form-control-file" multiple required />
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm ảnh</button>
+</form>
+
+
+<div id="preview-list" class="row mt-3"></div>
+
+<script>
+    // Hiển thị preview ảnh đã chọn
+    $('input[name="ImageFile"]').on('change', function () {
+        var files = this.files;
+        var preview = $('#preview-list');
+        preview.empty();
+
+        if (files.length === 0) return;
+
+        Array.from(files).forEach(file => {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var col = `
+                    <div class="col-md-3 text-center mb-2">
+                        <img src="${e.target.result}" class="img-thumbnail" style="max-height: 100px;" />
+                        <p class="text-truncate small">${file.name}</p>
+                    </div>`;
+                preview.append(col);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Submit nhiều ảnh qua AJAX
+    $('form[asp-action="AddAnhLoaiPhong"]').submit(function (e) {
+        e.preventDefault();
+
+        var formData = new FormData();
+        var files = $('input[name="ImageFile"]')[0].files;
+        var loaiPhongId = $('input[name="loaiPhongId"]').val();
+
+        if (files.length === 0) {
+            alert("Vui lòng chọn ít nhất một ảnh.");
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append("ImageFile", files[i]);
+        }
+
+        formData.append("LoaiPhongId", loaiPhongId);
+
+        $.ajax({
+            url: '/LoaiPhong/AddAnhLoaiPhong',
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    ShowMessageData({ isSuccessed: true, message: res.message });
+                    // Load lại danh sách ảnh phụ
+                    $('#modal .modal-content').load(`/LoaiPhong/AddAnhPhu?id=${loaiPhongId}`);
+                } else {
+                    ShowMessageData({ isSuccessed: false, message: res.message });
+                }
+            },
+            error: function () {
+                ShowMessageData({ isSuccessed: false, message: "Đã có lỗi xảy ra khi upload ảnh!" });
+            }
+        });
+    });
+</script>

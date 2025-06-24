@@ -1,0 +1,66 @@
+﻿@using DPKS.App.Extensions
+@using DPKS.Common.Enum
+@model DPKS.Model.LoaiPhong.Request.LoaiPhongSearchRequest
+
+@{
+    ViewData["Title"] = "Danh sách phòng";
+}
+
+<section id="widget-grid">
+    <div class="row">
+        <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="jarviswidget" id="wid-id-room" data-widget-editbutton="false" data-widget-deletebutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-bed"></i> </span>
+                    <h2>@ViewData["Title"]</h2>
+                </header>
+                <div>
+                    <div class="widget-body">
+                        <form id="searchForm" method="get">
+                            <div class="row mb-2">
+                                <div class="col-md-9">
+                                    <label>Từ khóa:</label>
+                                    <input name="Keyword" class="form-control" value="@Model.Keyword" />
+                                </div>
+                                <div class="col-md-3 d-flex justify-content-center align-items-end">
+                                    <button class="btn btn-primary me-2" type="submit">
+                                        <i class="fa fa-search"></i> Tìm kiếm
+                                    </button>
+                                    <button type="button" class="btn btn-success popup"
+                                            data-url="/LoaiPhong/Create"
+                                            data-link="/LoaiPhong/List/">
+                                        <i class="fa fa-plus-circle"></i> Thêm phòng
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div id="box-content">
+                                <!-- Nội dung danh sách sẽ được load ở đây -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+@section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                let element = document.getElementById('box-content');
+
+                loadContent('@Html.Raw(Context.Request.GetRawUrl("/LoaiPhong/List/"))', element);
+
+                $("#Status").on("change", function () {
+                    this.form.submit()
+                });
+                $("#LoaiPhongId").on("change", function () {
+                    this.form.submit()
+                });
+                $("#TrangThaiPhongId").on("change", function () {
+                    this.form.submit()
+                });
+            });
+        </script>
+}

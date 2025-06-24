@@ -1,0 +1,151 @@
+﻿@using DPKS.App.Extensions
+@using DPKS.Common.Helper
+@using DPKS.Common.Result
+
+@model PagedResult<DPKS.Model.LoaiPhong.ThongTinLoaiPhongVm>
+
+
+<div class="box">
+    <div class="box-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-info">
+                    <tr>
+                        <th>Loại phòng</th>
+                        <th>Mô tả</th>
+                        <th class="text-center">Diện tích (m²)</th>
+                        <th class="text-center">Ảnh</th>
+                        <th class="text-center">Số lượng phòng</th>
+                        <th class="text-center">Tổng ảnh</th>
+                        <th class="text-center">Tổng tiện nghi</th>
+                        <th class="text-center">Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        foreach (var p in Model.Items)
+                        {
+                            <tr>
+                                <td>@p.Type</td>
+                                <td>@p.Description</td>
+                                <td class="text-center">@p.DienTich</td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(p.HinhAnhChinh))
+                                    {
+                                        <img src="~/images/loaiphong/@p.HinhAnhChinh"
+                                             alt="Ảnh loại phòng"
+                                             width="50"
+                                             height="40"
+                                             class="img-thumbnail"
+                                             style="object-fit: cover; cursor: pointer;"
+                                             data-toggle="tooltip"
+                                             data-html="true"
+                                             title="<img src='/images/loaiphong/@p.HinhAnhChinh' width='200' />" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                                <td class="text-center">@p.SoLuongPhong</td>
+                                <td class="text-center">@p.TongAnh</td>
+                                <td class="text-center">@p.TongTienNghi</td>
+                                <td class="text-center">
+                                    <a title="Sửa phòng" class="btn btn-warning popup"
+                                       data-toggle="modal"
+                                       data-target="#modal"
+                                       data-url="/LoaiPhong/Edit/?id=@p.Id"
+                                       data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-edit"></i> Sửa
+                                    </a>
+                                    <a class="btn btn-danger btn-delete"
+                                       data-id="@p.Id.EncodeId1()"
+                                       data-token="@Html.GetAntiXsrfRequestToken()">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">Không có dữ liệu loại phòng</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="box-footer clearfix">
+        @if (Model.TotalRecords > Model.PageSize)
+        {
+            <div class="card-footer">
+                @await Component.InvokeAsync("Paging", new { page = Model })
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+
+
+    function handleErrorOrder(elem, data) {
+        $(elem).val(data.resultObj)
+    }
+
+    $(".txtOrder").on("change", function () {
+        updateData($(this).data("url"), $(this).data("id"), $(this).val(), handleErrorOrder, this);
+    });
+    $(".chStatus").on("change", function () {
+        updateData($(this).data("url"), $(this).data("id"));
+    });
+
+        $(".btn-delete").on("click", function () {
+        const id = $(this).data("id");
+        const token = $(this).data("token");
+
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa phòng này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post("/LoaiPhong/Delete", {
+                    Id: id,
+                    __RequestVerificationToken: token
+                }, function (res) {
+                    if (res.isSuccessed) {
+                        Swal.fire({
+                            title: "Đã xóa!",
+                            text: res.message,
+                            icon: "success"
+                        });
+                        loadContent("/LoaiPhong", $("#box-content"));
+                    } else {
+                        Swal.fire({
+                            title: "Lỗi",
+                            text: res.message,
+                            icon: "error"
+                        });
+                    }
+                }).fail(() => {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Không thể xóa do lỗi máy chủ.",
+                        icon: "error"
+                    });
+                });
+            }
+        });
+    });
+</script>

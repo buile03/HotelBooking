@@ -1,0 +1,379 @@
+﻿@using DPKS.Common.Extensions
+@model DPKS.Model.LoaiPhong.Request.LoaiPhongUpdateRequest
+@{
+    Layout = null;
+    var anhPhu = ViewBag.AnhPhu as List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm> ?? new List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm>();
+}
+
+<div class="modal-content">
+    <form id="modal-form" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="modal-header">
+            <h4 class="modal-title">Cập nhật loại phòng</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Thông tin cơ bản -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Type">Loại phòng <span class="text-danger">*</span></label>
+                        <input asp-for="Type" class="form-control" />
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="DienTich">Diện tích (m²) <span class="text-danger">*</span></label>
+                        <input asp-for="DienTich" class="form-control" type="number" step="0.1" />
+                        <span asp-validation-for="DienTich" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for="Description">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ảnh đại diện hiện tại -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Ảnh đại diện hiện tại</label>
+                        @if (!string.IsNullOrEmpty(Model.HinhAnhChinh))
+                        {
+                                <div class="current-main-image">
+                                    <img src="/images/LoaiPhong/@Model.HinhAnhChinh" alt="Ảnh chính" class="img-thumbnail" style="max-width: 200px; max-height: 150px;" />
+                                </div>
+                        }
+                        else
+                        {
+                                <div class="no-image text-muted">
+                                    <i class="fas fa-image"></i> Chưa có ảnh đại diện
+                                </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HinhAnhChinhFile">Thay đổi ảnh đại diện</label>
+                        <input asp-for="HinhAnhChinhFile" class="form-control-file" type="file" accept="image/*" />
+                        <small class="form-text text-muted">Chấp nhận file: .jpg, .jpeg, .png, .gif (tối đa 5MB)</small>
+                        <span asp-validation-for="HinhAnhChinhFile" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Quản lý ảnh phụ -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Quản lý ảnh phụ</h5>
+
+                    <!-- Form thêm ảnh -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Thêm ảnh mới</label>
+                                <div class="input-group">
+                                    <input type="file" id="newImageFile" class="form-control-file" accept="image/*" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary" onclick="addNewImage()">
+                                            <i class="fas fa-plus"></i> Thêm ảnh
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Chấp nhận file: .jpg, .jpeg, .png, .gif (tối đa 5MB)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách ảnh hiện có -->
+                    <div id="photo-gallery">
+                        @if (anhPhu.Any())
+                        {
+                                <div class="row" id="photo-list">
+                                @foreach (var anh in anhPhu)
+                                {
+                                            <div class="col-md-3 col-sm-6 mb-3" data-photo-id="@anh.PhotoId">
+                                                <div class="card">
+                                                    <img src="@anh.PhotoUrl" class="card-img-top" alt="Ảnh loại phòng" style="height: 150px; object-fit: cover;" />
+                                                    <div class="card-body p-2">
+                                                        <div class="btn-group btn-group-sm w-100" role="group">
+                                                    @if (anh.IsMainPhoto)
+                                                    {
+                                                                    <button type="button" class="btn btn-success btn-sm" disabled>
+                                                                        <i class="fas fa-star"></i> Ảnh chính
+                                                                    </button>
+                                                    }
+                                                    else
+                                                    {
+                                                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="setMainPhoto(@anh.PhotoId)">
+                                                                        <i class="fas fa-star"></i> Đặt chính
+                                                                    </button>
+                                                    }
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="deletePhoto(@anh.PhotoId)">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        <small class="text-muted d-block mt-1">@anh.CreatedDate.ToString("dd/MM/yyyy")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                }
+                                </div>
+                        }
+                        else
+                        {
+                                <div class="alert alert-info" id="no-photos-message">
+                                    <i class="fas fa-info-circle"></i> Chưa có ảnh phụ nào. Hãy thêm ảnh để hiển thị đầy đủ thông tin loại phòng.
+                                </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Cập nhật
+            </button>
+        </div>
+    </form>
+
+    @{
+        await Html.RenderPartialAsync("_ModalScript", new DPKS.Admin.Models.ModalFormRequest()
+            {
+                FormId = "modal-form",
+                UrlSubmit = "/LoaiPhong/Edit",
+                UrlPathLoadData = ViewBag.ResultUrl?.ToString() ?? "/LoaiPhong/List/",
+                LoadDataId = "box-content"
+            });
+    }
+</div>
+
+<!-- JavaScript cho quản lý ảnh -->
+<script>
+    const loaiPhongId = '@Model.Id.DecodeId()'; // Cần tạo extension method DecodeId cho JavaScript
+
+    function addNewImage() {
+        const fileInput = document.getElementById('newImageFile');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            Swal.fire('Thông báo', 'Vui lòng chọn file ảnh!', 'warning');
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            Swal.fire('Lỗi', 'Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .gif)!', 'error');
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            Swal.fire('Lỗi', 'File ảnh không được vượt quá 5MB!', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('LoaiPhongId', loaiPhongId);
+        formData.append('ImageFile', file);
+        formData.append('__RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+
+        // Show loading
+        Swal.fire({
+            title: 'Đang xử lý...',
+            text: 'Vui lòng chờ trong giây lát',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/LoaiPhong/AddAnhLoaiPhong',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.close();
+                if (response.success) {
+                    Swal.fire('Thành công', response.message, 'success');
+                    refreshPhotoGallery(response.data);
+                    fileInput.value = ''; // Clear file input
+                } else {
+                    Swal.fire('Lỗi', response.message, 'error');
+                }
+            },
+            error: function() {
+                Swal.close();
+                Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm ảnh!', 'error');
+            }
+        });
+    }
+
+    function deletePhoto(photoId) {
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa ảnh này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/LoaiPhong/DeleteAnhLoaiPhong',
+                    type: 'POST',
+                    data: {
+                        photoId: photoId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Thành công', response.message, 'success');
+                            $(`[data-photo-id="${photoId}"]`).fadeOut(300, function() {
+                                $(this).remove();
+                                checkNoPhotos();
+                            });
+                        } else {
+                            Swal.fire('Lỗi', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Lỗi', 'Có lỗi xảy ra khi xóa ảnh!', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function setMainPhoto(photoId) {
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Đặt ảnh này làm ảnh đại diện chính?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/LoaiPhong/SetHinhAnhChinh',
+                    type: 'POST',
+                    data: {
+                        LoaiPhongId: loaiPhongId,
+                        PhotoId: photoId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Thành công', response.message, 'success');
+                            refreshPhotoGallery(response.data);
+                        } else {
+                            Swal.fire('Lỗi', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Lỗi', 'Có lỗi xảy ra khi đặt ảnh chính!', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function refreshPhotoGallery(photos) {
+        const photoList = $('#photo-list');
+        photoList.empty();
+
+        if (photos && photos.length > 0) {
+            $('#no-photos-message').hide();
+
+            photos.forEach(function(photo) {
+                const photoCard = createPhotoCard(photo);
+                photoList.append(photoCard);
+            });
+        } else {
+            checkNoPhotos();
+        }
+    }
+
+    function createPhotoCard(photo) {
+        const isMainClass = photo.isMainPhoto ? 'btn-success' : 'btn-outline-primary';
+        const mainButtonText = photo.isMainPhoto ? '<i class="fas fa-star"></i> Ảnh chính' : '<i class="fas fa-star"></i> Đặt chính';
+        const mainButtonDisabled = photo.isMainPhoto ? 'disabled' : '';
+        const mainButtonClick = photo.isMainPhoto ? '' : `onclick="setMainPhoto(${photo.photoId})"`;
+
+        return `
+            <div class="col-md-3 col-sm-6 mb-3" data-photo-id="${photo.photoId}">
+                <div class="card">
+                    <img src="${photo.photoUrl}" class="card-img-top" alt="Ảnh loại phòng" style="height: 150px; object-fit: cover;" />
+                    <div class="card-body p-2">
+                        <div class="btn-group btn-group-sm w-100" role="group">
+                            <button type="button" class="btn ${isMainClass} btn-sm" ${mainButtonDisabled} ${mainButtonClick}>
+                                ${mainButtonText}
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="deletePhoto(${photo.photoId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-1">${formatDate(photo.createdDate)}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function checkNoPhotos() {
+        if ($('#photo-list .col-md-3').length === 0) {
+            $('#photo-gallery').html(`
+                <div class="alert alert-info" id="no-photos-message">
+                    <i class="fas fa-info-circle"></i> Chưa có ảnh phụ nào. Hãy thêm ảnh để hiển thị đầy đủ thông tin loại phòng.
+                </div>
+            `);
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN');
+    }
+
+    // Drag and drop support
+    $(document).ready(function() {
+        // Preview image when file is selected
+        $('#newImageFile').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // You can add image preview here if needed
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+

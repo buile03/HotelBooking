@@ -1,0 +1,77 @@
+﻿@using DPKS.Common.Extensions
+
+@model DPKS.Model.LoaiPhong.Request.LoaiPhongCreateRequest
+@{
+    Layout = null;
+}
+<div class="modal-content">
+    <form id="modal-form" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="modal-header">
+            <h4 class="modal-title">Thêm loại phòng mới</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Type">Loại phòng</label>
+                        <input asp-for="Type" class="form-control" />
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Description">Mô tả</label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="DienTich">Diện tích (m²)</label>
+                        <input asp-for="DienTich" class="form-control" />
+                        <span asp-validation-for="DienTich" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HinhAnhUpload">Ảnh đại diện</label>
+                        <input asp-for="HinhAnhUpload" class="form-control-file" type="file" />
+                        <span asp-validation-for="HinhAnhUpload" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-success">Lưu</button>
+        </div>
+    </form>
+    
+    
+    @{
+        await Html.RenderPartialAsync("_ModalScript", new DPKS.Admin.Models.ModalFormRequest()
+            {
+                FormId = "modal-form",
+                UrlSubmit = "/LoaiPhong/Create",
+                UrlPathLoadData = ViewBag.ResultUrl?.ToString() ?? "/LoaiPhong/List/",
+                LoadDataId = "box-content",
+                FunctionCallBack = "loadAnhPhuModal(data.loaiPhongId);"
+            });
+    }
+</div>
+<script>
+        function loadAnhPhuModal(loaiPhongId) {
+        $('.modal-content').fadeOut(200, function () {
+            $(this).load(`/LoaiPhong/AddAnhPhu/${loaiPhongId}`, function () {
+                $('.modal-content').fadeIn(200);
+            });
+        });
+    }
+</script>

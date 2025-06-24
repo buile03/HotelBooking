@@ -95,6 +95,6 @@ namespace DPKS.Data.EF
         public DbSet<AnhPhong> AnhPhongs { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Tracking> Trackings { get; set; }
-
+        public DbSet<AnhLoaiPhong> AnhLoaiPhongs { get; set; }
     }
 }

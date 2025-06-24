@@ -39,6 +39,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -77,6 +80,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")
@@ -293,6 +299,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -378,6 +387,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -417,13 +429,15 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("DienTich")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("HinhAnhChinh")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")
@@ -464,6 +478,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")
@@ -574,6 +591,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -604,6 +624,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")
@@ -646,6 +669,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnName("Gia");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")
@@ -696,6 +722,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -742,6 +771,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -778,6 +810,9 @@ namespace DPKS.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LateModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -811,6 +846,9 @@ namespace DPKS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LateModifiedDate")

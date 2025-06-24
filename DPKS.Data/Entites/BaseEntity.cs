@@ -13,5 +13,6 @@ namespace DPKS.Data.Entites
         public string ModifiedBy { get; set; }
         public DateTime? LateModifiedDate { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
     }
 }

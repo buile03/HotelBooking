@@ -49,7 +49,7 @@ namespace DPKS.Service
             _context = context;
             _httpContextAccessor = httpContextAccessor; 
         }
-        #region USER
+        #region KHÁCH HÀNG
         public async Task<PagedResult<ThongTinDanhSachPhongVm>> GetPagings(PhongSearchRequest request)
         {
             try

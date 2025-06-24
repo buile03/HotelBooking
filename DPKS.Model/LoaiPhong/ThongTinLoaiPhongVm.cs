@@ -23,6 +23,10 @@ namespace DPKS.Model.LoaiPhong
         public List<string> DanhSachHinhAnh { get; set; } = new List<string>();
 
 
+        public int TongAnh { get; set; }              // => lp.anhLoaiPhongs.Count()
+        public int TongTienNghi { get; set; }         // => lp.tienNghiTheoLoaiPhongs.Count()
+
+
         public int SoLuongPhong { get; set; } // Số lượng phòng thuộc loại này
         public int SoLuongPhongTrong { get; set; } // Số lượng phòng đang trống
         public decimal GiaThapNhat { get; set; } // Giá thấp nhất trong loại phòng này
