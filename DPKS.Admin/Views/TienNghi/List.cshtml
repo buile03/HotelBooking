@@ -1,0 +1,122 @@
+﻿@using DPKS.App.Extensions
+@using DPKS.Common.Helper
+@using DPKS.Common.Result
+
+@model PagedResult<DPKS.Model.TienNghi.DanhSachTienNghiVm>
+
+<div class="card shadow-sm rounded-3 border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped mb-0 text-center align-middle">
+                <thead class="bg-light text-dark border-bottom">
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên tiện nghi</th>
+                        <th>Mô tả</th>
+                        <th>Icon</th>
+                        <th>Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        int stt = (Model.PageIndex - 1) * Model.PageSize + 1;
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.Name</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Icon))
+                                    {
+                                        <i class="@item.Icon"></i>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a title="Sửa tiện nghi"
+                                       class="btn btn-sm btn-outline-primary popup mr-1"
+                                       data-toggle="modal"
+                                       data-target="#modal"
+                                       data-url="/TienNghi/Edit/?id=@item.Id"
+                                       data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger btn-delete"
+                                            data-id="@item.Id.EncodeId1()"
+                                            data-token="@Html.GetAntiXsrfRequestToken()">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-muted">Không có dữ liệu tiện nghi</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.TotalRecords > Model.PageSize)
+    {
+        <div class="card-footer bg-light">
+            @await Component.InvokeAsync("Paging", new { page = Model })
+        </div>
+    }
+</div>
+
+<script>
+    $(".btn-delete").on("click", function () {
+        const id = $(this).data("id");
+        const token = $(this).data("token");
+
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa tiện nghi này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post("/TienNghi/Delete", {
+                    Id: id,
+                    __RequestVerificationToken: token
+                }, function (res) {
+                    if (res.isSuccessed) {
+                        Swal.fire({
+                            title: "Đã xóa!",
+                            text: res.message,
+                            icon: "success"
+                        });
+                        loadContent("/TienNghi", $("#box-content"));
+                    } else {
+                        Swal.fire({
+                            title: "Lỗi",
+                            text: res.message,
+                            icon: "error"
+                        });
+                    }
+                }).fail(() => {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Không thể xóa do lỗi máy chủ.",
+                        icon: "error"
+                    });
+                });
+            }
+        });
+    });
+</script>

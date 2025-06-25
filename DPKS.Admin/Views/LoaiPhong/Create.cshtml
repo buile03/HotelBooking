@@ -3,6 +3,7 @@
 @model DPKS.Model.LoaiPhong.Request.LoaiPhongCreateRequest
 @{
     Layout = null;
+    var tienNghiList = ViewBag.TienNghiList as List<DPKS.Model.TienNghi.DanhSachTienNghiVm> ?? new List<DPKS.Model.TienNghi.DanhSachTienNghiVm>();
 }
 <div class="modal-content">
     <form id="modal-form" method="post" enctype="multipart/form-data">
@@ -45,6 +46,24 @@
                         <span asp-validation-for="HinhAnhUpload" class="text-danger"></span>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label>Chọn tiện nghi áp dụng</label>
+                    <div class="row">
+                        @foreach (var tn in tienNghiList)
+                        {
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="SelectedTienNghiIds" value="@tn.Id" />
+                                    <label class="form-check-label">
+                                        <i class="@tn.Icon"></i> @tn.Name
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
             </div>
         </div>
         

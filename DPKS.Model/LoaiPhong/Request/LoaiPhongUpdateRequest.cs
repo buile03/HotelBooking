@@ -21,5 +21,7 @@ namespace DPKS.Model.LoaiPhong.Request
         public IFormFile? HinhAnhChinhFile { get; set; }
 
         public string? HinhAnhChinh { get; set; }
+        public List<int>? SelectedTienNghiIds { get; set; } = new();
+
     }
 }

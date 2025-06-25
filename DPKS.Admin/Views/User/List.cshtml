@@ -1,0 +1,93 @@
+﻿@using DPKS.App.Extensions
+@using DPKS.Common.Helper
+@using DPKS.Common.Result
+@model PagedResult<DPKS.Model.User.DanhSachUserVm>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Giới tính</th>
+                        <th>Quốc gia</th>
+                        <th>Tỉnh</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        int stt = (Model.PageIndex - 1) * Model.PageSize + 1;
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.HoTen</td>
+                                <td>@item.Email</td>
+                                <td>@item.GioiTinh</td>
+                                <td>@item.QuocGia</td>
+                                <td>@item.Tinh</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary popup" data-url="/User/Edit?id=@item.Id" data-link="@Context.Request.GetRawUrl()">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="@item.Id.EncodeId1()" data-token="@Html.GetAntiXsrfRequestToken()">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-muted">Không có dữ liệu</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.TotalRecords > Model.PageSize)
+    {
+        <div class="card-footer bg-light">
+            @await Component.InvokeAsync("Paging", new { page = Model })
+        </div>
+    }
+</div>
+
+<script>
+    $(".btn-delete").on("click", function () {
+        const id = $(this).data("id");
+        const token = $(this).data("token");
+
+        Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa người dùng này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post("/User/Delete", {
+                    Id: id,
+                    __RequestVerificationToken: token
+                }, function (res) {
+                    if (res.isSuccessed) {
+                        Swal.fire("Đã xóa!", res.message, "success");
+                        loadContent("/User", $("#box-content"));
+                    } else {
+                        Swal.fire("Lỗi", res.message, "error");
+                    }
+                }).fail(() => {
+                    Swal.fire("Lỗi", "Không thể xóa do lỗi máy chủ.", "error");
+                });
+            }
+        });
+    });
+</script>

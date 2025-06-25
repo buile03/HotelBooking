@@ -63,15 +63,15 @@ namespace DPKS.Admin.Controllers
                 
             }
         }
-        public async Task<IActionResult> Details(int id)
-        {
-            var phong = await _phongService.GetPhongById(id);
-            if (phong == null)
-            {
-                return NotFound();
-            }
-            return View(phong);
-        }
+        //public async Task<IActionResult> Details(int id)
+        //{
+        //    var phong = await _phongService.GetPhongById(id);
+        //    if (phong == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(phong);
+        //}
 
 
         [HttpGet]

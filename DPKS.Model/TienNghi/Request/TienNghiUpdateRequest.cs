@@ -1,12 +1,22 @@
-﻿namespace DPKS.Model.TienNghi.Request
+﻿using DPKS.Common.Result;
+using System.ComponentModel.DataAnnotations;
+
+namespace DPKS.Model.TienNghi.Request
 {
-    public class TienNghiUpdateRequest
+    public class TienNghiUpdateRequest : UpdateRequestBase
     {
-        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập tên tiện nghi")]
+        [Display(Name = "Tên tiện nghi")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập mô tả")]
+        [Display(Name = "Mô tả")]
         public string Description { get; set; }
-        // public string ModifiedBy { get; set }
-        public DateTime LastModifiedDate => DateTime.Now;
-        public bool IsActive { get; set; }
+
+        [Display(Name = "Icon")]
+        public string Icon { get; set; }
+
+        
     }
 }

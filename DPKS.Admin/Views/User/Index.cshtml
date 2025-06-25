@@ -1,0 +1,49 @@
+﻿@using DPKS.App.Extensions
+@model DPKS.Model.User.Request.UserSearchRequest
+
+@{
+    ViewData["Title"] = "Danh sách người dùng";
+}
+
+<section id="widget-grid">
+    <div class="row">
+        <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="jarviswidget" id="wid-id-user" data-widget-editbutton="false" data-widget-deletebutton="false">
+                <header>
+                    <h3 class="text-dark">@ViewData["Title"]</h3>
+                </header>
+                <div>
+                    <div class="widget-body">
+                        <form id="searchForm" method="get">
+                            <div class="row mb-2">
+                                <div class="col-md-9">
+                                    <label>Từ khóa:</label>
+                                    <input name="Keyword" class="form-control" value="@Model.Keyword" placeholder="Tên, email hoặc số điện thoại..." />
+                                </div>
+                                <div class="col-md-3 d-flex justify-content-center align-items-end">
+                                    <button class="btn btn-primary me-2" type="submit">
+                                        <i class="fa fa-search"></i> Tìm
+                                    </button>
+                                    <button type="button" class="btn btn-success popup"
+                                            data-url="/User/Create"
+                                            data-link="/User/List/">
+                                        <i class="fa fa-plus-circle"></i> Thêm người dùng
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="box-content"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+@section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                loadContent('@Html.Raw(Context.Request.GetRawUrl("/User/List"))', document.getElementById('box-content'));
+            });
+        </script>
+}

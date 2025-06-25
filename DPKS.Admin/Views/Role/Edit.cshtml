@@ -1,0 +1,55 @@
+﻿@using DPKS.Common.Enum
+@model DPKS.Model.Role.Request.RoleUpdateRequest
+
+<div class="modal-content">
+    <form id="modal-form" enctype="multipart/form-data">
+        <div class="modal-header">
+            <h4 class="modal-title">Cập nhật vai trò</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            @Html.AntiForgeryToken()
+
+            @if (!string.IsNullOrEmpty(Model.Id))
+            {
+                <input type="hidden" name="Id" value="@Model.Id" />
+            }
+            else
+            {
+                <input type="hidden" name="Id" value="@ViewBag.Id?.ToString().EncodeId()" />
+            }
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+    </form>
+
+    @{
+        await Html.RenderPartialAsync("_ModalScript", new DPKS.Admin.Models.ModalFormRequest
+            {
+                FormId = "modal-form",
+                UrlSubmit = "/Role/Edit",
+                UrlPathLoadData = "/Role/List/",
+                LoadDataId = "box-content"
+            });
+    }
+</div>
+

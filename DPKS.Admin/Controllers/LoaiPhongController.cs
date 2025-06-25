@@ -17,6 +17,7 @@ using DPKS.Common.Helper;
 using DPKS.Model.Phong.Request;
 using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.VariantTypes;
+using DPKS.Model.TienNghi;
 
 namespace DPKS.Admin.Controllers
 {
@@ -24,6 +25,7 @@ namespace DPKS.Admin.Controllers
     {
         
         private readonly ILoaiPhongService _loaiPhongService;
+        private readonly ITienNghiService _tienNghiService;
         private readonly ILogger<LoaiPhongController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly AppDbContext _context;
@@ -33,7 +35,8 @@ namespace DPKS.Admin.Controllers
             ILoaiPhongService loaiPhongService,
             ILogger<LoaiPhongController> logger,
             IWebHostEnvironment webHostEnvironment,
-            AppDbContext context
+            AppDbContext context,
+            ITienNghiService tienNghiService
             )
             : base(userService, trackingService, logger) // truyền cùng logger lên base
         {
@@ -41,6 +44,7 @@ namespace DPKS.Admin.Controllers
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _context = context;
+            _tienNghiService = tienNghiService;
         }
 
         public async Task<IActionResult> Index(LoaiPhongSearchRequest request)
@@ -65,6 +69,9 @@ namespace DPKS.Admin.Controllers
         public async Task<IActionResult> Create(int id )
         {
             ViewBag.AnhPhu = await _loaiPhongService.GetAnhLoaiPhong(id);
+
+            var tienNghiResult = await _tienNghiService.GetAll();
+            ViewBag.TienNghiList = tienNghiResult.IsSuccessed ? tienNghiResult.ResultObj : new List<DanhSachTienNghiVm>();
 
             var model = new LoaiPhongCreateRequest
             {
@@ -145,6 +152,15 @@ namespace DPKS.Admin.Controllers
 
             ViewBag.LoaiPhongId = id;
             ViewBag.AnhPhu = await _loaiPhongService.GetAnhLoaiPhong(id);
+
+            var tienNghiResult = await _tienNghiService.GetAll();
+            ViewBag.TienNghiList = tienNghiResult.IsSuccessed ? tienNghiResult.ResultObj : new List<DanhSachTienNghiVm>();
+
+            // Lấy danh sách tiện nghi của loại phòng này
+            var selectedIds = await _loaiPhongService.GetSelectedTienNghiIds(id);
+            entity.SelectedTienNghiIds = selectedIds;
+
+
             return PartialView(entity);
         }
         [HttpPost]

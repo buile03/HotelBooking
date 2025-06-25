@@ -1,11 +1,19 @@
-﻿using DPKS.Common.Enum;
+﻿using DPKS.Common;
+using DPKS.Common.Enum;
+using DPKS.Common.Extensions;
+using DPKS.Common.Result;
+using DPKS.Data.EF;
 using DPKS.Data.Entites;
+using DPKS.Model.Role;
+using DPKS.Model.User;
+using DPKS.Model.User.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +28,14 @@ namespace DPKS.Service
         Task<bool> LockUser(int userId); //khóa tài khoản
         Task<bool> UnlockUser(int userId); // mở tài khoản
         Task<bool> ResetPasswordByAdmin(int userId, string newPassword);
+
+        Task<Result<int>> Create(UserCreateRequest request);
+        Task<Result<int>> Update(UserUpdateRequest request);
+        Task<Result<int>> Delete(DeleteRequest request);
+        Task<Result<PagedResult<DanhSachUserVm>>> GetPaging(UserSearchRequest request);
+        Task<UserUpdateRequest> GetByIdAdmin(int id);
+
+
 
         // dùng chung 
         Task<IdentityResult> DangKy(ApplicationUser user, string password, string role);
@@ -43,25 +59,31 @@ namespace DPKS.Service
         Task<string> LuuAnhDaiDien(IFormFile avatarFile, int userId);
     }
 
-    public class UserService : IUserService
+    public class UserService : BaseService, IUserService
     {
+        private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IEmailSenderService _emailSender;
         private readonly IDanhMucService _danhmucService;
+        private readonly IStorageService _storageService;
         public UserService(
+            AppDbContext context,
+            IStorageService storageService,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             IEmailSenderService emailSender,
-            IDanhMucService danhmucService)
+            IDanhMucService danhmucService) : base(context, storageService)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _danhmucService = danhmucService;
+            _storageService = storageService;
         }
 
         #region Admin
@@ -328,6 +350,204 @@ namespace DPKS.Service
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+
+
         #endregion
+
+        public async Task<Result<int>> Create(UserCreateRequest request)
+        {
+            try
+            {
+                
+
+                var user = new ApplicationUser
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    HoTen = request.HoTen,
+                    PhoneNumber = request.PhoneNum,
+                    GioiTinh = request.GioiTinh,
+                    NgaySinh = request.Ngaysinh,
+                    QuocGiaId = request.QuocGiaId,
+                    TinhId = request.TinhId,
+                    IsActive = true,
+                    
+                    CreatedAt = DateTime.UtcNow
+                };
+                if (await _userManager.FindByEmailAsync(request.Email) != null)
+                    return Result<int>.Error("Email đã tồn tại!");
+
+                if (request.Avatar != null)
+                {
+                    var extension = Path.GetExtension(request.Avatar.FileName);
+                    var fileName = Guid.NewGuid().ToString() + extension;
+
+                    using var stream = request.Avatar.OpenReadStream();
+                    var savedPath = await _storageService.SaveFileAsync(stream, fileName, "uploads/user");
+
+                    user.PhotoName = Path.GetFileName(savedPath);
+                }
+
+                var result = await _userManager.CreateAsync(user, request.Password ?? "123456Bui");
+
+                return result.Succeeded
+                    ? Result<int>.Success("Tạo người dùng thành công", user.Id)
+                    : Result<int>.Error(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Result<int>> Update(UserUpdateRequest request)
+        {
+            try
+            {
+                int id = request.Id.DecodeId();
+                var user = await _context.Users.FindAsync(id);
+                if (user == null) return Result<int>.Error("Không tìm thấy người dùng!");
+
+                user.HoTen = request.HoTen;
+                user.PhoneNumber = request.PhoneNum;
+                user.GioiTinh = request.GioiTinh;
+                user.NgaySinh = request.Ngaysinh;
+                user.QuocGiaId = request.QuocGiaId;
+                user.TinhId = request.TinhId;
+                
+                user.ModifiedBy = request.UserId.ToString();
+                user.LastModifiedDate = DateTime.UtcNow;
+
+
+                if (request.Avatar != null && request.Avatar.Length > 0)
+                {
+                    // Xóa ảnh cũ nếu có
+                    if (!string.IsNullOrEmpty(user.PhotoName))
+                    {
+                        await _storageService.DeleteFileAsync(user.PhotoName, "uploads/user");
+                    }
+
+                    var extension = Path.GetExtension(request.Avatar.FileName);
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+
+                    using var stream = request.Avatar.OpenReadStream();
+                    await _storageService.SaveFileAsync(stream, fileName, "uploads/user");
+
+                    user.PhotoName = fileName;
+                }
+
+                _context.Users.Update(user);
+                var result = await SaveChange();
+                return result > 0
+                    ? Result<int>.Success("Cập nhật người dùng thành công", user.Id)
+                    : Result<int>.Error("Cập nhật thất bại");
+
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Result<int>> Delete(DeleteRequest request)
+        {
+            try
+            {
+                int id = request.Id.DecodeId();
+                var user = await _context.Users.FindAsync(id);
+                if (user == null) return Result<int>.Error("Không tìm thấy người dùng!");
+
+                user.IsDeleted = true;
+                user.LastModifiedDate = DateTime.UtcNow;
+                user.ModifiedBy = request.UserId.ToString();
+
+                _context.Users.Update(user);
+                var result = await SaveChange();
+                return result > 0
+                    ? Result<int>.Success("Xóa người dùng thành công", id)
+                    : Result<int>.Error("Xóa thất bại");
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Result<PagedResult<DanhSachUserVm>>> GetPaging(UserSearchRequest request)
+        {
+            try
+            {
+                var query = _context.Users
+                    .Where(u => !u.IsDeleted)
+                    .Include(u => u.QuocGia)
+                    .Include(u => u.Tinh)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(request.Keyword))
+                {
+                    var keyword = request.Keyword.ToLower();
+                    query = query.Where(u =>
+                        u.HoTen.ToLower().Contains(keyword) ||
+                        u.Email.ToLower().Contains(keyword));
+                }
+
+                int total = await query.CountAsync();
+                var user = await query
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Select(u => new DanhSachUserVm
+                    {
+                        Id = u.Id,
+                        HoTen = u.HoTen,
+                        Email = u.Email,
+                        PhoneNum = u.PhoneNumber,
+                        GioiTinh = u.GioiTinh,
+                        NgaySinh = u.NgaySinh,
+                        IsActive = u.IsActive,
+                        QuocGia = u.QuocGia.Name,
+                        Tinh = u.Tinh.Name
+                    })
+                    .ToListAsync();
+
+                
+                return Result<PagedResult<DanhSachUserVm>>.Success("Lấy danh sách vai trò thành công", new PagedResult<DanhSachUserVm>
+                {
+                    PageIndex = request.PageIndex,
+                    PageSize = request.PageSize,
+                    TotalRecords = total,
+                    Items = user
+                });
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<UserUpdateRequest> GetByIdAdmin(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null) return null;
+
+                return new UserUpdateRequest
+                {
+                    Id = user.Id.EncodeId(),
+                    HoTen = user.HoTen,
+                    PhoneNum = user.PhoneNumber,
+                    GioiTinh = user.GioiTinh,
+                    Ngaysinh = user.NgaySinh,
+                    QuocGiaId = user.QuocGiaId,
+                    TinhId = user.TinhId,
+                    PhotoName = user.PhotoName
+                };
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

@@ -29,5 +29,6 @@ namespace DPKS.Model.LoaiPhong.Request
         //[BindNever]// bỏ qua khi binding (option)
         [ValidateNever]
         public string HinhAnhChinh { get; set; }
+        public List<int> SelectedTienNghiIds { get; set; } = new();
     }
 }

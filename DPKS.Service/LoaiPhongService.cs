@@ -36,6 +36,8 @@ namespace DPKS.Service
         Task<Result<bool>> SetHinhAnhChinh(int loaiPhongId, int photoId, int userId);
         Task<Result<bool>> AddAnhLoaiPhong(int loaiPhongId, string ImageFile, int userId);
         Task<Result<bool>> DeleteAnhLoaiPhong(int photoId, int userId);
+
+        Task<List<int>> GetSelectedTienNghiIds(int loaiPhongId); // lấy tiện nghi của loại phòng
     }
     public class LoaiPhongService : BaseService, ILoaiPhongService
     {
@@ -268,6 +270,19 @@ namespace DPKS.Service
                 _context.LoaiPhongs.Add(obj);
                 var result = await _context.SaveChangesAsync();
 
+                if (request.SelectedTienNghiIds != null && request.SelectedTienNghiIds.Any())
+                {
+                    foreach (var tienNghiId in request.SelectedTienNghiIds)
+                    {
+                        _context.TienNghiTheoLoaiPhongs.Add(new TienNghiTheoLoaiPhong
+                        {
+                            LoaiPhongId = obj.Id,
+                            TienNghiId = tienNghiId
+                        });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 if (result > 0)
                     return Result<int>.Success(_action, obj.Id);
 
@@ -285,7 +300,7 @@ namespace DPKS.Service
             try
             {
                 if (string.IsNullOrWhiteSpace(request.Id))
-                    return Result<int>.Error("ID không hợp lệ!");
+                    return Result<int>.Error("ID không hợp lệ!");   
 
                 int id = request.Id.DecodeId();
 
@@ -323,7 +338,25 @@ namespace DPKS.Service
 
 
                 _context.LoaiPhongs.Update(entity);
+
+                // Cập nhật danh sách tiện nghi
+                var oldTienNghis = _context.TienNghiTheoLoaiPhongs.Where(x => x.LoaiPhongId == id);
+                _context.TienNghiTheoLoaiPhongs.RemoveRange(oldTienNghis);
+
+                if (request.SelectedTienNghiIds?.Any() == true)
+                {
+                    foreach (var tienNghiId in request.SelectedTienNghiIds)
+                    {
+                        _context.TienNghiTheoLoaiPhongs.Add(new TienNghiTheoLoaiPhong
+                        {
+                            LoaiPhongId = id,
+                            TienNghiId = tienNghiId
+                        });
+                    }
+                }
                 var result = await SaveChange();
+
+
 
                 return result > 0
                     ? Result<int>.Success("Cập nhật loại phòng thành công", id)
@@ -645,6 +678,15 @@ namespace DPKS.Service
                 return Result<int>.Error("Đã xảy ra lỗi khi xóa phòng.");
             }
         }
+        // lấy tiện nghi của loại phòng
+        public async Task<List<int>> GetSelectedTienNghiIds(int loaiPhongId)
+        {
+            return await _context.TienNghiTheoLoaiPhongs
+                .Where(x => x.LoaiPhongId == loaiPhongId)
+                .Select(x => x.TienNghiId)
+                .ToListAsync();
+        }
+
     }
 
 

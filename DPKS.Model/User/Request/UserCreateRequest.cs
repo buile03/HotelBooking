@@ -1,0 +1,22 @@
+﻿using DPKS.Common.Result;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+
+namespace DPKS.Model.User.Request
+{
+    public class UserCreateRequest : RequestBase
+    {
+        [Required]
+        public string HoTen { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+        public string PhoneNum { get; set; }
+        public string Password { get; set; }
+        public string GioiTinh { get; set; }
+        public DateTime? Ngaysinh { get; set; }
+        public int QuocGiaId { get; set; }
+        public int TinhId { get; set; }
+        public IFormFile Avatar { get; set; }
+    }
+}

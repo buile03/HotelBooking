@@ -43,6 +43,9 @@ namespace DPKS.Data.Entites
         public ICollection<DatPhong> datPhongs { get; set; } = new List<DatPhong>();
 
         public ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
+
+
+        public bool IsDeleted { get; set; } = false;
     }
 
 }

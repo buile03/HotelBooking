@@ -1,0 +1,92 @@
+﻿@model DPKS.Model.User.Request.UserCreateRequest
+@using DPKS.Common.Enum
+@{
+    Layout = null;
+}
+
+<div class="modal-content">
+    <form id="modal-form" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+
+
+        <div class="modal-header">
+            <h4 class="modal-title">Thêm người dùng</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HoTen" class="control-label">Tên người dùng</label>
+                        <input asp-for="HoTen" class="form-control" />
+                        <span asp-validation-for="HoTen" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="QuocGiaId">Quốc gia</label>
+                        <select asp-for="QuocGiaId" class="form-control" asp-items="ViewBag.QuocGiaList"></select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="TinhId">Tỉnh / Thành phố</label>
+                        <select asp-for="TinhId" class="form-control" asp-items="ViewBag.TinhList"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GioiTinh">Giới tính</label>
+                    <select asp-for="GioiTinh" class="form-control">
+                        <option value="">-- Chọn giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                    <span asp-validation-for="GioiTinh" class="text-danger"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-success">Lưu</button>
+        </div>
+    </form>
+
+    @* Script xử lý submit *@
+    @{
+        await Html.RenderPartialAsync("_ModalScript", new DPKS.Admin.Models.ModalFormRequest()
+            {
+                FormId = "modal-form",
+                UrlSubmit = "/Users/Create",
+                UrlPathLoadData = ViewBag.ResultUrl?.ToString() ?? "/User/List/",
+                LoadDataId = "box-content"
+            });
+    }
+
+    <script>
+        $('#QuocGiaId').on('change', function () {
+            var quocGiaId = $(this).val();
+            $.get('/User/GetTinhByQuocGia', { quocGiaId }, function (data) {
+                var $tinhDropdown = $('#TinhId');
+                $tinhDropdown.empty();
+                $.each(data, function (index, item) {
+                    $tinhDropdown.append(new Option(item.text, item.value));
+                });
+            });
+        });
+    </script>
+</div>

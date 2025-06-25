@@ -16,8 +16,10 @@ namespace DPKS.Admin.Extensions
             services.AddScoped<IDanhMucService, DanhMucService>();
             services.AddScoped<IPhongService, PhongService>();
             services.AddScoped<ILoaiPhongService, LoaiPhongService>();
+            services.AddScoped<ITienNghiService, TienNghiService>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITrackingService, TrackingService>();
             services.AddScoped<IOrganizationService, OrganizationService>();
             return services;

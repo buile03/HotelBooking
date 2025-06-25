@@ -4,7 +4,7 @@
     Layout = null;
     var anhPhu = ViewBag.AnhPhu as List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm> ?? new List<DPKS.Model.LoaiPhong.AnhLoaiPhongVm>();
     var loaiPhongId = (int)ViewBag.LoaiPhongId;
-    
+    var tienNghiList = ViewBag.TienNghiList as List<DPKS.Model.TienNghi.DanhSachTienNghiVm> ?? new List<DPKS.Model.TienNghi.DanhSachTienNghiVm>();
 }
 
 
@@ -48,6 +48,27 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tiện nghi -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Tiện nghi</label>
+                        <div class="row">
+                            @foreach (var tienNghi in tienNghiList)
+                            {
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="SelectedTienNghiIds" class="form-check-input" value="@tienNghi.Id" @(Model.SelectedTienNghiIds?.Contains(tienNghi.Id) == true ? "checked" : "") />
+                                        <label class="form-check-label">@tienNghi.Name</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Ảnh đại diện hiện tại -->
             <div class="row">
